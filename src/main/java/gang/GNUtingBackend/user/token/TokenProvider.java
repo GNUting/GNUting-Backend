@@ -1,8 +1,8 @@
 package gang.GNUtingBackend.user.token;
 
 import gang.GNUtingBackend.user.domain.enums.UserRole;
-import gang.GNUtingBackend.user.security.PrincipalDetails;
-import gang.GNUtingBackend.user.security.PrincipalDetailsService;
+import gang.GNUtingBackend.user.auth.PrincipalDetails;
+import gang.GNUtingBackend.user.auth.PrincipalDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;

@@ -1,4 +1,4 @@
-package gang.GNUtingBackend.user.security;
+package gang.GNUtingBackend.user.auth;
 
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.repository.UserRepository;
