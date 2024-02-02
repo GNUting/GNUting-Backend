@@ -3,6 +3,7 @@ package gang.GNUtingBackend.user.service;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
+import gang.GNUtingBackend.user.dto.UserDetailResponseDto;
 import gang.GNUtingBackend.user.dto.UserLoginResponseDto;
 import gang.GNUtingBackend.user.dto.UserSignupRequestDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
@@ -70,6 +71,32 @@ public class UserService {
                 .studentId(user.getStudentId())
                 .userRole(user.getUserRole())
                 .createDate(user.getCreateDate())
+                .build();
+    }
+
+    /**
+     * 토큰으로 사용자 정보 조회하기
+     * @param token
+     * @return UserDetailResponseDto
+     */
+    @Transactional(readOnly = true)
+    public UserDetailResponseDto userDetail(String token) {
+        String email = tokenProvider.getUserEmail(token);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        return UserDetailResponseDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .phoneNumber(user.getPhoneNumber())
+                .gender(user.getGender())
+                .birthDate(user.getBirthDate())
+                .nickname(user.getNickname())
+                .department(user.getDepartment())
+                .studentId(user.getStudentId())
+                .profileImage(user.getProfileImage())
+                .userRole(user.getUserRole())
                 .build();
     }
 }
