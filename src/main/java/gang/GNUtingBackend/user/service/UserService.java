@@ -29,7 +29,7 @@ public class UserService {
      * @return
      */
     @Transactional
-    public UserSignupResponseDto signUp(UserSignupRequestDto userSignupRequestDto) {
+    public UserSignupResponseDto signup(UserSignupRequestDto userSignupRequestDto) {
         // 이메일로 이미 가입된 사용자가 있는지 확인
         Optional<User> existingUser = userRepository.findByEmail(userSignupRequestDto.getEmail());
 

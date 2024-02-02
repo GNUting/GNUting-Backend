@@ -3,10 +3,11 @@ package gang.GNUtingBackend.user.controller;
 import gang.GNUtingBackend.response.ApiResponse;
 import gang.GNUtingBackend.user.dto.UserLoginRequestDto;
 import gang.GNUtingBackend.user.dto.UserLoginResponseDto;
+import gang.GNUtingBackend.user.dto.UserSignupRequestDto;
+import gang.GNUtingBackend.user.dto.UserSignupResponseDto;
 import gang.GNUtingBackend.user.service.UserService;
 import gang.GNUtingBackend.user.token.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.SelectBeforeUpdate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,6 +43,24 @@ public class UserController {
                 .body(apiResponse);
     }
 
+    /**
+     * 사용자의 가입 요청을 처리하고, 가입이 성공했을 때, 응답 헤더에 토큰을 추가하여 반환한다.
+     * @param userSignupRequestDto
+     * @return
+     */
+    @PostMapping("/signup")
+    public ResponseEntity<ApiResponse<UserSignupResponseDto>> signup(@RequestBody UserSignupRequestDto userSignupRequestDto) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        UserSignupResponseDto user = userService.signup(userSignupRequestDto);
+        String token = tokenProvider.createToken(user.getEmail(), user.getUserRole());
 
+        httpHeaders.add("Authorization", "Bearer " + token);
+
+        ApiResponse<UserSignupResponseDto> apiResponse = ApiResponse.onSuccess(user);
+
+        return ResponseEntity.ok()
+                .headers(httpHeaders)
+                .body(apiResponse);
+    }
 
 }
