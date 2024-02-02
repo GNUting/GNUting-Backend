@@ -45,4 +45,15 @@ public class UserService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public UserLoginResponseDto login(String email, String password) {
+        // 이메일로 사용자 정보를 조회
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // 입력한 비밀번호를 암호화된 비밀번호와 비교
+        if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
+            throw new UserHandler(ErrorStatus.PASSWORD_NOT_MATCH);
+        }
+    }
 }
