@@ -1,5 +1,6 @@
 package gang.GNUtingBackend.user.dto;
 
+import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.domain.enums.Gender;
 import gang.GNUtingBackend.user.domain.enums.UserRole;
 import java.time.LocalDate;
@@ -24,4 +25,24 @@ public class UserSignupRequestDto {
     private String studentId;
     private String profileImage;
     private UserRole userRole;
+
+    public User toEntity() {
+        return User.builder()
+                .email(email)
+                .password(password)
+                .name(name)
+                .phoneNumber(phoneNumber)
+                .gender(gender)
+                .birthDate(birthDate)
+                .nickname(nickname)
+                .department(department)
+                .studentId(studentId)
+                .profileImage(profileImage)
+                .userRole(UserRole.ROLE_USER)
+                .build();
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
