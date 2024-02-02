@@ -6,6 +6,7 @@ import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.dto.UserDetailResponseDto;
 import gang.GNUtingBackend.user.dto.UserLoginResponseDto;
 import gang.GNUtingBackend.user.dto.UserSignupRequestDto;
+import gang.GNUtingBackend.user.dto.UserSignupResponseDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
 import gang.GNUtingBackend.user.token.TokenProvider;
 import java.util.Optional;
@@ -28,7 +29,7 @@ public class UserService {
      * @return
      */
     @Transactional
-    public User signUp(UserSignupRequestDto userSignupRequestDto) {
+    public UserSignupResponseDto signUp(UserSignupRequestDto userSignupRequestDto) {
         // 이메일로 이미 가입된 사용자가 있는지 확인
         Optional<User> existingUser = userRepository.findByEmail(userSignupRequestDto.getEmail());
 
@@ -38,8 +39,23 @@ public class UserService {
             userSignupRequestDto.setPassword(encodedPassword);
 
             // UserSignupRequestDto를 User 엔티티로 변환하여 저장
-            User newUser = userSignupRequestDto.toEntity();
-            return userRepository.save(newUser);
+            User user = userSignupRequestDto.toEntity();
+            userRepository.save(user);
+
+            return UserSignupResponseDto.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .phoneNumber(user.getPhoneNumber())
+                    .gender(user.getGender())
+                    .birthDate(user.getBirthDate())
+                    .nickname(user.getNickname())
+                    .department(user.getDepartment())
+                    .studentId(user.getStudentId())
+                    .profileImage(user.getProfileImage())
+                    .userRole(user.getUserRole())
+                    .build();
+
         } else {
             // 이미 가입된 사용자가 있으면 예외 발생
             throw new UserHandler(ErrorStatus.USER_ALREADY_EXIST);
