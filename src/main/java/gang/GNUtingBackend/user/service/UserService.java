@@ -22,7 +22,7 @@ public class UserService {
     private final TokenProvider tokenProvider;
 
     /**
-     * 사용자 회원가입하기
+     * 사용자 회원가입 하기
      * @param userSignupRequestDto
      * @return
      */
@@ -45,6 +45,12 @@ public class UserService {
         }
     }
 
+    /**
+     * 사용자 로그인 하기
+     * @param email
+     * @param password
+     * @return UserLoginResponseDto
+     */
     @Transactional(readOnly = true)
     public UserLoginResponseDto login(String email, String password) {
         // 이메일로 사용자 정보를 조회
@@ -55,5 +61,15 @@ public class UserService {
         if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
             throw new UserHandler(ErrorStatus.PASSWORD_NOT_MATCH);
         }
+
+        return UserLoginResponseDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .department(user.getDepartment())
+                .studentId(user.getStudentId())
+                .userRole(user.getUserRole())
+                .createDate(user.getCreateDate())
+                .build();
     }
 }
