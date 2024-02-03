@@ -68,7 +68,6 @@ public class User extends BaseEntity {
     private String studentId;
 
     // 프로필 이미지
-    @Column(nullable = false)
     private String profileImage;
 
     @Column(nullable = false)
