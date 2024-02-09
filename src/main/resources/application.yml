@@ -1,21 +1,38 @@
+#spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://203.255.3.66:13306/gnuting
+#    username: root
+#    password: 5607
+#
+#  jpa:
+#    database-platform: org.hibernate.dialect.MySQL8Dialect
+#    hibernate:
+#      ddl-auto: update
+#      show-sql: true # true 설정시 JPA 쿼리문 확인 가능
+#      format-sql: true # JPA의 구현체인 Hibernate가 동작하면서 발생하는 SQL의 가독성을 높여준다.
+#      generate-ddl: true
+#
+#    properties:
+#      hibernate:
+#        globally_quoted_identifiers: true
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://203.255.3.66:13306/gnuting
-    username: root
-    password: 5607
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: password
 
-  jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-    hibernate:
-      ddl-auto: update
-      show-sql: true # true 설정시 JPA 쿼리문 확인 가능
-      format-sql: true # JPA의 구현체인 Hibernate가 동작하면서 발생하는 SQL의 가독성을 높여준다.
-      generate-ddl: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+    database:
+      platform: h2
+      console:
+        settings:
+          web-allow-others: false
 
-    properties:
-      hibernate:
-        globally_quoted_identifiers: true
 
 jwt:
   header: Authorization

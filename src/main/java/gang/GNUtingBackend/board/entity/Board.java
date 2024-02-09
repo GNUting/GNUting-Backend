@@ -1,5 +1,8 @@
-package gang.GNUtingBackend.entity;
+package gang.GNUtingBackend.board.entity;
 
+import gang.GNUtingBackend.board.entity.enums.Status;
+import gang.GNUtingBackend.user.domain.User;
+import gang.GNUtingBackend.user.domain.enums.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,8 +20,10 @@ public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
-    private int userId; //외래키로 변경
+
+    @JoinColumn
+    @ManyToOne
+    private User userId; //외래키로 변경
 
     @Column(nullable = false)
     private String title;
@@ -27,5 +32,10 @@ public class Board {
     private String detail;
 
     @Column(nullable = false)
-    private int status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 }

@@ -3,13 +3,8 @@ package gang.GNUtingBackend.user.domain;
 import gang.GNUtingBackend.user.domain.enums.Gender;
 import gang.GNUtingBackend.user.domain.enums.UserRole;
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,6 +19,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @AllArgsConstructor
 @DynamicInsert
 @DynamicUpdate
+@Table(name = "custom_user") //h2 데이터베이스 사용을 위한 테이블명 설정 나중에 삭제
 public class User extends BaseEntity {
 
     @Id

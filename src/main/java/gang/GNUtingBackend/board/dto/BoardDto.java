@@ -1,6 +1,9 @@
-package gang.GNUtingBackend.dto;
+package gang.GNUtingBackend.board.dto;
 
-import gang.GNUtingBackend.entity.Board;
+import gang.GNUtingBackend.board.entity.Board;
+import gang.GNUtingBackend.board.entity.enums.Status;
+import gang.GNUtingBackend.user.domain.User;
+import gang.GNUtingBackend.user.domain.enums.Gender;
 import lombok.*;
 
 import java.util.List;
@@ -13,11 +16,13 @@ import java.util.List;
 @Setter
 public class BoardDto {
     private Long id;
-    private int userId; //외래키로 변경
+    private User userId;
     private String title;
     private String detail;
-    private List<Integer> inUser;
-    private int status; //추후 enum으로 바꿀지 생각
+    private List<User> inUser;
+    private Status status;
+    private Gender gender;
+
 
 
     public Board toEntity(){
@@ -27,6 +32,7 @@ public class BoardDto {
                 .title(title)
                 .detail(detail)
                 .status(status)
+                .gender(gender)
                 .build();
     }
 
@@ -36,6 +42,7 @@ public class BoardDto {
                 .title(board.getTitle())
                 .detail(board.getDetail())
                 .status(board.getStatus())
+                .gender(board.getGender())
                 .build();
     }
 

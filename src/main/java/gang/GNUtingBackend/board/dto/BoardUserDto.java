@@ -1,7 +1,8 @@
-package gang.GNUtingBackend.dto;
+package gang.GNUtingBackend.board.dto;
 
-import gang.GNUtingBackend.entity.Board;
-import gang.GNUtingBackend.entity.BoardUser;
+import gang.GNUtingBackend.board.entity.BoardParticipant;
+import gang.GNUtingBackend.board.entity.Board;
+import gang.GNUtingBackend.user.domain.User;
 import lombok.*;
 
 @Getter
@@ -13,16 +14,16 @@ import lombok.*;
 public class BoardUserDto {
     private Long id;
     private Board boradId;
-    private int userId;
+    private User userId;
 
-    public BoardUser toEntity(){
-       return BoardUser.builder()
+    public BoardParticipant toEntity(){
+       return BoardParticipant.builder()
                .boardId(boradId)
                .userId(userId)
                .build();
     }
 
-    public static BoardUserDto toDto(Board board,int user){
+    public static BoardUserDto toDto(Board board, User user){
         return BoardUserDto.builder()
                 .boradId(board)
                 .userId(user)

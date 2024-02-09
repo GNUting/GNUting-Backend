@@ -1,5 +1,6 @@
-package gang.GNUtingBackend.entity;
+package gang.GNUtingBackend.board.entity;
 
+import gang.GNUtingBackend.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Builder
-public class BoardUser {
+public class BoardParticipant {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -21,10 +22,9 @@ public class BoardUser {
     @JoinColumn(name="board_id")
     private Board boardId;
 
-    @Column
-    //@ManyToOne
-    //@JoinColumn(name="user_id") 유저만들어지면 이걸로 수정
-    private int userId;
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    private User userId;
 
     @Column
     private int status;
