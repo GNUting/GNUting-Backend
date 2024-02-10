@@ -2,7 +2,10 @@ package gang.GNUtingBackend.user.repository;
 
 import gang.GNUtingBackend.user.domain.User;
 import java.util.Optional;
+
+import gang.GNUtingBackend.user.domain.enums.Gender;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -12,4 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return
      */
     Optional<User> findByEmail(String email);
+
+    @Query("select u from User u where u.gender = :gender and u.nickname = :nickname")
+    User findByUserSearch(Gender gender,String nickname);
 }

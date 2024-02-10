@@ -1,9 +1,10 @@
 package gang.GNUtingBackend.board.controller;
 
 import gang.GNUtingBackend.board.dto.BoardRequestDto;
+import gang.GNUtingBackend.board.dto.BoardResponseDto;
 import gang.GNUtingBackend.board.service.BoardService;
 import gang.GNUtingBackend.board.entity.Board;
-import gang.GNUtingBackend.service.BoardService;
+
 import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
 import gang.GNUtingBackend.user.token.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,8 @@ public class BoardController {
     }
 
     @GetMapping("/board/{id}")
-    public ResponseEntity<BoardRequestDto> inshow(@PathVariable Long id){
-        BoardRequestDto board = boardService.inshow(id);
+    public ResponseEntity<BoardResponseDto> inshow(@PathVariable Long id){
+        BoardResponseDto board = boardService.inshow(id);
         return ResponseEntity.status(HttpStatus.OK).body(board);
     }
 

@@ -3,6 +3,7 @@ package gang.GNUtingBackend.board.dto;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
 import gang.GNUtingBackend.board.entity.Board;
 import gang.GNUtingBackend.user.domain.User;
+import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
 import lombok.*;
 
 @Getter
