@@ -1,18 +1,27 @@
 package gang.GNUtingBackend.board.service;
 
+import gang.GNUtingBackend.board.dto.BoardApplyUsersDto;
 import gang.GNUtingBackend.board.dto.BoardResponseDto;
-import gang.GNUtingBackend.board.dto.BoardUserDto;
+import gang.GNUtingBackend.board.dto.BoardParticipantDto;
+import gang.GNUtingBackend.board.entity.BoardApplyUsers;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
+import gang.GNUtingBackend.board.entity.enums.ApplyStatus;
 import gang.GNUtingBackend.board.entity.enums.Status;
+import gang.GNUtingBackend.board.repository.BoardApplyUsersRepository;
 import gang.GNUtingBackend.board.repository.BoardRepository;
 import gang.GNUtingBackend.board.repository.BoardParticipantRepository;
 import gang.GNUtingBackend.board.dto.BoardRequestDto;
 import gang.GNUtingBackend.board.entity.Board;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.domain.enums.Gender;
+import gang.GNUtingBackend.user.dto.UserSearchRequestDto;
 import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,10 +41,15 @@ public class BoardService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<BoardRequestDto> show(String email) {
+    @Autowired
+    private BoardApplyUsersRepository boardApplyUsersRepository;
+
+    public List<BoardRequestDto> show(String email, Pageable pageable) {
         User user= userRepository.findByEmail(email).orElseThrow(()->new IllegalArgumentException("사용자를 찾을수 없습니다 토큰오류"));
         Gender gender=user.getGender();
-        List<Board> links = boardRepository.findByGenderNot(gender);
+        int page = pageable.getPageNumber() - 1;
+        int pageLimit = 20;
+        Page<Board> links = boardRepository.findByGenderNot(gender, PageRequest.of(page,pageLimit, Sort.by(Sort.Direction.DESC,"createdDate")));
 
         return links.stream()
                 .map(BoardRequestDto::toDto)
@@ -51,11 +65,9 @@ public class BoardService {
         Board boardSave = boardRequestDto.toEntity();
         boardRepository.save(boardSave);
 
-
-        //리스트로 받아온 유저들을 게시글 테이블에 저장 모르겟다 이건
         for (User member: boardRequestDto.getInUser()) {
-            BoardUserDto boardUserDto=BoardUserDto.toDto(boardSave,member);
-            BoardParticipant boardParticipantSave =boardUserDto.toEntity();
+            BoardParticipantDto boardParticipantDto = BoardParticipantDto.toDto(boardSave,member);
+            BoardParticipant boardParticipantSave = boardParticipantDto.toEntity();
             boardParticipantRepository.save(boardParticipantSave);
         }
 
@@ -116,8 +128,8 @@ public class BoardService {
             boardParticipantRepository.deleteAll(users);
 
             for (User member: changeBoard.getInUser()) {
-                BoardUserDto boardUserDto=BoardUserDto.toDto(changedBoard,member);
-                BoardParticipant boardParticipantSave =boardUserDto.toEntity();
+                BoardParticipantDto boardParticipantDto = BoardParticipantDto.toDto(changedBoard,member);
+                BoardParticipant boardParticipantSave = boardParticipantDto.toEntity();
                 boardParticipantRepository.save(boardParticipantSave);
             }
 
@@ -137,4 +149,45 @@ public class BoardService {
         UserSearchResponseDto userSearchResponseDto =UserSearchResponseDto.toDto(finduser);
         return userSearchResponseDto;
     }
+
+    public String apply(Long id, List<UserSearchRequestDto> userSearchRequestDto, String email) {
+        User user= userRepository.findByEmail(email).orElseThrow(()->new IllegalArgumentException("사용자를 찾을수 없습니다 토큰오류"));
+        Board board=boardRepository.findById(id).orElseThrow(()->new IllegalArgumentException("게시물을 찾을수 없습니다 토큰오류"));
+        String usersName="";
+        String overlap="";
+        List<BoardApplyUsers> boardApplyUsers = boardApplyUsersRepository.findByBoardId(board);
+
+
+        if(board.getInUserCount()!=userSearchRequestDto.size()){
+            return "인원을 정확하게 추가해주세요";
+        }
+
+        //중복검사하는 건데 이쁘게 코드수정 필요 ㅠㅠ... 예외처리 필요
+       for (UserSearchRequestDto userApply:userSearchRequestDto) {
+           User member = userRepository.findById(userApply.getId()).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을수 없습니다"));
+           for (BoardApplyUsers boardApplyAll:boardApplyUsers) {
+               if(member.getId()==boardApplyAll.getUserId().getId()){
+                   overlap=overlap+" "+member.getNickname();
+               }
+           }
+        }
+        if(overlap.length()>1){
+            return overlap+" 유저가 이미 신청했습니다";
+        }
+
+        // 게시글에 신청하는 유저 저장
+        for (UserSearchRequestDto userApply:userSearchRequestDto) {
+            User member = userRepository.findById(userApply.getId()).orElseThrow(()->new IllegalArgumentException("사용자를 찾을수 없습니다"));;
+            BoardApplyUsersDto boardApplyUsersDto=new BoardApplyUsersDto();
+            boardApplyUsersDto.setStatus(ApplyStatus.대기중);
+            BoardApplyUsers boardApplyUsersToEntity=boardApplyUsersDto.toEntity(board,user,member);
+            boardApplyUsersRepository.save(boardApplyUsersToEntity);
+            usersName=usersName+" "+userApply.getNickname();
+        }
+        // 작성자에게 알림 날려줘야함
+        return board.getId()+"게시물에 "+usersName + "유저들 신청완료";
+
+
+    }
+
 }

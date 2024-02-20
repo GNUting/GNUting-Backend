@@ -24,6 +24,7 @@ public class BoardResponseDto {
     private String nickname;
     private Status status;
     private Gender gender;
+    private int inUserCount;
 
 
 
@@ -37,6 +38,7 @@ public class BoardResponseDto {
                 .status(board.getStatus())
                 .nickname(board.getUserId().getNickname())
                 .gender(board.getGender())
+                .inUserCount(board.getInUserCount())
                 .build();
     }
 

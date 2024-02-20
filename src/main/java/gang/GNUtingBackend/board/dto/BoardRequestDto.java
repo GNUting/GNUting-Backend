@@ -22,6 +22,7 @@ public class BoardRequestDto {
     private List<User> inUser;
     private Status status;
     private Gender gender;
+    private int inUserCount;
 
 
 
@@ -33,6 +34,7 @@ public class BoardRequestDto {
                 .detail(detail)
                 .status(status)
                 .gender(gender)
+                .inUserCount(inUser.size())
                 .build();
     }
 
