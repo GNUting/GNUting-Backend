@@ -1,0 +1,62 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://203.255.3.66:13306/gnuting
+    username: root
+    password: 5607
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+      show-sql: true # true 설정시 JPA 쿼리문 확인 가능
+      format-sql: true # JPA의 구현체인 Hibernate가 동작하면서 발생하는 SQL의 가독성을 높여준다.
+      generate-ddl: true
+
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: gentleman959@gmail.com
+    password: ypavxiczvwzcymeg
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+  auth:
+    code:
+      expiration:
+        millis: 2 * 60 * 1000
+
+#spring:
+#  datasource:
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem:testdb
+#    username: sa
+#    password:
+#
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2-console
+#    database:
+#      platform: h2
+#      console:
+#        settings:
+#          web-allow-others: false
+
+
+jwt:
+  header: Authorization
+  secret: b2394ad3c1101b896006157023d36e9bf9c98f60e54646c9c280efddea88521466817faee9d471cb0c6650e25b21c3282c44e427b74ed70b8295bca22f09c37a
+  duration: 30
