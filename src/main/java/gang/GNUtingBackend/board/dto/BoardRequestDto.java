@@ -29,7 +29,7 @@ public class BoardRequestDto {
     public Board toEntity(){
         return Board.builder()
                 .id(id)
-                .userId(userId)
+                .user(userId)
                 .title(title)
                 .detail(detail)
                 .status(status)
