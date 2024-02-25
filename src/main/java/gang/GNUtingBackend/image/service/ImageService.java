@@ -1,4 +1,4 @@
-package gang.GNUtingBackend.image;
+package gang.GNUtingBackend.image.service;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
