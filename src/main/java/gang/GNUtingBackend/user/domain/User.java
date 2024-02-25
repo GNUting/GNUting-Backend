@@ -19,7 +19,6 @@ import org.hibernate.annotations.DynamicUpdate;
 @AllArgsConstructor
 @DynamicInsert
 @DynamicUpdate
-@Table(name = "custom_user") //h2 데이터베이스 사용을 위한 테이블명 설정 나중에 삭제
 public class User extends BaseEntity {
 
     @Id
