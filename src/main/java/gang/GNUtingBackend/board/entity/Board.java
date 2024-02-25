@@ -7,11 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -25,11 +22,13 @@ public class Board extends BaseTime {
 
     @JoinColumn
     @ManyToOne
-    private User userId; //외래키로 변경
+    private User user;
 
+    // 글쓰기 제목
     @Column(nullable = false)
     private String title;
 
+    // 글쓰기 내용
     @Column(nullable = false)
     private String detail;
 

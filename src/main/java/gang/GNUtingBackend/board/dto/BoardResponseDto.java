@@ -1,9 +1,7 @@
 package gang.GNUtingBackend.board.dto;
 
 import gang.GNUtingBackend.board.entity.Board;
-import gang.GNUtingBackend.board.entity.BoardParticipant;
 import gang.GNUtingBackend.board.entity.enums.Status;
-import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.domain.enums.Gender;
 import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
 import lombok.*;
@@ -36,7 +34,7 @@ public class BoardResponseDto {
                 .inUser(user)
                 .detail(board.getDetail())
                 .status(board.getStatus())
-                .nickname(board.getUserId().getNickname())
+                .nickname(board.getUser().getNickname())
                 .gender(board.getGender())
                 .inUserCount(board.getInUserCount())
                 .build();
