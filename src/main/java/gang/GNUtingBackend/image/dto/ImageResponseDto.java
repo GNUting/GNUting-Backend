@@ -1,4 +1,4 @@
-package gang.GNUtingBackend.image;
+package gang.GNUtingBackend.image.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
