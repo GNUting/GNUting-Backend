@@ -38,6 +38,18 @@ spring:
       expiration:
         millis: 2 * 60 * 1000
 
+  cloud:
+    gcp:
+      storage:
+        credentials:
+          location: ./charismatic-age-414606-08978a3bdbe0.json
+    project-id: charismatic-age-414606
+    bucket: gnuting-storage-access
+
+app:
+  firebase-configuration-file: ./charismatic-age-414606-08978a3bdbe0.json
+  firebase-bucket: gnuting-storage-access
+
 #spring:
 #  datasource:
 #    driver-class-name: org.h2.Driver

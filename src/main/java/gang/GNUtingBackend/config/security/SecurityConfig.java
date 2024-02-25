@@ -1,4 +1,4 @@
-package gang.GNUtingBackend.user.config.security;
+package gang.GNUtingBackend.config.security;
 
 import gang.GNUtingBackend.user.filter.JwtFilter;
 import gang.GNUtingBackend.user.token.TokenProvider;
