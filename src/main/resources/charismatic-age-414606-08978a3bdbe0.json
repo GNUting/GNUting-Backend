@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "charismatic-age-414606",
+  "private_key_id": "08978a3bdbe0e1385125e99a806aeb4d65bb678a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDV6Z75giQshZ9h\nx1AWvwxtKKxKri9scW15O72dCeJ/cuqhLYpBGg8oBYMHrUJ+vzdDYBQIUITUJ0US\nBqSjlrPQ+t/fXPzQ1zMx5DTazP5GgnssvGkLrabvUTHPJPAXyrkt87mfEpCPFCYC\nL2vmj0G9qDDoLVvsaUCAHiwg8aWSRwOS3wKsA5VOGZLzJdGzys+RuarUiGjzbF7y\nFH1bvAaBkftBdPnGbKPy1L6ZWvE2WtQecyWUW5AX7kQ7CXh6J4Vsc8o2i6iMXG7x\nq6XSP3a1T17h8h6jlODluxfcZ2OAsqGNueKjaMi4lB6xWy0RgJqB3yj8qmFFmaoe\nDb6LwBMJAgMBAAECggEALdRsu/Y2+9bxC8jhDs6FwglZyHJDNM+kbbnv6OpKPZYI\nUNnp6gLERoXPyeBEA9XB6Ex4XkOqAa4cLT2BHo9WHSryte89Nx00GbdT36DVxZOF\nAlOnidn9jv5tVn0Kd352aDL0jPE0SYM+lW9FhdMheZnESKoXLLJsIEbWm4RKPelW\nwu1hD5c5uT4BJ0cr1iTuQFxtc6859Zn3GgzwptEhowXY8Y65A3DtBarcCToVoclf\nANc1jQ0BZD6VbIHp/nE0U68bxjPCK+Ur7jLzZiIXRHXL+ZYYwLzwQT4m5KCpSnHJ\nx+AFW030jtfcxS7OxIrdM2pCF4LFQ0Vh6cjIIEvaZQKBgQDrxm4imrhn57Gsd4is\n2pZnIFnjDKSa3+pWN4lMPS616p9XRn2rlqiE4EkOA2k6rd9LXQ+mvOrSA8Bw9D72\n0VVxA4Lk5hWjMtvXNVhhc/vY6a3YMMFeZqcY/JVbXEEqrbjP6umuzNLdHcBav662\n2vYpcJ+psgulnfAwkxMBhs15EwKBgQDoQxgjhxZjmJ9kbTRTAcafvHXvonb7llOC\nuImTGrDStf0WmXvhZC9kU4Jzj4GIObNdiny9dv/gWd0GlKMK5+adEC2Z3QEXGJId\n/d9jx+4CItXA+VDxaeCLW57n5cQiMiWp2/T9uAEcU0H39cPyJmTHQ8LsvossgyGD\nVKJsMawC8wKBgQCzHAjqrNLNzEtDE4N2nI+JRCBExYP+S3//gy0AB7KGa/gkGt65\nDThzyNZ2mMzF0PRCki2jovxYEpWMuV9jrN7Vfa9gKBHj6mzrbhD35145CDwScedT\nyXPDHY5w2wJ+Y350JKblLaA6bbGEvv0A2BIMpQwFo8YJSJQAspnLnRZWlQKBgAqm\nUOwIHKmybNSRAU4xDadzX8D+JRCCIxAiYASDu8ndmF456Wk7S8UA40FjOiBB7QyD\n9hZF55Ok6zKLDDLK0VMwU7bzYEJr2P9RDbYoi6xDZqOziteW8DnTmKSvb1/WBs4U\nDNa5YiunUaYJ+dMXmZVdcQmj7wO6e4XnEo99c5KrAoGAHZDdqtUse7Yctfxp7CIM\nOOsEWQWW5oKQxxZfECSfOgeC0ObEvzWZaHZootg+LL9kpc6+YqkulakK/DLX5lOw\nWU8hYU7s2NIxHgAT+ssjAR8c1DKnBMDYKlCvODN0h45lG8AR/2DySS++1NK2zScu\nZUviq7Os19oUZ3R+uHEVopY=\n-----END PRIVATE KEY-----\n",
+  "client_email": "gnuting-storage-access@charismatic-age-414606.iam.gserviceaccount.com",
+  "client_id": "106282025979487757316",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/gnuting-storage-access%40charismatic-age-414606.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
