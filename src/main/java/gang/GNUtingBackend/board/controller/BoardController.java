@@ -26,6 +26,7 @@ public class BoardController {
 
     private final TokenProvider tokenProvider;
 
+    //모든게시판 조회(사용자와 반대되는 성별의 게시글만 조회)
     @GetMapping("/board")
     public ResponseEntity<List<BoardRequestDto>> show(@PageableDefault(page=1) Pageable pageable, @RequestHeader("Authorization") String token){
 
@@ -34,12 +35,14 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.OK).body(board);
     }
 
+    //특정 글 조회
     @GetMapping("/board/{id}")
     public ResponseEntity<BoardResponseDto> inshow(@PathVariable Long id){
         BoardResponseDto board = boardService.inshow(id);
         return ResponseEntity.status(HttpStatus.OK).body(board);
     }
 
+    //유저 검색
     @GetMapping("/board/user/search")
     public ResponseEntity<UserSearchResponseDto> userSearch(@RequestParam String nickname,@RequestHeader("Authorization") String token){
         String email=tokenProvider.getUserEmail(token.substring(7));
@@ -47,6 +50,7 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.OK).body(userSearch);
     }
 
+    //게시글 수정
     @PatchMapping("board/{id}")
     public ResponseEntity<String> edit(@PathVariable Long id, @RequestBody BoardRequestDto boardRequestDto, @RequestHeader("Authorization") String token){
         String email=tokenProvider.getUserEmail(token.substring(7));
@@ -54,7 +58,7 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-
+    //게시글 저장
     @PostMapping("/board/save")
     public ResponseEntity<BoardRequestDto> save(@RequestBody BoardRequestDto boardRequestDto, @RequestHeader("Authorization") String token){
 
@@ -63,6 +67,8 @@ public class BoardController {
         BoardRequestDto saved= boardService.save(boardRequestDto,email);
         return ResponseEntity.status(HttpStatus.OK).body(saved);
     }
+
+    //게시글 삭제
     @DeleteMapping("/board/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id,@RequestHeader("Authorization") String token){
         String email=tokenProvider.getUserEmail(token.substring(7));
@@ -74,7 +80,7 @@ public class BoardController {
     }
 
 
-    // 중복체크 필요 (기존에 등록했으면 신청이 다시 안되어야함) 완성(?)
+     //게시글에 과팅신청
     @PostMapping("/board/apply/{id}")
     public ResponseEntity<String> apply(@PathVariable Long id, @RequestBody List<UserSearchRequestDto> userSearchRequestDto, @RequestHeader("Authorization") String token){
 
