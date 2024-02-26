@@ -120,7 +120,7 @@ public class BoardService {
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을수 없습니다 토큰오류"));
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("게시물을 찾을수 없습니다 토큰오류"));
-        if (board.getUser().getId() == user.getId()) {
+        if (board.getUserId().getId() == user.getId()) {
             BoardRequestDto changeBoard = BoardRequestDto.toDto(board);
             changeBoard.setTitle(boardRequestDto.getTitle());
             changeBoard.setDetail(boardRequestDto.getDetail());

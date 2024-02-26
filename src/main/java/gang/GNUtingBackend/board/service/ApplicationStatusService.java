@@ -82,7 +82,7 @@ public class ApplicationStatusService {
                 .collect(Collectors.groupingBy(BoardApplyUsers::getBoardId));
 
         groupedByBoardId.forEach((board, users) -> {
-            String participantDepartment=board.getUser().getDepartment();
+            String participantDepartment=board.getUserId().getDepartment();
 
             List<BoardParticipant> participantUser=boardParticipantRepository.findByBoardId(board);
             List<UserSearchResponseDto> participantsUsers=participantUser.stream()

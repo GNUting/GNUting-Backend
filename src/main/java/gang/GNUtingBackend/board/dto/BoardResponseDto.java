@@ -34,7 +34,7 @@ public class BoardResponseDto {
                 .inUser(user)
                 .detail(board.getDetail())
                 .status(board.getStatus())
-                .nickname(board.getUser().getNickname())
+                .nickname(board.getUserId().getNickname())
                 .gender(board.getGender())
                 .inUserCount(board.getInUserCount())
                 .build();

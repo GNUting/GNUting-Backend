@@ -25,11 +25,10 @@ public class BoardRequestDto {
     private int inUserCount;
 
 
-
     public Board toEntity(){
         return Board.builder()
                 .id(id)
-                .user(userId)
+                .userId(userId)
                 .title(title)
                 .detail(detail)
                 .status(status)

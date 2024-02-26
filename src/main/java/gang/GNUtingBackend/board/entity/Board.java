@@ -20,9 +20,9 @@ public class Board extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn
+    @JoinColumn(name = "user_id")
     @ManyToOne
-    private User user;
+    private User userId;
 
     // 글쓰기 제목
     @Column(nullable = false)

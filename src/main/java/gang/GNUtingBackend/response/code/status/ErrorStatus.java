@@ -23,6 +23,9 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "USER4004", "이미 가입된 사용자입니다."),
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "USER4005", "비밀번호가 일치하지 않습니다.");
 
+    // Board 관련 에러
+
+
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
