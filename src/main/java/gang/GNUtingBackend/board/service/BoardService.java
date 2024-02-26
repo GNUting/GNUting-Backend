@@ -39,6 +39,10 @@ public class BoardService {
     private final UserRepository userRepository;
     private final BoardApplyUsersRepository boardApplyUsersRepository;
 
+       /*
+    게시글 모두 보기
+     사용자의 성별을 가져와서 확인후 반대되는 성별이 작성한 게시글만 조회
+     */
     public List<BoardRequestDto> show(String email, Pageable pageable) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을수 없습니다 토큰오류"));
@@ -53,6 +57,10 @@ public class BoardService {
                 .collect(Collectors.toList());
     }
 
+       /*
+    게시글 작성
+    게시글의 내용 저장 및 리스트형태로 받아온 User들 저장
+     */
     @Transactional
     public BoardRequestDto save(BoardRequestDto boardRequestDto, String email) {
 
@@ -74,7 +82,11 @@ public class BoardService {
 
 
     }
-
+    
+     /*
+    게시글 삭제
+    게시글이 삭제될시 boardParticipant 테이블에 저장된 유저들 삭
+     */
     @Transactional
     public Board delete(Long id, String email) {
         User user = userRepository.findByEmail(email)
@@ -94,7 +106,10 @@ public class BoardService {
     }
 
 
-    //dto를 새로만들어서 보여줘야할듯
+     /*
+    글 보기
+    게시글과 해당게시글의 참여자들 보기
+     */
     @Transactional(readOnly = true)
     public BoardResponseDto inshow(Long id) {
         Board board = boardRepository.findById(id).orElseThrow();
@@ -114,6 +129,10 @@ public class BoardService {
         return boardResponseDto;
     }
 
+     /*
+    게시글 수정
+    게시글에 참여자들도 수정가능하게 구현함
+     */
     @Transactional
     public String edit(Long id, BoardRequestDto boardRequestDto, String email) {
         User user = userRepository.findByEmail(email)
@@ -144,7 +163,10 @@ public class BoardService {
     }
 
 
-    //똑같은 성별의 닉네임만 찾을 수 있도록
+     /*
+    유저 검색
+    게시글작성할 때 유저를 추가하기위한 검색
+     */
     @Transactional(readOnly = true)
     public UserSearchResponseDto userSearch(String email, String nickname) {
         User user = userRepository.findByEmail(email)
@@ -157,6 +179,9 @@ public class BoardService {
         return userSearchResponseDto;
     }
 
+      /*
+    게시글에 과팅신청
+     */
     @Transactional
     public String apply(Long id, List<UserSearchRequestDto> userSearchRequestDto, String email) {
         User user = userRepository.findByEmail(email)
@@ -167,10 +192,12 @@ public class BoardService {
         String overlap = "";
         List<BoardApplyUsers> boardApplyUsers = boardApplyUsersRepository.findByBoardId(board);
 
+        //게시글의 참여자 인원과 신청자 인원이 맞지않을경우 예외처리 필요
         if (board.getInUserCount() != userSearchRequestDto.size()) {
             return "인원을 정확하게 추가해주세요";
         }
 
+        //게시글에 이미 신청한 유저가 있을경우 신청이 안되게 구현
         //중복검사하는 건데 이쁘게 코드수정 필요 ㅠㅠ... 예외처리 필요
         for (UserSearchRequestDto userApply : userSearchRequestDto) {
             User member = userRepository.findById(userApply.getId())
@@ -181,8 +208,9 @@ public class BoardService {
                 }
             }
         }
+        // 만약 overlap변수에 글이 1개라도 있을시(유저가1명이라도 있을시) 이미신청한 유저
         if (overlap.length() > 1) {
-            return overlap + " 유저가 이미 신청했습니다";
+            return overlap + " 유저가 이미 신청했습니다"; //이미 신청한 유저가 있을경우 예외처리 필요
         }
 
         // 게시글에 신청하는 유저 저장
@@ -196,7 +224,7 @@ public class BoardService {
             boardApplyUsersRepository.save(boardApplyUsersToEntity);
             usersName = usersName + " " + userApply.getNickname();
         }
-        // 작성자에게 알림 날려줘야함
+        // + 작성자에게 알림 날려줘야함 추가 알림코드 구현해야함
         return board.getId() + "게시물에 " + usersName + "유저들 신청완료";
 
 
