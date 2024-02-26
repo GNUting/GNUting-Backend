@@ -37,7 +37,14 @@ public class ApplicationStatusService {
     @Autowired
     private BoardApplyUsersRepository boardApplyUsersRepository;
 
-
+      /*
+    내글에 신청한 현황보기
+    1. 유저가 쓴글들을 가져오고
+    2. 쓴글들의 참여자목록을 가져온다
+    3. 글에 신청한 유저들을 가져온다
+    4. 게시글에 대표로 신청한 리더를 찾아서 그 리더들을 기준으로 게시글에 신청한 유저들의 리스트를 만든다
+    5. 참여자와 게시글에 신청한 유저들을 리스트에 합쳐서 반환한다
+     */
     public List<ApplicationStatusResponseDto> received(String email) {
         User user= userRepository.findByEmail(email).orElseThrow(()->new IllegalArgumentException("사용자를 찾을수 없습니다 토큰오류"));
         List<Board> board=boardRepository.findByUserId(user);
@@ -100,7 +107,9 @@ public class ApplicationStatusService {
         return allUsersByBoard;
     }
 
-
+/*
+    내가쓴글 조회
+     */
     public List<BoardResponseDto> myBoard(String email) {
         User user= userRepository.findByEmail(email).orElseThrow(()->new IllegalArgumentException("사용자를 찾을수 없습니다 토큰오류"));
         List<Board> board=boardRepository.findByUserId(user);
