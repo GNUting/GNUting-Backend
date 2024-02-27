@@ -1,5 +1,7 @@
 package gang.GNUtingBackend.mail.service;
 
+import gang.GNUtingBackend.exception.handler.MailHandler;
+import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -51,8 +53,10 @@ public class MailService {
         return message;
     }
 
-    public int sendMail(String email){
-
+    public int sendMail(String email) {
+        if (!isValidAddress(email)) {
+            throw new MailHandler(ErrorStatus.INVALID_MAIL_ADDRESS);
+        }
         MimeMessage message = CreateMail(email);
         javaMailSender.send(message);
         return number;
