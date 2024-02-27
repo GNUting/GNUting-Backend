@@ -2,6 +2,7 @@ package gang.GNUtingBackend.user.domain;
 
 import gang.GNUtingBackend.user.domain.enums.Gender;
 import gang.GNUtingBackend.user.domain.enums.UserRole;
+import gang.GNUtingBackend.user.dto.UserUpdateRequestDto;
 import java.time.LocalDate;
 import javax.persistence.*;
 
@@ -72,4 +73,12 @@ public class User extends BaseEntity {
 
     // 사용자 한줄 소개
     private String userSelfIntroduction;
+
+    public void update(UserUpdateRequestDto userUpdateRequestDto) {
+        this.profileImage = userUpdateRequestDto.getProfileImage();
+        this.nickname = userUpdateRequestDto.getNickname();
+        this.password = userUpdateRequestDto.getPassword();
+        this.department = userUpdateRequestDto.getDepartment();
+        this.userSelfIntroduction = userUpdateRequestDto.getUserSelfIntroduction();
+    }
 }

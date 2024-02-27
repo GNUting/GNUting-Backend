@@ -7,11 +7,14 @@ import gang.GNUtingBackend.user.dto.UserDetailResponseDto;
 import gang.GNUtingBackend.user.dto.UserLoginResponseDto;
 import gang.GNUtingBackend.user.dto.UserSignupRequestDto;
 import gang.GNUtingBackend.user.dto.UserSignupResponseDto;
+import gang.GNUtingBackend.user.dto.UserUpdateRequestDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
 import gang.GNUtingBackend.user.token.TokenProvider;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -126,5 +129,38 @@ public class UserService {
     @Transactional(readOnly = true)
     public boolean isNicknameAvailable(String nickname) {
         return userRepository.findByNickname(nickname).isEmpty();
+    }
+
+    /**
+     * 사용자의 정보를 업데이트 한다.
+     * @param userUpdateRequestDto 사용자 업데이트 정보
+     * @param token 토큰
+     * @return UserDetailResponseDto
+     */
+    @Transactional
+    public UserDetailResponseDto InfoUpdate(UserUpdateRequestDto userUpdateRequestDto, String token) {
+        String email = tokenProvider.getUserEmail(token);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        String encodedPassword = bCryptPasswordEncoder.encode(userUpdateRequestDto.getPassword());
+        userUpdateRequestDto.setPassword(encodedPassword);
+
+        user.update(userUpdateRequestDto);
+
+        return UserDetailResponseDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .phoneNumber(user.getPhoneNumber())
+                .gender(user.getGender())
+                .birthDate(user.getBirthDate())
+                .nickname(user.getNickname())
+                .department(user.getDepartment())
+                .studentId(user.getStudentId())
+                .profileImage(user.getProfileImage())
+                .userRole(user.getUserRole())
+                .userSelfIntroduction(user.getUserSelfIntroduction())
+                .build();
     }
 }
