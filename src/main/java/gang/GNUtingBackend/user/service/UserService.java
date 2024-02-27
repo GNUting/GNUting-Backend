@@ -133,20 +133,23 @@ public class UserService {
 
     /**
      * 사용자의 정보를 업데이트 한다.
-     * @param userUpdateRequestDto 사용자 업데이트 정보
-     * @param token 토큰
-     * @return UserDetailResponseDto
+     * @param profileImage
+     * @param nickname
+     * @param password
+     * @param department
+     * @param userSelfIntroduction
+     * @param token
+     * @return
      */
     @Transactional
-    public UserDetailResponseDto userInfoUpdate(UserUpdateRequestDto userUpdateRequestDto, String token) {
+    public UserDetailResponseDto userInfoUpdate(String profileImage, String nickname, String password, String department, String userSelfIntroduction, String token) {
         String email = tokenProvider.getUserEmail(token);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        String encodedPassword = bCryptPasswordEncoder.encode(userUpdateRequestDto.getPassword());
-        userUpdateRequestDto.setPassword(encodedPassword);
+        String encodedPassword = bCryptPasswordEncoder.encode(password);
 
-        user.update(userUpdateRequestDto);
+        user.update(profileImage, nickname, encodedPassword, department, userSelfIntroduction);
 
         return UserDetailResponseDto.builder()
                 .id(user.getId())

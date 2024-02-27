@@ -74,11 +74,11 @@ public class User extends BaseEntity {
     // 사용자 한줄 소개
     private String userSelfIntroduction;
 
-    public void update(UserUpdateRequestDto userUpdateRequestDto) {
-        this.profileImage = userUpdateRequestDto.getProfileImage();
-        this.nickname = userUpdateRequestDto.getNickname();
-        this.password = userUpdateRequestDto.getPassword();
-        this.department = userUpdateRequestDto.getDepartment();
-        this.userSelfIntroduction = userUpdateRequestDto.getUserSelfIntroduction();
+    public void update(String profileImage, String nickname, String password, String department, String userSelfIntroduction) {
+        this.profileImage = profileImage;
+        this.nickname = nickname;
+        this.password = password;
+        this.department = department;
+        this.userSelfIntroduction = userSelfIntroduction;
     }
 }
