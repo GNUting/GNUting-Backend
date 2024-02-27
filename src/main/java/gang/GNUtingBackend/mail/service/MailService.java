@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class MailService {
 
     private final JavaMailSender javaMailSender;
-    private static final String senderEmail = "gentleman959@gmail.com";
+    private static final String senderEmail = "gnuting@gnuting.com";
     private static int number;
 
     public static void createNumber() {
@@ -56,5 +56,9 @@ public class MailService {
         MimeMessage message = CreateMail(email);
         javaMailSender.send(message);
         return number;
+    }
+
+    public boolean isValidAddress(String email) {
+        return email.endsWith("@gnu.ac.kr");
     }
 }
