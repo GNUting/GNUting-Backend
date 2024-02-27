@@ -68,15 +68,15 @@ public class UserController {
             @RequestParam("nickname") String nickname,
             @RequestParam("department") String department,
             @RequestParam("studentId") String studentId,
-            @RequestParam("profileImage") MultipartFile profileImage
+            @RequestParam("profileImage") MultipartFile profileImage,
+            @RequestParam("userSelfIntroduction") String userSelfIntroduction
             ) throws IOException {
-
 
         String mediaLink = imageService.uploadProfileImage(profileImage, email);
 
         UserSignupRequestDto userSignupRequestDto = new UserSignupRequestDto(
                 email, password, name, phoneNumber, gender, birthDate, nickname, department, studentId, mediaLink,
-                UserRole.ROLE_USER);
+                UserRole.ROLE_USER, userSelfIntroduction);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         UserSignupResponseDto user = userService.signup(userSignupRequestDto);
