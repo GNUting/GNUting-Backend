@@ -2,6 +2,7 @@ package gang.GNUtingBackend.user.controller;
 
 import gang.GNUtingBackend.image.service.ImageService;
 import gang.GNUtingBackend.response.ApiResponse;
+import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.enums.Gender;
 import gang.GNUtingBackend.user.domain.enums.UserRole;
 import gang.GNUtingBackend.user.dto.UserLoginRequestDto;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -94,19 +96,25 @@ public class UserController {
                 .body(apiResponse);
     }
 
-//    @PostMapping("/signup")
-//    public ResponseEntity<ApiResponse<UserSignupResponseDto>> signup(@RequestBody UserSignupRequestDto userSignupRequestDto) {
-//        HttpHeaders httpHeaders = new HttpHeaders();
-//        UserSignupResponseDto user = userService.signup(userSignupRequestDto);
-//        String token = tokenProvider.createToken(user.getEmail(), user.getUserRole());
-//
-//        httpHeaders.add("Authorization", "Bearer " + token);
-//
-//        ApiResponse<UserSignupResponseDto> apiResponse = ApiResponse.onSuccess(user);
-//
-//        return ResponseEntity.ok()
-//                .headers(httpHeaders)
-//                .body(apiResponse);
-//    }
+    /**
+     * 닉네임이 사용가능한지의 여부를 반환한다.
+     * @param nickname
+     * @return
+     */
+    @GetMapping("/check-nickname")
+    public ResponseEntity<ApiResponse<Boolean>> checkNicknameAvailability(@RequestParam("nickname") String nickname) {
+        boolean isAvailable = userService.isNicknameAvailable(nickname);
+        ApiResponse<Boolean> apiResponse;
+
+        if (isAvailable) {
+            apiResponse = ApiResponse.onSuccess(isAvailable, "사용 가능한 닉네임입니다.");
+        } else {
+            apiResponse = ApiResponse.onFailure(ErrorStatus.DUPLICATE_NICKNAME.getCode(),
+                    ErrorStatus.DUPLICATE_NICKNAME.getMessage(), isAvailable);
+        }
+
+        return ResponseEntity.ok()
+                .body(apiResponse);
+    }
 
 }

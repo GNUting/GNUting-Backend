@@ -117,4 +117,14 @@ public class UserService {
                 .userSelfIntroduction(user.getUserSelfIntroduction())
                 .build();
     }
+
+    /**
+     * 닉네임이 사용가능한지 여부를 판단한다.
+     * @param nickname
+     * @return 닉네임이 사용가능하면 true, 사용 불가능하면 false
+     */
+    @Transactional(readOnly = true)
+    public boolean isNicknameAvailable(String nickname) {
+        return userRepository.findByNickname(nickname).isEmpty();
+    }
 }
