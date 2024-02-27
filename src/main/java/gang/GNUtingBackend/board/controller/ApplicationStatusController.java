@@ -42,10 +42,4 @@ public class ApplicationStatusController {
         return ResponseEntity.status(HttpStatus.OK).body(userSearchResponseDto);
     }
 
-    //    @GetMapping("board/applyStatus")
-//    public ResponseEntity<List<List<UserSearchResponseDto>>> applyStatus(@RequestHeader("Authorization") String token){
-//        String email=tokenProvider.getUserEmail(token.substring(7));
-//        List<List<UserSearchResponseDto>> userSearchResponseDto= applicationStatusService.applyStatus(email);
-//        return ResponseEntity.status(HttpStatus.OK).body(userSearchResponseDto);
-//    }
 }
