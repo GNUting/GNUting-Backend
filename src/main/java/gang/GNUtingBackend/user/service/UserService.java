@@ -138,7 +138,7 @@ public class UserService {
      * @return UserDetailResponseDto
      */
     @Transactional
-    public UserDetailResponseDto InfoUpdate(UserUpdateRequestDto userUpdateRequestDto, String token) {
+    public UserDetailResponseDto userInfoUpdate(UserUpdateRequestDto userUpdateRequestDto, String token) {
         String email = tokenProvider.getUserEmail(token);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
