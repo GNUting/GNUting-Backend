@@ -1,5 +1,6 @@
 package gang.GNUtingBackend.user.controller;
 
+import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.image.service.ImageService;
 import gang.GNUtingBackend.response.ApiResponse;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
@@ -104,17 +105,12 @@ public class UserController {
     @GetMapping("/check-nickname")
     public ResponseEntity<ApiResponse<Boolean>> checkNicknameAvailability(@RequestParam("nickname") String nickname) {
         boolean isAvailable = userService.isNicknameAvailable(nickname);
-        ApiResponse<Boolean> apiResponse;
 
-        if (isAvailable) {
-            apiResponse = ApiResponse.onSuccess(isAvailable, "사용 가능한 닉네임입니다.");
-        } else {
-            apiResponse = ApiResponse.onFailure(ErrorStatus.DUPLICATE_NICKNAME.getCode(),
-                    ErrorStatus.DUPLICATE_NICKNAME.getMessage(), isAvailable);
+        if (!isAvailable) {
+            throw new UserHandler(ErrorStatus.DUPLICATE_NICKNAME);
         }
-
-        return ResponseEntity.ok()
-                .body(apiResponse);
+        ApiResponse<Boolean> apiResponse = ApiResponse.onSuccess(true, "사용 가능한 닉네임입니다.");
+        return ResponseEntity.ok().body(apiResponse);
     }
 
 }
