@@ -24,13 +24,13 @@ public class BoardApplyUsersDto {
     private User leader;
     private ApplyStatus status;
 
-    public BoardApplyUsers toEntity(Board board,User leader,User userId){
-       return BoardApplyUsers.builder()
-               .boardId(board)
-               .userId(userId)
-               .leader(leader)
-               .status(this.status)
-               .build();
+    public BoardApplyUsers toEntity(Board board, User leader, User userId) {
+        return BoardApplyUsers.builder()
+                .boardId(board)
+                .userId(userId)
+                .leader(leader)
+                .status(this.status)
+                .build();
     }
 
 

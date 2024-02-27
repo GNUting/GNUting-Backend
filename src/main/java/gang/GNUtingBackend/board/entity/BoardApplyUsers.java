@@ -21,21 +21,20 @@ public class BoardApplyUsers {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name="board_id")
+    @JoinColumn(name = "board_id")
     private Board boardId;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     private User userId;
 
     @ManyToOne
-    @JoinColumn(name="leader_id")
+    @JoinColumn(name = "leader_id")
     private User leader;
 
     @Column
     @Enumerated(EnumType.STRING)
     private ApplyStatus status;
-
 
 
 }

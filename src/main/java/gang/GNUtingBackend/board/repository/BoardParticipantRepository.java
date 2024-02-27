@@ -8,8 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
 
-public interface BoardParticipantRepository extends JpaRepository<BoardParticipant,Long> {
+public interface BoardParticipantRepository extends JpaRepository<BoardParticipant, Long> {
     void deleteByBoardId(Board boardDelete);
-
     List<BoardParticipant> findByBoardId(Board id);
 }

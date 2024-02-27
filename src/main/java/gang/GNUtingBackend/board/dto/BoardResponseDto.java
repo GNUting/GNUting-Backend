@@ -25,8 +25,7 @@ public class BoardResponseDto {
     private int inUserCount;
 
 
-
-    public static BoardResponseDto toDto(Board board,List<UserSearchResponseDto> user){
+    public static BoardResponseDto toDto(Board board, List<UserSearchResponseDto> user) {
 
         return BoardResponseDto.builder()
                 .id(board.getId())

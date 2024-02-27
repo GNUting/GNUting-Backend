@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Setter
-public class BoardRequestDto {
+public class BoardShowAllResponseDto {
     private Long id;
     private User userId;
     private String title;
@@ -25,20 +25,8 @@ public class BoardRequestDto {
     private int inUserCount;
 
 
-    public Board toEntity() {
-        return Board.builder()
-                .id(id)
-                .userId(userId)
-                .title(title)
-                .detail(detail)
-                .status(status)
-                .gender(gender)
-                .inUserCount(inUser.size())
-                .build();
-    }
-
-    public static BoardRequestDto toDto(Board board) {
-        return BoardRequestDto.builder()
+    public static BoardShowAllResponseDto toDto(Board board) {
+        return BoardShowAllResponseDto.builder()
                 .id(board.getId())
                 .title(board.getTitle())
                 .detail(board.getDetail())

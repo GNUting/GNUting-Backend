@@ -8,10 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.BitSet;
 import java.util.List;
 
-public interface BoardApplyUsersRepository extends JpaRepository<BoardApplyUsers,Long> {
-
+public interface BoardApplyUsersRepository extends JpaRepository<BoardApplyUsers, Long> {
 
     List<BoardApplyUsers> findByBoardId(Board id);
-
     List<BoardApplyUsers> findByLeader(User user);
+
+    void deleteByBoardId(Board boardDelete);
 }
