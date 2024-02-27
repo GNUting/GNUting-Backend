@@ -21,4 +21,5 @@ public class UserSignupResponseDto {
     private final String studentId;
     private final String profileImage;
     private UserRole userRole;
+    private String userSelfIntroduction;
 }

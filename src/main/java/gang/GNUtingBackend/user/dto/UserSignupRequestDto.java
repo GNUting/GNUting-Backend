@@ -25,6 +25,7 @@ public class UserSignupRequestDto {
     private String studentId;
     private String profileImage;
     private UserRole userRole;
+    private String userSelfIntroduction;
 
     public User toEntity() {
         return User.builder()
@@ -39,6 +40,7 @@ public class UserSignupRequestDto {
                 .studentId(studentId)
                 .profileImage(profileImage)
                 .userRole(UserRole.ROLE_USER)
+                .userSelfIntroduction(userSelfIntroduction)
                 .build();
     }
 

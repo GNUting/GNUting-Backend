@@ -65,7 +65,11 @@ public class User extends BaseEntity {
     // 프로필 이미지
     private String profileImage;
 
+    // 사용자 역할
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+
+    // 사용자 한줄 소개
+    private String userSelfIntroduction;
 }

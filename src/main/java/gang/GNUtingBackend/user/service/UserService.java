@@ -54,6 +54,7 @@ public class UserService {
                     .studentId(user.getStudentId())
                     .profileImage(user.getProfileImage())
                     .userRole(user.getUserRole())
+                    .userSelfIntroduction(user.getUserSelfIntroduction())
                     .build();
 
         } else {
@@ -113,6 +114,7 @@ public class UserService {
                 .studentId(user.getStudentId())
                 .profileImage(user.getProfileImage())
                 .userRole(user.getUserRole())
+                .userSelfIntroduction(user.getUserSelfIntroduction())
                 .build();
     }
 }
