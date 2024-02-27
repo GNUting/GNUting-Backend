@@ -11,7 +11,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface BoardRepository extends JpaRepository<Board, Long> {
-    Page<Board> findByGenderNot(Gender gender, Pageable pageable);
-    List<Board> findByUserId(User user);
+public interface BoardRepository extends JpaRepository<Board,Long> {
+  //List<Board> findByGenderNot(Gender male);
+  Page<Board> findByGenderNot(Gender gender, Pageable pageable);
+
+  List<Board> findByUserId(User user);
 }

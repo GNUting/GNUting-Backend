@@ -21,31 +21,31 @@ public class ApplicationStatusController {
 
     private final TokenProvider tokenProvider;
 
-    @GetMapping("board/applications/received")
-    public ResponseEntity<List<ApplicationStatusResponseDto>> received(@RequestHeader("Authorization") String token) {
-        String email = tokenProvider.getUserEmail(token.substring(7));
-        List<ApplicationStatusResponseDto> userSearchResponseDto = applicationStatusService.receiveState(email);
-        return ResponseEntity.status(HttpStatus.OK).body(userSearchResponseDto);
-    }
-
-    @GetMapping("board/myboard")
-    public ResponseEntity<List<BoardResponseDto>> myBoard(@RequestHeader("Authorization") String token) {
-        String email = tokenProvider.getUserEmail(token.substring(7));
-        List<BoardResponseDto> myBoards = applicationStatusService.myBoard(email);
-        return ResponseEntity.status(HttpStatus.OK).body(myBoards);
-    }
-
-    @GetMapping("board/applications/apply")
-    public ResponseEntity<List<ApplicationStatusResponseDto>> apply(@RequestHeader("Authorization") String token) {
-        String email = tokenProvider.getUserEmail(token.substring(7));
-        List<ApplicationStatusResponseDto> userSearchResponseDto = applicationStatusService.applyState(email);
-        return ResponseEntity.status(HttpStatus.OK).body(userSearchResponseDto);
-    }
-
-    //    @GetMapping("board/applyStatus")
+//    @GetMapping("board/applyStatus")
 //    public ResponseEntity<List<List<UserSearchResponseDto>>> applyStatus(@RequestHeader("Authorization") String token){
 //        String email=tokenProvider.getUserEmail(token.substring(7));
 //        List<List<UserSearchResponseDto>> userSearchResponseDto= applicationStatusService.applyStatus(email);
 //        return ResponseEntity.status(HttpStatus.OK).body(userSearchResponseDto);
 //    }
+
+    @GetMapping("board/applications/received")
+    public ResponseEntity<List<ApplicationStatusResponseDto>> received(@RequestHeader("Authorization") String token){
+        String email=tokenProvider.getUserEmail(token.substring(7));
+        List<ApplicationStatusResponseDto> userSearchResponseDto= applicationStatusService.received(email);
+        return ResponseEntity.status(HttpStatus.OK).body(userSearchResponseDto);
+    }
+
+    @GetMapping("board/myboard")
+    public ResponseEntity<List<BoardResponseDto>> myBoard(@RequestHeader("Authorization") String token){
+        String email=tokenProvider.getUserEmail(token.substring(7));
+        List<BoardResponseDto> myBoards=applicationStatusService.myBoard(email);
+        return ResponseEntity.status(HttpStatus.OK).body(myBoards);
+    }
+
+    @GetMapping("board/applications/apply")
+    public ResponseEntity<List<ApplicationStatusResponseDto>> apply(@RequestHeader("Authorization") String token){
+        String email=tokenProvider.getUserEmail(token.substring(7));
+        List<ApplicationStatusResponseDto> userSearchResponseDto= applicationStatusService.apply(email);
+        return ResponseEntity.status(HttpStatus.OK).body(userSearchResponseDto);
+    }
 }

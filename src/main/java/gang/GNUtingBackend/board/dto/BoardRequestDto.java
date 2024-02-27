@@ -25,7 +25,7 @@ public class BoardRequestDto {
     private int inUserCount;
 
 
-    public Board toEntity() {
+    public Board toEntity(){
         return Board.builder()
                 .id(id)
                 .userId(userId)
@@ -37,7 +37,7 @@ public class BoardRequestDto {
                 .build();
     }
 
-    public static BoardRequestDto toDto(Board board) {
+    public static BoardRequestDto toDto(Board board){
         return BoardRequestDto.builder()
                 .id(board.getId())
                 .title(board.getTitle())

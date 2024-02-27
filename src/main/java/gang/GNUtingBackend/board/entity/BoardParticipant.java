@@ -19,11 +19,11 @@ public class BoardParticipant {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "board_id")
+    @JoinColumn(name="board_id")
     private Board boardId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name="user_id")
     private User userId;
 
     @Column
