@@ -26,6 +26,11 @@ public class ApiResponse<T> {
         return new ApiResponse<>(true, SuccessStatus.SUCCESS.getCode() , SuccessStatus.SUCCESS.getMessage(), result);
     }
 
+    // 성공한 경우 응답 생성
+    public static <T> ApiResponse<T> onSuccess(T result, String message) {
+        return new ApiResponse<>(true, SuccessStatus.SUCCESS.getCode(), message, result);
+    }
+
     public static <T> ApiResponse<T> of(BaseCode code, T result){
         return new ApiResponse<>(true, code.getReasonHttpStatus().getCode() , code.getReasonHttpStatus().getMessage(), result);
     }

@@ -18,4 +18,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u from User u where u.gender = :gender and u.nickname = :nickname")
     User findByUserSearch(Gender gender,String nickname);
+
+    /**
+     * 닉네임을 통해 해당 닉네임을 가진 User를 찾는다.
+     * @param nickname
+     * @return
+     */
+    Optional<User> findByNickname(String nickname);
 }

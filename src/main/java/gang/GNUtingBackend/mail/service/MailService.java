@@ -1,5 +1,7 @@
 package gang.GNUtingBackend.mail.service;
 
+import gang.GNUtingBackend.exception.handler.MailHandler;
+import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class MailService {
 
     private final JavaMailSender javaMailSender;
-    private static final String senderEmail = "gentleman959@gmail.com";
+    private static final String senderEmail = "gnuting@gnuting.com";
     private static int number;
 
     public static void createNumber() {
@@ -51,10 +53,16 @@ public class MailService {
         return message;
     }
 
-    public int sendMail(String email){
-
+    public int sendMail(String email) {
+        if (!isValidAddress(email)) {
+            throw new MailHandler(ErrorStatus.INVALID_MAIL_ADDRESS);
+        }
         MimeMessage message = CreateMail(email);
         javaMailSender.send(message);
         return number;
+    }
+
+    public boolean isValidAddress(String email) {
+        return email.endsWith("@gnu.ac.kr");
     }
 }
