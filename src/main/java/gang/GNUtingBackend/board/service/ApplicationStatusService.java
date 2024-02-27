@@ -8,10 +8,12 @@ import gang.GNUtingBackend.board.entity.BoardParticipant;
 import gang.GNUtingBackend.board.repository.BoardApplyUsersRepository;
 import gang.GNUtingBackend.board.repository.BoardParticipantRepository;
 import gang.GNUtingBackend.board.repository.BoardRepository;
+import gang.GNUtingBackend.exception.handler.UserHandler;
+import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,50 +22,43 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ApplicationStatusService {
 
-    @Autowired
-    private BoardRepository boardRepository;
+    private final BoardRepository boardRepository;
+    private final BoardParticipantRepository boardParticipantRepository;
+    private final UserRepository userRepository;
+    private final BoardService boardService;
+    private final BoardApplyUsersRepository boardApplyUsersRepository;
 
-    @Autowired
-    private BoardParticipantRepository boardParticipantRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private BoardService boardService;
-
-    @Autowired
-    private BoardApplyUsersRepository boardApplyUsersRepository;
-
-      /*
-    내글에 신청한 현황보기
-    1. 유저가 쓴글들을 가져오고
-    2. 쓴글들의 참여자목록을 가져온다
-    3. 글에 신청한 유저들을 가져온다
-    4. 게시글에 대표로 신청한 리더를 찾아서 그 리더들을 기준으로 게시글에 신청한 유저들의 리스트를 만든다
-    5. 참여자와 게시글에 신청한 유저들을 리스트에 합쳐서 반환한다
-     */
-    public List<ApplicationStatusResponseDto> received(String email) {
-        User user= userRepository.findByEmail(email).orElseThrow(()->new IllegalArgumentException("사용자를 찾을수 없습니다 토큰오류"));
-        List<Board> board=boardRepository.findByUserId(user);
+    /*
+  내글에 신청한 현황보기
+  1. 유저가 쓴글들을 가져오고
+  2. 쓴글들의 참여자목록을 가져온다
+  3. 글에 신청한 유저들을 가져온다
+  4. 게시글에 대표로 신청한 리더를 찾아서 그 리더들을 기준으로 게시글에 신청한 유저들의 리스트를 만든다
+  5. 참여자와 게시글에 신청한 유저들을 리스트에 합쳐서 반환한다
+   */
+    public List<ApplicationStatusResponseDto> receiveState(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        List<Board> board = boardRepository.findByUserId(user);
         List<ApplicationStatusResponseDto> allUsersByLeader = new ArrayList<>();
-        String participantDepartment=user.getDepartment();
+        String participantDepartment = user.getDepartment();
 
-        for (Board findBoard:board) {
-            List<BoardParticipant> boardParticipants=boardParticipantRepository.findByBoardId(findBoard);
-            List<BoardApplyUsers> boardApplyUsers=boardApplyUsersRepository.findByBoardId(findBoard);
+        for (Board findBoard : board) {
+            List<BoardParticipant> boardParticipants = boardParticipantRepository.findByBoardId(findBoard);
+            List<BoardApplyUsers> boardApplyUsers = boardApplyUsersRepository.findByBoardId(findBoard);
             Map<User, List<BoardApplyUsers>> groupedByLeaderId = boardApplyUsers.stream()
                     .collect(Collectors.groupingBy(BoardApplyUsers::getLeader));
 
-             List<UserSearchResponseDto> participantsUsers=boardParticipants.stream()
-                     .map(BoardParticipant::getUserId)
-                     .map(UserSearchResponseDto::toDto)
-                     .collect(Collectors.toList());
+            List<UserSearchResponseDto> participantsUsers = boardParticipants.stream()
+                    .map(BoardParticipant::getUserId)
+                    .map(UserSearchResponseDto::toDto)
+                    .collect(Collectors.toList());
 
             groupedByLeaderId.forEach((leader, users) -> {
-                String applyDepartment=leader.getDepartment();
+                String applyDepartment = leader.getDepartment();
                 List<UserSearchResponseDto> receivedUsers = users.stream()
                         .map(BoardApplyUsers::getUserId)
                         .map(UserSearchResponseDto::toDto)
@@ -73,26 +68,33 @@ public class ApplicationStatusService {
 //                applicationStatusResponseDto.setApplyUserDepartment(applyDepartment);
 //                applicationStatusResponseDto.setParticipantUser(participantsUsers);
 //                applicationStatusResponseDto.setParticipantUserDepartment(participantDepartment);
-                allUsersByLeader.add(ApplicationStatusResponseDto.toDto(participantsUsers,receivedUsers,applyDepartment,participantDepartment));
+                allUsersByLeader.add(ApplicationStatusResponseDto.toDto(participantsUsers, receivedUsers, applyDepartment, participantDepartment));
             });
         }
         return allUsersByLeader;
     }
-    public List<ApplicationStatusResponseDto> apply(String email) {
+
+    /**
+     * 신청현황
+     * @param email
+     * @return
+     */
+    public List<ApplicationStatusResponseDto> applyState(String email) {
 
         List<ApplicationStatusResponseDto> allUsersByBoard = new ArrayList<>();
 
-        User user= userRepository.findByEmail(email).orElseThrow(()->new IllegalArgumentException("사용자를 찾을수 없습니다 토큰오류"));
-        List<BoardApplyUsers> boardApplyUsers=boardApplyUsersRepository.findByLeader(user);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        List<BoardApplyUsers> boardApplyUsers = boardApplyUsersRepository.findByLeader(user);
 
         Map<Board, List<BoardApplyUsers>> groupedByBoardId = boardApplyUsers.stream()
                 .collect(Collectors.groupingBy(BoardApplyUsers::getBoardId));
 
         groupedByBoardId.forEach((board, users) -> {
-            String participantDepartment=board.getUserId().getDepartment();
+            String participantDepartment = board.getUserId().getDepartment();
 
-            List<BoardParticipant> participantUser=boardParticipantRepository.findByBoardId(board);
-            List<UserSearchResponseDto> participantsUsers=participantUser.stream()
+            List<BoardParticipant> participantUser = boardParticipantRepository.findByBoardId(board);
+            List<UserSearchResponseDto> participantsUsers = participantUser.stream()
                     .map(BoardParticipant::getUserId)
                     .map(UserSearchResponseDto::toDto)
                     .collect(Collectors.toList());
@@ -101,21 +103,23 @@ public class ApplicationStatusService {
                     .map(BoardApplyUsers::getUserId)
                     .map(UserSearchResponseDto::toDto)
                     .collect(Collectors.toList());
-            allUsersByBoard.add(ApplicationStatusResponseDto.toDto(participantsUsers,applyUsers,user.getDepartment(),participantDepartment));
+            allUsersByBoard.add(ApplicationStatusResponseDto.toDto(participantsUsers, applyUsers, user.getDepartment(), participantDepartment));
         });
 
         return allUsersByBoard;
     }
 
-/*
-    내가쓴글 조회
+    /**
+     * 내가 쓴 글
+     * @param email
+     * @return
      */
     public List<BoardResponseDto> myBoard(String email) {
-        User user= userRepository.findByEmail(email).orElseThrow(()->new IllegalArgumentException("사용자를 찾을수 없습니다 토큰오류"));
-        List<Board> board=boardRepository.findByUserId(user);
-        List<BoardResponseDto> boardResponseDtos=new ArrayList<>();
-        for (Board boards:board) {
-            BoardResponseDto boardResponseDto=boardService.inshow(boards.getId());
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을수 없습니다 토큰오류"));
+        List<Board> board = boardRepository.findByUserId(user);
+        List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
+        for (Board boards : board) {
+            BoardResponseDto boardResponseDto = boardService.inshow(boards.getId());
             boardResponseDtos.add(boardResponseDto);
         }
         return boardResponseDtos;
@@ -152,7 +156,6 @@ public class ApplicationStatusService {
 //        }
 //        return allUsersByLeader;
 //    }
-
 
 
 }
