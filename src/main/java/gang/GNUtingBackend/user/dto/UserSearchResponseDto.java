@@ -14,22 +14,24 @@ public class UserSearchResponseDto {
 
     private final Long id;
     private final Gender gender;
-    private final LocalDate birthDate;
+    private final String age;
     private final String nickname;
     private final String department;
     private final String profileImage;
+    private final String studentId;
     private UserRole userRole;
 
-
+    // 한줄소개 추가
     public static UserSearchResponseDto toDto(User user){
         return UserSearchResponseDto.builder()
                 .id(user.getId())
                 .gender(user.getGender())
-                .birthDate(user.getBirthDate())
+                .age(LocalDate.now().getYear()-user.getBirthDate().getYear()+1+"살")
                 .nickname(user.getNickname())
                 .department(user.getDepartment())
                 .profileImage(user.getProfileImage())
                 .userRole(user.getUserRole())
+                .studentId(user.getStudentId().substring(2,4)+"학번")
                 .build();
     }
 }

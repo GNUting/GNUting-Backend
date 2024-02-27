@@ -23,6 +23,14 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "USER4004", "이미 가입된 사용자입니다."),
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "USER4005", "비밀번호가 일치하지 않습니다."),
 
+    // Board 관련 에러
+    BOARD_NOT_FOUND(HttpStatus.BAD_REQUEST,"BOARD5001", "게시글이 없습니다"),
+    USER_NOT_FOUND_IN_BOARD(HttpStatus.BAD_REQUEST,"BOARD5001", "권한이없습니다.(게시글을 작성한 유저가 아닙니다)"),
+    INCORRECT_NUMBER_OF_PEOPLE(HttpStatus.BAD_REQUEST,"BOARD5002", "인원수가 맞지 않습니다."),
+
+    //Apply 관련 에러
+    ALREADY_IN_USER(HttpStatus.BAD_REQUEST,"APLLY6001", "유저가 이미 참여해 있습니다."),
+
     // 메일 관련 에러
     INVALID_MAIL_ADDRESS(HttpStatus.BAD_REQUEST, "MAIL4001", "경상국립대학교 이메일을 입력해주세요.");
 
