@@ -32,7 +32,7 @@ public class ApplicationStatusService {
     private final BoardApplyUsersRepository boardApplyUsersRepository;
 
     /*
-  내글에 신청한 현황보기
+  내글에 신청한 현황보기 s
   1. 유저가 쓴글들을 가져오고
   2. 쓴글들의 참여자목록을 가져온다
   3. 글에 신청한 유저들을 가져온다
