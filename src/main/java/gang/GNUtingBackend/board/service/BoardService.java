@@ -44,11 +44,6 @@ public class BoardService {
     private final UserRepository userRepository;
     private final BoardApplyUsersRepository boardApplyUsersRepository;
 
-    /*
-
-
-  */
-
     /**
      * 게시글 모두 보기
      * @param email 현재 사용자
@@ -62,17 +57,12 @@ public class BoardService {
         int page = pageable.getPageNumber() - 1;
         int pageLimit = 20;
         Page<Board> links = boardRepository.findByGenderNot(gender,
-                PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "createdDate")));
+                PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "createdDate")));  //추후 close된 글들도 아래로 정렬
 
         return links.stream()
                 .map(BoardShowAllResponseDto::toDto)
                 .collect(Collectors.toList());
     }
-
-    /*
- 게시글 작성
- 게시글의 내용 저장 및 리스트형태로 받아온 User들 저장
-  */
 
     /**
      * 게시글 저장
@@ -136,8 +126,8 @@ public class BoardService {
      */
     @Transactional(readOnly = true)
     public BoardResponseDto inshow(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));;
-
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
         List<BoardParticipant> users = boardParticipantRepository.findByBoardId(board);
         List<User> members = new ArrayList<>();
         for (BoardParticipant user : users) {
@@ -172,6 +162,7 @@ public class BoardService {
             changeBoard.setInUser(boardRequestDto.getInUser());
             changeBoard.setUserId(user);
             Board changedBoard = changeBoard.toEntity();
+            changedBoard.setCreatedDate(board.getCreatedDate()); //기존 게시글생산시간 유지
             boardRepository.save(changedBoard);
 
             List<BoardParticipant> users = boardParticipantRepository.findByBoardId(board);
@@ -201,8 +192,8 @@ public class BoardService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         Gender gender = user.getGender();
         Optional<User> optionalUser = Optional.ofNullable(userRepository.findByUserSearch(gender, nickname));
-        User finduser = optionalUser.orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
+        User finduser = optionalUser.orElseThrow(() -> new UserHandler(ErrorStatus.USER_GENDER_NOT_MATCH));
+        System.out.println(finduser.getNickname());
 //      User finduser = userRepository.findByUserSearch(gender, nickname);
         UserSearchResponseDto userSearchResponseDto = UserSearchResponseDto.toDto(finduser); //한줄소개 ResponseDto에 추가
         return userSearchResponseDto;
@@ -221,8 +212,8 @@ public class BoardService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
-        String usersName = "";
-        String overlap = "";
+        String nickname = "";
+       // String overlap = "";
         List<BoardApplyUsers> boardApplyUsers = boardApplyUsersRepository.findByBoardId(board);
 
         //게시글의 참여자 인원과 신청자 인원이 맞지않을경우 예외처리 필요
@@ -258,10 +249,10 @@ public class BoardService {
             boardApplyUsersDto.setStatus(ApplyStatus.대기중);
             BoardApplyUsers boardApplyUsersToEntity = boardApplyUsersDto.toEntity(board, user, member);
             boardApplyUsersRepository.save(boardApplyUsersToEntity);
-            usersName = usersName + " " + userApply.getNickname();
+            nickname = nickname + " " + member.getNickname();
         }
         // + 작성자에게 알림 날려줘야함 추가 알림코드 구현해야함
-        return board.getId() + "게시물에 " + usersName + "유저들 신청완료";
+        return board.getId() + "게시물에 " + nickname + "유저들 신청완료";
     }
 
 }

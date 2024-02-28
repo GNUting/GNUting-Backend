@@ -21,13 +21,24 @@ public class ApplicationStatusController {
 
     private final TokenProvider tokenProvider;
 
+
+    //신청 받은 현황
     @GetMapping("board/applications/received")
-    public ResponseEntity<List<ApplicationStatusResponseDto>> received(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<ApplicationStatusResponseDto>> receivedState(@RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
         List<ApplicationStatusResponseDto> userSearchResponseDto = applicationStatusService.receiveState(email);
         return ResponseEntity.status(HttpStatus.OK).body(userSearchResponseDto);
     }
 
+    //내가 신청한 현황
+    @GetMapping("board/applications/apply")
+    public ResponseEntity<List<ApplicationStatusResponseDto>> applyState(@RequestHeader("Authorization") String token) {
+        String email = tokenProvider.getUserEmail(token.substring(7));
+        List<ApplicationStatusResponseDto> userSearchResponseDto = applicationStatusService.applyState(email);
+        return ResponseEntity.status(HttpStatus.OK).body(userSearchResponseDto);
+    }
+
+    //내가쓴글
     @GetMapping("board/myboard")
     public ResponseEntity<List<BoardResponseDto>> myBoard(@RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
@@ -35,11 +46,6 @@ public class ApplicationStatusController {
         return ResponseEntity.status(HttpStatus.OK).body(myBoards);
     }
 
-    @GetMapping("board/applications/apply")
-    public ResponseEntity<List<ApplicationStatusResponseDto>> apply(@RequestHeader("Authorization") String token) {
-        String email = tokenProvider.getUserEmail(token.substring(7));
-        List<ApplicationStatusResponseDto> userSearchResponseDto = applicationStatusService.applyState(email);
-        return ResponseEntity.status(HttpStatus.OK).body(userSearchResponseDto);
-    }
+
 
 }
