@@ -190,7 +190,6 @@ public class BoardService {
         Gender gender = user.getGender();
         Optional<User> optionalUser = Optional.ofNullable(userRepository.findByUserSearch(gender, nickname));
         User finduser = optionalUser.orElseThrow(() -> new UserHandler(ErrorStatus.USER_GENDER_NOT_MATCH));
-        System.out.println(finduser.getNickname());
 //      User finduser = userRepository.findByUserSearch(gender, nickname);
         UserSearchResponseDto userSearchResponseDto = UserSearchResponseDto.toDto(finduser); //한줄소개 ResponseDto에 추가
         return userSearchResponseDto;
