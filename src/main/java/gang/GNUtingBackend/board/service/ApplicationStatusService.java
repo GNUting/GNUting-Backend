@@ -2,10 +2,11 @@ package gang.GNUtingBackend.board.service;
 
 import gang.GNUtingBackend.board.dto.ApplicationStatusResponseDto;
 import gang.GNUtingBackend.board.dto.BoardResponseDto;
+import gang.GNUtingBackend.board.entity.ApplyUsers;
 import gang.GNUtingBackend.board.entity.Board;
-import gang.GNUtingBackend.board.entity.BoardApplyUsers;
+import gang.GNUtingBackend.board.entity.BoardApplyLeader;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
-import gang.GNUtingBackend.board.repository.BoardApplyUsersRepository;
+import gang.GNUtingBackend.board.repository.BoardApplyLeaderRepository;
 import gang.GNUtingBackend.board.repository.BoardParticipantRepository;
 import gang.GNUtingBackend.board.repository.BoardRepository;
 import gang.GNUtingBackend.exception.handler.UserHandler;
@@ -29,7 +30,8 @@ public class ApplicationStatusService {
     private final BoardParticipantRepository boardParticipantRepository;
     private final UserRepository userRepository;
     private final BoardService boardService;
-    private final BoardApplyUsersRepository boardApplyUsersRepository;
+    private final BoardApplyLeaderRepository boardApplyLeaderRepository;
+    //private final BoardApplyUsersRepository boardApplyUsersRepository;
 
     /*
   내글에 신청한 현황보기 s
@@ -42,75 +44,75 @@ public class ApplicationStatusService {
     public List<ApplicationStatusResponseDto> receiveState(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        List<Board> board = boardRepository.findByUserId(user);
+        List<Board> boardList = boardRepository.findByUserId(user);
         List<ApplicationStatusResponseDto> allUsersByLeader = new ArrayList<>();
         String participantDepartment = user.getDepartment();
 
-        for (Board findBoard : board) {
-            List<BoardParticipant> boardParticipants = boardParticipantRepository.findByBoardId(findBoard);
-            List<BoardApplyUsers> boardApplyUsers = boardApplyUsersRepository.findByBoardId(findBoard);
-            Map<User, List<BoardApplyUsers>> groupedByLeaderId = boardApplyUsers.stream()
-                    .collect(Collectors.groupingBy(BoardApplyUsers::getLeader));
-
-            List<UserSearchResponseDto> participantsUsers = boardParticipants.stream()
-                    .map(BoardParticipant::getUserId)
-                    .map(UserSearchResponseDto::toDto)
-                    .collect(Collectors.toList());
-
-            groupedByLeaderId.forEach((leader, users) -> {
-                String applyDepartment = leader.getDepartment();
-                List<UserSearchResponseDto> receivedUsers = users.stream()
-                        .map(BoardApplyUsers::getUserId)
+        for (Board boards : boardList) {  //내가작성한 글에서 참여자와 신청자 가져오기
+            List<BoardParticipant> boardParticipantList = boardParticipantRepository.findByBoardId(boards);
+            List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByBoardId(boards);
+            for (BoardApplyLeader boardApplyLeader : boardApplyLeaderList) { //게시판에 신청한 리더 가져오기
+                List<ApplyUsers> applyUsersList = boardApplyLeader.getApplyUsers();
+                List<User> userList = new ArrayList<>();
+                for (ApplyUsers applyUsers : applyUsersList) {  //리더안에 유저들 가져오기
+                    userList.add(applyUsers.getUserId());
+                }
+                List<UserSearchResponseDto> participantsUsers = boardParticipantList.stream()
+                        .map(BoardParticipant::getUserId)
                         .map(UserSearchResponseDto::toDto)
                         .collect(Collectors.toList());
-//                ApplicationStatusResponseDto applicationStatusResponseDto=new ApplicationStatusResponseDto();
-//                applicationStatusResponseDto.setApplyUser(receivedUsers);
-//                applicationStatusResponseDto.setApplyUserDepartment(applyDepartment);
-//                applicationStatusResponseDto.setParticipantUser(participantsUsers);
-//                applicationStatusResponseDto.setParticipantUserDepartment(participantDepartment);
-                allUsersByLeader.add(ApplicationStatusResponseDto.toDto(participantsUsers, receivedUsers, applyDepartment, participantDepartment));
-            });
+
+                List<UserSearchResponseDto> applyUsers = userList.stream()
+                        .map(UserSearchResponseDto::toDto)
+                        .collect(Collectors.toList());
+
+                ApplicationStatusResponseDto savedResponseDto =
+                        ApplicationStatusResponseDto.toDto(boardApplyLeader.getId(), participantsUsers, applyUsers, boardApplyLeader.getLeaderId().getDepartment(), participantDepartment);
+                allUsersByLeader.add(savedResponseDto);
+            }
         }
         return allUsersByLeader;
     }
 
     /**
      * 신청현황
+     *
      * @param email
      * @return
      */
     public List<ApplicationStatusResponseDto> applyState(String email) {
 
-        List<ApplicationStatusResponseDto> allUsersByBoard = new ArrayList<>();
-
+        List<ApplicationStatusResponseDto> allUsersByLeader = new ArrayList<>();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        List<BoardApplyUsers> boardApplyUsers = boardApplyUsersRepository.findByLeader(user);
+        List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByLeaderId(user);
 
-        Map<Board, List<BoardApplyUsers>> groupedByBoardId = boardApplyUsers.stream()
-                .collect(Collectors.groupingBy(BoardApplyUsers::getBoardId));
+        for (BoardApplyLeader boardApplyLeaders : boardApplyLeaderList) {
 
-        groupedByBoardId.forEach((board, users) -> {
-            String participantDepartment = board.getUserId().getDepartment();
-
-            List<BoardParticipant> participantUser = boardParticipantRepository.findByBoardId(board);
-            List<UserSearchResponseDto> participantsUsers = participantUser.stream()
+            List<BoardParticipant> boardParticipantList = boardParticipantRepository.findByBoardId(boardApplyLeaders.getBoardId());
+            List<ApplyUsers> applyUsersList = boardApplyLeaders.getApplyUsers();
+            List<User> userList = new ArrayList<>();
+            for (ApplyUsers applyUsers : applyUsersList) {
+                userList.add(applyUsers.getUserId());
+            }
+            List<UserSearchResponseDto> participantsUsers = boardParticipantList.stream()
                     .map(BoardParticipant::getUserId)
                     .map(UserSearchResponseDto::toDto)
                     .collect(Collectors.toList());
-
-            List<UserSearchResponseDto> applyUsers = users.stream()
-                    .map(BoardApplyUsers::getUserId)
+            List<UserSearchResponseDto> applyUsers = userList.stream()
                     .map(UserSearchResponseDto::toDto)
                     .collect(Collectors.toList());
-            allUsersByBoard.add(ApplicationStatusResponseDto.toDto(participantsUsers, applyUsers, user.getDepartment(), participantDepartment));
-        });
-
-        return allUsersByBoard;
+            ApplicationStatusResponseDto savedResponseDto =
+                    ApplicationStatusResponseDto.toDto
+                            (boardApplyLeaders.getId(), participantsUsers, applyUsers, boardApplyLeaders.getLeaderId().getDepartment(), boardApplyLeaders.getBoardId().getUserId().getDepartment());
+            allUsersByLeader.add(savedResponseDto);
+        }
+        return allUsersByLeader;
     }
 
     /**
      * 내가 쓴 글
+     *
      * @param email
      * @return
      */
@@ -124,8 +126,6 @@ public class ApplicationStatusService {
         }
         return boardResponseDtos;
     }
-
-
 
 
     //이건 반환 클래스를 사용하지않고 리스트형으로 유저들만 반환하는 메소드

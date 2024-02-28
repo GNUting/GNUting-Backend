@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 @Setter
 public class ApplicationStatusResponseDto {
+    private Long id;
     private String applyUserDepartment;
     private String participantUserDepartment;
     private List<UserSearchResponseDto> applyUser;
@@ -18,8 +19,9 @@ public class ApplicationStatusResponseDto {
     private int applyUserCount;
     private int participantUserCount;
 
-    public static ApplicationStatusResponseDto toDto(List<UserSearchResponseDto> participantUser, List<UserSearchResponseDto> applyUsers, String applyDepartment, String participantDepartment) {
+    public static ApplicationStatusResponseDto toDto(Long id,List<UserSearchResponseDto> participantUser, List<UserSearchResponseDto> applyUsers, String applyDepartment, String participantDepartment) {
         return ApplicationStatusResponseDto.builder()
+                .id(id)
                 .applyUser(applyUsers)
                 .applyUserDepartment(applyDepartment)
                 .participantUser(participantUser)
