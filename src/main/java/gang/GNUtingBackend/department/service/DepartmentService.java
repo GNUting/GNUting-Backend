@@ -12,6 +12,11 @@ public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
 
+    /**
+     * name이 이름에 포함된 학과를 모두 찾는다.
+     * @param name
+     * @return
+     */
     public List<Department> searchDepartments(String name) {
         return departmentRepository.findByNameContaining(name);
     }
