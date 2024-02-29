@@ -45,6 +45,13 @@ public class BoardController {
                 .body(ApiResponse.onSuccess(board));
     }
 
+    @GetMapping("/board/user/myinfo")
+    public ResponseEntity<?> myinfo(@RequestHeader("Authorization") String token){
+        String email = tokenProvider.getUserEmail(token.substring(7));
+        UserSearchResponseDto myInfo = boardService.myInfo(email);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(myInfo));
+    }
     //유저 검색
     @GetMapping("/board/user/search")
     public ResponseEntity<?> userSearch(@RequestParam String nickname, @RequestHeader("Authorization") String token) {
