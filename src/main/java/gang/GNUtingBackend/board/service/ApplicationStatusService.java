@@ -139,6 +139,7 @@ public class ApplicationStatusService {
             throw new UserHandler(ErrorStatus.USER_NOT_AUTHORITY);
         }
         boardApplyLeader.setStatus(ApplyStatus.거절);
+        boardApplyLeaderRepository.save(boardApplyLeader);
 
         return boardApplyLeader.getId()+"번 신청이 거절되었습니다.";
     }

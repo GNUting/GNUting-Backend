@@ -11,6 +11,7 @@ import gang.GNUtingBackend.board.repository.BoardApplyLeaderRepository;
 import gang.GNUtingBackend.board.repository.BoardRepository;
 import gang.GNUtingBackend.board.repository.BoardParticipantRepository;
 import gang.GNUtingBackend.board.entity.Board;
+import gang.GNUtingBackend.exception.UserAlreadyException;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
@@ -241,7 +242,7 @@ public class BoardService {
                     .anyMatch(applyUsers -> applyUsers.getUserId().equals(member));
 
             if (isUserAlreadyApplied) {
-                throw new BoardHandler(ErrorStatus.ALREADY_IN_USER);
+                throw new UserAlreadyException(member.getNickname() + "님이 이미 참여해 있습니다.");
             }
         }
 

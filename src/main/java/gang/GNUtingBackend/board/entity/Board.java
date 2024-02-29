@@ -41,6 +41,7 @@ public class Board extends BaseTime {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    // 글쓰기 추가된 총 인원 수
     @Column
     private int inUserCount;
 
