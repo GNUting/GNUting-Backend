@@ -21,16 +21,15 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/v1")
 public class BoardController {
 
     private final BoardService boardService;
-
     private final TokenProvider tokenProvider;
 
     //모든게시판 조회(사용자와 반대되는 성별의 게시글만 조회)
     @GetMapping("/board")
     public ResponseEntity<List<BoardShowAllResponseDto>> show(@PageableDefault(page = 1) Pageable pageable, @RequestHeader("Authorization") String token) {
-
         String email = tokenProvider.getUserEmail(token.substring(7));
         List<BoardShowAllResponseDto> board = boardService.show(email, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(board);
@@ -62,9 +61,7 @@ public class BoardController {
     //게시글 저장
     @PostMapping("/board/save")
     public ResponseEntity<String> save(@RequestBody BoardRequestDto boardRequestDto, @RequestHeader("Authorization") String token) {
-
         String email = tokenProvider.getUserEmail(token.substring(7));
-
         String saved = boardService.save(boardRequestDto, email);
         return ResponseEntity.status(HttpStatus.OK).body(saved);
     }
@@ -81,9 +78,7 @@ public class BoardController {
     //게시글에 과팅신청
     @PostMapping("/board/apply/{id}")
     public ResponseEntity<String> apply(@PathVariable Long id, @RequestBody List<UserSearchRequestDto> userSearchRequestDto, @RequestHeader("Authorization") String token) {
-
         String email = tokenProvider.getUserEmail(token.substring(7));
-
         String saved = boardService.apply(id, userSearchRequestDto, email);
         return ResponseEntity.status(HttpStatus.OK).body(saved);
     }

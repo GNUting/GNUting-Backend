@@ -20,6 +20,7 @@ public class UserSearchResponseDto {
     private final String profileImage;
     private final String studentId;
     private UserRole userRole;
+    private String userSelfIntroduction;
 
     // 한줄소개 추가
     public static UserSearchResponseDto toDto(User user){
@@ -32,6 +33,7 @@ public class UserSearchResponseDto {
                 .profileImage(user.getProfileImage())
                 .userRole(user.getUserRole())
                 .studentId(user.getStudentId().substring(2,4)+"학번")
+                .userSelfIntroduction(user.getUserSelfIntroduction())
                 .build();
     }
 }

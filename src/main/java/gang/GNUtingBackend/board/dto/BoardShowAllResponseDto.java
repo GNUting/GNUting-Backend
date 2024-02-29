@@ -16,10 +16,8 @@ import java.util.List;
 @Setter
 public class BoardShowAllResponseDto {
     private Long id;
-    private User userId;
     private String title;
     private String detail;
-    private List<User> inUser;
     private Status status;
     private Gender gender;
     private int inUserCount;
@@ -32,6 +30,7 @@ public class BoardShowAllResponseDto {
                 .detail(board.getDetail())
                 .status(board.getStatus())
                 .gender(board.getGender())
+                .inUserCount(board.getInUserCount())
                 .build();
     }
 

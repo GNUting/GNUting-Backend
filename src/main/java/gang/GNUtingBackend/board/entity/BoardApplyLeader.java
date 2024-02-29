@@ -2,19 +2,18 @@ package gang.GNUtingBackend.board.entity;
 
 import gang.GNUtingBackend.board.entity.enums.ApplyStatus;
 import gang.GNUtingBackend.user.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Builder
-public class BoardApplyUsers {
+@Setter
+public class BoardApplyLeader {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,16 +24,15 @@ public class BoardApplyUsers {
     private Board boardId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User userId;
-
-    @ManyToOne
     @JoinColumn(name = "leader_id")
-    private User leader;
+    private User leaderId;
 
     @Column
     @Enumerated(EnumType.STRING)
     private ApplyStatus status;
+
+    @OneToMany(mappedBy = "boardApplyLeaderId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ApplyUsers> applyUsers;
 
 
 }

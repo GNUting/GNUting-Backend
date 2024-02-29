@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -42,5 +43,10 @@ public class Board extends BaseTime {
 
     @Column
     private int inUserCount;
+
+    @OneToMany(mappedBy = "boardId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BoardApplyLeader> boardApplyLeader;
+
+
 
 }

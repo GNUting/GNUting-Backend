@@ -7,10 +7,9 @@ import gang.GNUtingBackend.user.token.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Parameter;
 import java.util.List;
 
 @RestController
@@ -21,13 +20,24 @@ public class ApplicationStatusController {
 
     private final TokenProvider tokenProvider;
 
-    @GetMapping("board/applications/received")
-    public ResponseEntity<List<ApplicationStatusResponseDto>> received(@RequestHeader("Authorization") String token) {
+
+    //신청 받은 현황
+    @GetMapping("board/applications/receivedstate")
+    public ResponseEntity<List<ApplicationStatusResponseDto>> receivedState(@RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
         List<ApplicationStatusResponseDto> userSearchResponseDto = applicationStatusService.receiveState(email);
         return ResponseEntity.status(HttpStatus.OK).body(userSearchResponseDto);
     }
 
+    //내가 신청한 현황
+    @GetMapping("board/applications/applystate")
+    public ResponseEntity<List<ApplicationStatusResponseDto>> applyState(@RequestHeader("Authorization") String token) {
+        String email = tokenProvider.getUserEmail(token.substring(7));
+        List<ApplicationStatusResponseDto> userSearchResponseDto = applicationStatusService.applyState(email);
+        return ResponseEntity.status(HttpStatus.OK).body(userSearchResponseDto);
+    }
+
+    //내가쓴글
     @GetMapping("board/myboard")
     public ResponseEntity<List<BoardResponseDto>> myBoard(@RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
@@ -35,11 +45,13 @@ public class ApplicationStatusController {
         return ResponseEntity.status(HttpStatus.OK).body(myBoards);
     }
 
-    @GetMapping("board/applications/apply")
-    public ResponseEntity<List<ApplicationStatusResponseDto>> apply(@RequestHeader("Authorization") String token) {
-        String email = tokenProvider.getUserEmail(token.substring(7));
-        List<ApplicationStatusResponseDto> userSearchResponseDto = applicationStatusService.applyState(email);
-        return ResponseEntity.status(HttpStatus.OK).body(userSearchResponseDto);
+    //거절하기
+    @PatchMapping("board/applications/refuse/{id}")
+    public ResponseEntity<String> refuse(@RequestHeader("Authorization") String token, @PathVariable Long id){
+        String email=tokenProvider.getUserEmail(token.substring(7));
+        String refuse=applicationStatusService.refuse(id,email);
+        return ResponseEntity.status(HttpStatus.OK).body(refuse);
     }
+
 
 }
