@@ -66,7 +66,7 @@ public class ApplicationStatusService {
                         .collect(Collectors.toList());
 
                 ApplicationStatusResponseDto savedResponseDto =
-                        ApplicationStatusResponseDto.toDto(boardApplyLeader.getId(), participantsUsers, applyUsers, boardApplyLeader.getLeaderId().getDepartment(), participantDepartment);
+                        ApplicationStatusResponseDto.toDto(boardApplyLeader.getId(), participantsUsers, applyUsers, boardApplyLeader.getLeaderId().getDepartment(), participantDepartment,boardApplyLeader.getStatus());
                 allUsersByLeader.add(savedResponseDto);
             }
         }
@@ -103,7 +103,7 @@ public class ApplicationStatusService {
                     .collect(Collectors.toList());
             ApplicationStatusResponseDto savedResponseDto =
                     ApplicationStatusResponseDto.toDto
-                            (boardApplyLeaders.getId(), participantsUsers, applyUsers, boardApplyLeaders.getLeaderId().getDepartment(), boardApplyLeaders.getBoardId().getUserId().getDepartment());
+                            (boardApplyLeaders.getId(), participantsUsers, applyUsers, boardApplyLeaders.getLeaderId().getDepartment(), boardApplyLeaders.getBoardId().getUserId().getDepartment(),boardApplyLeaders.getStatus());
             allUsersByLeader.add(savedResponseDto);
         }
         return allUsersByLeader;
