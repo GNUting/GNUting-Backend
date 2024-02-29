@@ -140,6 +140,7 @@ public class ApplicationStatusService {
         }
         boardApplyLeader.setStatus(ApplyStatus.거절);
         boardApplyLeaderRepository.save(boardApplyLeader);
+
         return boardApplyLeader.getId()+"번 신청이 거절되었습니다.";
     }
 
