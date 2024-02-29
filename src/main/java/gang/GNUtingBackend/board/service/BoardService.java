@@ -276,4 +276,10 @@ public class BoardService {
         return board.getId() + "게시물에 " + nickname + "유저들 신청완료";
     }
 
+    public UserSearchResponseDto myInfo(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        return UserSearchResponseDto.toDto(user);
+
+    }
 }
