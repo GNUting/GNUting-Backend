@@ -14,7 +14,7 @@ import lombok.*;
 @Builder
 @Setter
 public class BoardApplyLeaderDto {
-    private Long id;
+    //private Long id;
     private Board boardId;
     private User leaderId;
     private ApplyStatus status;
@@ -24,6 +24,13 @@ public class BoardApplyLeaderDto {
                 .boardId(boardId)
                 .leaderId(leaderId)
                 .status(this.status)
+                .build();
+    }
+    public static BoardApplyLeaderDto toDto(BoardApplyLeader boardApplyLeader){
+        return BoardApplyLeaderDto.builder()
+                .boardId(boardApplyLeader.getBoardId())
+                .leaderId(boardApplyLeader.getLeaderId())
+                .status(boardApplyLeader.getStatus())
                 .build();
     }
 

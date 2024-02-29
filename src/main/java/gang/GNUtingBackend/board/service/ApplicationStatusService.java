@@ -1,11 +1,13 @@
 package gang.GNUtingBackend.board.service;
 
 import gang.GNUtingBackend.board.dto.ApplicationStatusResponseDto;
+import gang.GNUtingBackend.board.dto.BoardApplyLeaderDto;
 import gang.GNUtingBackend.board.dto.BoardResponseDto;
 import gang.GNUtingBackend.board.entity.ApplyUsers;
 import gang.GNUtingBackend.board.entity.Board;
 import gang.GNUtingBackend.board.entity.BoardApplyLeader;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
+import gang.GNUtingBackend.board.entity.enums.ApplyStatus;
 import gang.GNUtingBackend.board.repository.BoardApplyLeaderRepository;
 import gang.GNUtingBackend.board.repository.BoardParticipantRepository;
 import gang.GNUtingBackend.board.repository.BoardRepository;
@@ -31,7 +33,6 @@ public class ApplicationStatusService {
     private final UserRepository userRepository;
     private final BoardService boardService;
     private final BoardApplyLeaderRepository boardApplyLeaderRepository;
-    //private final BoardApplyUsersRepository boardApplyUsersRepository;
 
     /*
   내글에 신청한 현황보기 s
@@ -110,6 +111,9 @@ public class ApplicationStatusService {
         return allUsersByLeader;
     }
 
+
+
+
     /**
      * 내가 쓴 글
      *
@@ -117,7 +121,8 @@ public class ApplicationStatusService {
      * @return
      */
     public List<BoardResponseDto> myBoard(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을수 없습니다 토큰오류"));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         List<Board> board = boardRepository.findByUserId(user);
         List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
         for (Board boards : board) {
@@ -125,6 +130,19 @@ public class ApplicationStatusService {
             boardResponseDtos.add(boardResponseDto);
         }
         return boardResponseDtos;
+    }
+
+    public String refuse(Long id, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        BoardApplyLeader boardApplyLeader=boardApplyLeaderRepository.findById(id)
+                .orElseThrow(()->new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        if(boardApplyLeader.getBoardId().getUserId()!=user){
+            throw new UserHandler(ErrorStatus.USER_NOT_AUTHORITY);
+        }
+        boardApplyLeader.setStatus(ApplyStatus.거절);
+
+        return boardApplyLeader.getId()+"번 신청이 거절되었습니다.";
     }
 
 

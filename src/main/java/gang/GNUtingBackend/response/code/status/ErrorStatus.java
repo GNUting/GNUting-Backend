@@ -25,7 +25,8 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_GENDER_NOT_MATCH(HttpStatus.BAD_REQUEST, "USER4001", "사용자가 없습니다. (성별이 일치하지않거나 닉네임이 잘못됐습니다.)"),
     // Board 관련 에러
     BOARD_NOT_FOUND(HttpStatus.BAD_REQUEST,"BOARD5001", "게시글이 없습니다"),
-    USER_NOT_FOUND_IN_BOARD(HttpStatus.BAD_REQUEST,"BOARD5001", "권한이없습니다.(게시글을 작성한 유저가 아닙니다)"),
+    USER_NOT_FOUND_IN_BOARD(HttpStatus.BAD_REQUEST,"BOARD5002", "권한이없습니다.(게시글을 작성한 유저가 아닙니다)"),
+    USER_NOT_AUTHORITY(HttpStatus.BAD_REQUEST,"BOARD5003","권한이 없습니다."),
     INCORRECT_NUMBER_OF_PEOPLE(HttpStatus.BAD_REQUEST,"BOARD5002", "인원수가 맞지 않습니다."),
 
     //Apply 관련 에러

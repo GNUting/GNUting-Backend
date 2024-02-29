@@ -4,6 +4,7 @@ import gang.GNUtingBackend.board.dto.*;
 import gang.GNUtingBackend.board.entity.ApplyUsers;
 import gang.GNUtingBackend.board.entity.BoardApplyLeader;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
+import gang.GNUtingBackend.board.entity.enums.ApplyStatus;
 import gang.GNUtingBackend.board.entity.enums.Status;
 import gang.GNUtingBackend.board.repository.ApplyUsersRepository;
 import gang.GNUtingBackend.board.repository.BoardApplyLeaderRepository;
@@ -253,6 +254,7 @@ public class BoardService {
         BoardApplyLeaderDto boardApplyLeaderDto=new BoardApplyLeaderDto();
         boardApplyLeaderDto.setBoardId(board);
         boardApplyLeaderDto.setLeaderId(user);
+        boardApplyLeaderDto.setStatus(ApplyStatus.대기중);
         BoardApplyLeader savedBoardApplyLeader=boardApplyLeaderRepository.save(boardApplyLeaderDto.toEntity());
 
         // 게시글에 신청하는 유저 저장
@@ -262,6 +264,7 @@ public class BoardService {
             ApplyUsersDto applyUsers=new ApplyUsersDto();
             applyUsers.setBoardApplyLeaderId(savedBoardApplyLeader);
             applyUsers.setUserId(member);
+
             applyUsersRepository.save(applyUsers.toEntity());
             nickname = nickname + " " + member.getNickname();
         }

@@ -7,11 +7,9 @@ import gang.GNUtingBackend.user.token.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Parameter;
 import java.util.List;
 
 @RestController
@@ -24,7 +22,7 @@ public class ApplicationStatusController {
 
 
     //신청 받은 현황
-    @GetMapping("board/applications/received")
+    @GetMapping("board/applications/receivedstate")
     public ResponseEntity<List<ApplicationStatusResponseDto>> receivedState(@RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
         List<ApplicationStatusResponseDto> userSearchResponseDto = applicationStatusService.receiveState(email);
@@ -32,7 +30,7 @@ public class ApplicationStatusController {
     }
 
     //내가 신청한 현황
-    @GetMapping("board/applications/apply")
+    @GetMapping("board/applications/applystate")
     public ResponseEntity<List<ApplicationStatusResponseDto>> applyState(@RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
         List<ApplicationStatusResponseDto> userSearchResponseDto = applicationStatusService.applyState(email);
@@ -48,6 +46,12 @@ public class ApplicationStatusController {
     }
 
     //거절하기
+    @PatchMapping("board/applications/refuse/{id}")
+    public ResponseEntity<String> refuse(@RequestHeader("Authorization") String token, @PathVariable Long id){
+        String email=tokenProvider.getUserEmail(token.substring(7));
+        String refuse=applicationStatusService.refuse(id,email);
+        return ResponseEntity.status(HttpStatus.OK).body(refuse);
+    }
 
 
 }
