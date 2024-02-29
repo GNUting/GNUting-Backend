@@ -1,7 +1,6 @@
 package gang.GNUtingBackend.board.service;
 
 import gang.GNUtingBackend.board.dto.ApplicationStatusResponseDto;
-import gang.GNUtingBackend.board.dto.BoardApplyLeaderDto;
 import gang.GNUtingBackend.board.dto.BoardResponseDto;
 import gang.GNUtingBackend.board.entity.ApplyUsers;
 import gang.GNUtingBackend.board.entity.Board;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
