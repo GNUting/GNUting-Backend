@@ -11,6 +11,7 @@ import gang.GNUtingBackend.board.repository.BoardApplyLeaderRepository;
 import gang.GNUtingBackend.board.repository.BoardRepository;
 import gang.GNUtingBackend.board.repository.BoardParticipantRepository;
 import gang.GNUtingBackend.board.entity.Board;
+import gang.GNUtingBackend.board.repository.SearchBoardRepositoryImpl;
 import gang.GNUtingBackend.exception.UserAlreadyException;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
@@ -43,6 +44,7 @@ public class BoardService {
     private final UserRepository userRepository;
     private final BoardApplyLeaderRepository boardApplyLeaderRepository;
     private final ApplyUsersRepository applyUsersRepository;
+    private final SearchBoardRepositoryImpl searchBoardRepository;
 
     /**
      * 게시글 모두 보기
@@ -282,5 +284,9 @@ public class BoardService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         return UserSearchResponseDto.toDto(user);
 
+    }
+
+    public Page<BoardSearchResultDto> searchBoards(String keyword, String email, Pageable pageable) {
+        return searchBoardRepository.searchByTitleOrDepartment(keyword, email, pageable);
     }
 }
