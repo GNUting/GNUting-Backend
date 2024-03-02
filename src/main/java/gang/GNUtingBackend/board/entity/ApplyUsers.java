@@ -27,6 +27,4 @@ public class ApplyUsers {
     @JoinColumn(name = "user_id")
     private User userId;
 
-
-
 }

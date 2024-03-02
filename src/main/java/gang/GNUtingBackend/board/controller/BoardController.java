@@ -2,6 +2,7 @@ package gang.GNUtingBackend.board.controller;
 
 import gang.GNUtingBackend.board.dto.BoardRequestDto;
 import gang.GNUtingBackend.board.dto.BoardResponseDto;
+import gang.GNUtingBackend.board.dto.BoardSearchResultDto;
 import gang.GNUtingBackend.board.dto.BoardShowAllResponseDto;
 import gang.GNUtingBackend.board.service.BoardService;
 import gang.GNUtingBackend.board.entity.Board;
@@ -96,6 +97,21 @@ public class BoardController {
         String saved = boardService.apply(id, userSearchRequestDto, email);
         return ResponseEntity.ok()
                 .body(ApiResponse.onSuccess(saved));
+    }
+
+    @GetMapping("/board/search")
+    public ResponseEntity<?> searchBoards (
+            @RequestParam("keyword") String keyword,
+            @RequestHeader("Authorization") String token,
+            Pageable pageable
+    ) {
+        String email = tokenProvider.getUserEmail(token.substring(7));
+
+        Page<BoardSearchResultDto> boardSearchResultDtos = boardService.searchBoards(keyword, email, pageable);
+
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(boardSearchResultDtos));
+
     }
 }
 

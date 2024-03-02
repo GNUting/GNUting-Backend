@@ -22,6 +22,7 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 학과 이름
     @Column(nullable = false)
     private String name;
 }

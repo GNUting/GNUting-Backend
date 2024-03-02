@@ -48,6 +48,4 @@ public class Board extends BaseTime {
     @OneToMany(mappedBy = "boardId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BoardApplyLeader> boardApplyLeader;
 
-
-
 }
