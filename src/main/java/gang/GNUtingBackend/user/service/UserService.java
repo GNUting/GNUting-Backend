@@ -34,36 +34,39 @@ public class UserService {
     @Transactional
     public UserSignupResponseDto signup(UserSignupRequestDto userSignupRequestDto) {
         // 이메일로 이미 가입된 사용자가 있는지 확인
-        Optional<User> existingUser = userRepository.findByEmail(userSignupRequestDto.getEmail());
+        userRepository.findByEmail(userSignupRequestDto.getEmail())
+                .ifPresent(user -> {
+                    throw new UserHandler(ErrorStatus.USER_ALREADY_EXIST);
+                });
 
-        if (existingUser.isEmpty()) {
-            // 사용자가 존재하지 않으면 비밀번호를 암호화하여 저장
-            String encodedPassword = bCryptPasswordEncoder.encode(userSignupRequestDto.getPassword());
-            userSignupRequestDto.setPassword(encodedPassword);
+        // 닉네임으로 이미 가입된 사용자가 있는지 확인
+        userRepository.findByNickname(userSignupRequestDto.getNickname())
+                .ifPresent(user -> {
+                    throw new UserHandler(ErrorStatus.DUPLICATE_NICKNAME);
+                });
 
-            // UserSignupRequestDto를 User 엔티티로 변환하여 저장
-            User user = userSignupRequestDto.toEntity();
-            userRepository.save(user);
+        // 사용자가 존재하지 않으면 비밀번호를 암호화하여 저장
+        String encodedPassword = bCryptPasswordEncoder.encode(userSignupRequestDto.getPassword());
+        userSignupRequestDto.setPassword(encodedPassword);
 
-            return UserSignupResponseDto.builder()
-                    .id(user.getId())
-                    .email(user.getEmail())
-                    .name(user.getName())
-                    .phoneNumber(user.getPhoneNumber())
-                    .gender(user.getGender())
-                    .birthDate(user.getBirthDate())
-                    .nickname(user.getNickname())
-                    .department(user.getDepartment())
-                    .studentId(user.getStudentId())
-                    .profileImage(user.getProfileImage())
-                    .userRole(user.getUserRole())
-                    .userSelfIntroduction(user.getUserSelfIntroduction())
-                    .build();
+        // UserSignupRequestDto를 User 엔티티로 변환하여 저장
+        User user = userSignupRequestDto.toEntity();
+        userRepository.save(user);
 
-        } else {
-            // 이미 가입된 사용자가 있으면 예외 발생
-            throw new UserHandler(ErrorStatus.USER_ALREADY_EXIST);
-        }
+        return UserSignupResponseDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .phoneNumber(user.getPhoneNumber())
+                .gender(user.getGender())
+                .birthDate(user.getBirthDate())
+                .nickname(user.getNickname())
+                .department(user.getDepartment())
+                .studentId(user.getStudentId())
+                .profileImage(user.getProfileImage())
+                .userRole(user.getUserRole())
+                .userSelfIntroduction(user.getUserSelfIntroduction())
+                .build();
     }
 
     /**

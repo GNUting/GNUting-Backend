@@ -52,6 +52,7 @@ public class BoardService {
      * @param pageable 페이지번호
      * @return 로그인한 유저의 성별과 반대되는 성별이 쓴 글들
      */
+    @Transactional(readOnly = true)
     public List<BoardShowAllResponseDto> show(String email, Pageable pageable) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
