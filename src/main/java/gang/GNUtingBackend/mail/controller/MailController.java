@@ -4,6 +4,7 @@ import gang.GNUtingBackend.mail.dto.MailSendRequestDto;
 import gang.GNUtingBackend.mail.dto.MailSendResponseDto;
 import gang.GNUtingBackend.mail.service.MailService;
 import gang.GNUtingBackend.response.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ public class MailController {
     private final MailService mailService;
 
     @PostMapping("/mail")
+    @Operation(summary = "이메일 인증 API", description = "회원가입 시, 작성한 경상국립대 이메일로 인증 번호 메일을 전송합니다.")
     public ResponseEntity<ApiResponse<MailSendResponseDto>> mailSend(@RequestBody MailSendRequestDto mailSendRequestDto) {
         int number = mailService.sendMail(mailSendRequestDto.getEmail());
         String num = Integer.toString(number);
