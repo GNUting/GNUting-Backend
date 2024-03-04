@@ -13,6 +13,9 @@ import gang.GNUtingBackend.user.dto.UserSignupRequestDto;
 import gang.GNUtingBackend.user.dto.UserSignupResponseDto;
 import gang.GNUtingBackend.user.service.UserService;
 import gang.GNUtingBackend.user.token.TokenProvider;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import java.io.IOException;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +48,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/login")
+    @Operation(summary = "로그인 API", description = "이메일과 비밀번호를 사용하여 로그인합니다.")
     public ResponseEntity<ApiResponse<UserLoginResponseDto>> login(
             @RequestBody UserLoginRequestDto userLoginRequestDto) {
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -68,18 +72,19 @@ public class UserController {
      * @return
      */
     @PostMapping("/signup")
+    @Operation(summary = "회원가입 API", description = "사용자의 정보를 바탕으로 회원가입을 진행합니다.")
     public ResponseEntity<ApiResponse<UserSignupResponseDto>> signup(
-            @RequestParam("email") String email,
-            @RequestParam("password") String password,
-            @RequestParam("name") String name,
-            @RequestParam("phoneNumber") String phoneNumber,
-            @RequestParam("gender") Gender gender,
-            @RequestParam("birthDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthDate,
-            @RequestParam("nickname") String nickname,
-            @RequestParam("department") String department,
-            @RequestParam("studentId") String studentId,
-            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
-            @RequestParam("userSelfIntroduction") String userSelfIntroduction
+            @RequestParam("email") @Parameter(description = "경상국립대학교 이메일") String email,
+            @RequestParam("password") @Parameter(description = "비밀번호") String password,
+            @RequestParam("name") @Parameter(description = "이름") String name,
+            @RequestParam("phoneNumber") @Parameter(description = "전화번호") String phoneNumber,
+            @RequestParam("gender") @Parameter(description = "성별") Gender gender,
+            @RequestParam("birthDate") @Parameter(description = "생년 월일") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthDate,
+            @RequestParam("nickname") @Parameter(description = "닉네임") String nickname,
+            @RequestParam("department") @Parameter(description = "학과") String department,
+            @RequestParam("studentId") @Parameter(description = "학번") String studentId,
+            @RequestParam(value = "profileImage", required = false) @Parameter(description = "프로필 이미지") MultipartFile profileImage,
+            @RequestParam("userSelfIntroduction") @Parameter(description = "한 줄 소개") String userSelfIntroduction
     ) throws IOException {
 
         String mediaLink = null;
@@ -111,7 +116,8 @@ public class UserController {
      * @return
      */
     @GetMapping("/check-nickname")
-    public ResponseEntity<ApiResponse<Boolean>> checkNicknameAvailability(@RequestParam("nickname") String nickname) {
+    @Operation(summary = "회원가입 시 닉네임 중복 체크 API", description = "이미 사용중인 닉네임인지 확인합니다.")
+    public ResponseEntity<ApiResponse<Boolean>> checkNicknameAvailability(@RequestParam("nickname") @Parameter(description = "닉네임") String nickname) {
         boolean isAvailable = userService.isNicknameAvailable(nickname);
 
         if (!isAvailable) {
@@ -121,14 +127,26 @@ public class UserController {
         return ResponseEntity.ok().body(apiResponse);
     }
 
+    /**
+     * 사용자 프로필사진, 비밀번호, 닉네임, 학과, 한줄소개를 수정한다.
+     * @param token
+     * @param profileImage
+     * @param nickname
+     * @param password
+     * @param department
+     * @param userSelfIntroduction
+     * @return
+     * @throws IOException
+     */
     @PatchMapping("/update")
+    @Operation(summary = "사용자 프로필 수정 API", description = "프로필 이미지, 닉네임, 비밀번호, 학과, 한 줄 소개를 수정합니다.")
     public ResponseEntity<ApiResponse<UserDetailResponseDto>> userInfoUpdate(
             @RequestHeader("Authorization") String token,
-            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
-            @RequestParam("nickname") String nickname,
-            @RequestParam("password") String password,
-            @RequestParam("department") String department,
-            @RequestParam("userSelfIntroduction") String userSelfIntroduction) throws IOException {
+            @RequestParam(value = "profileImage", required = false) @Parameter(description = "프로필 이미지") MultipartFile profileImage,
+            @RequestParam("nickname") @Parameter(description = "닉네임") String nickname,
+            @RequestParam("password") @Parameter(description = "비밀번호") String password,
+            @RequestParam("department") @Parameter(description = "학과") String department,
+            @RequestParam("userSelfIntroduction") @Parameter(description = "한 줄 소개") String userSelfIntroduction) throws IOException {
         token = token.substring(7);
         String email = tokenProvider.getUserEmail(token);
 
