@@ -11,6 +11,9 @@ import gang.GNUtingBackend.response.ApiResponse;
 import gang.GNUtingBackend.user.dto.UserSearchRequestDto;
 import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
 import gang.GNUtingBackend.user.token.TokenProvider;
+import io.opencensus.metrics.export.Summary;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -100,8 +103,9 @@ public class BoardController {
     }
 
     @GetMapping("/board/search")
+    @Operation(summary = "게시판 글 검색 API", description = "게시글 제목, 학과를 통해 게시판 글을 검색합니다. 사용자의 성별과 반대인글만 검색됩니다.")
     public ResponseEntity<?> searchBoards (
-            @RequestParam("keyword") String keyword,
+            @RequestParam("keyword") @Parameter(description = "게시글 제목, 학과") String keyword,
             @RequestHeader("Authorization") String token,
             Pageable pageable
     ) {
