@@ -5,6 +5,7 @@ import gang.GNUtingBackend.board.dto.BoardResponseDto;
 import gang.GNUtingBackend.board.service.ApplicationStatusService;
 import gang.GNUtingBackend.response.ApiResponse;
 import gang.GNUtingBackend.user.token.TokenProvider;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ public class ApplicationStatusController {
 
     //신청 받은 현황
     @GetMapping("board/applications/receivedstate")
+    @Operation(summary = "과팅 신청받은 현황 API", description = "내가 작성한 글에 과팅신청을 받은 현황을 표시합니다.")
     public ResponseEntity<?> receivedState(@RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
         List<ApplicationStatusResponseDto> userSearchResponseDto = applicationStatusService.receiveState(email);
@@ -31,6 +33,7 @@ public class ApplicationStatusController {
 
     //내가 신청한 현황
     @GetMapping("board/applications/applystate")
+    @Operation(summary = "과팅을 신청한 현황 API", description = "내가 다른게시물에 신청한 현황을 표시합니다.")
     public ResponseEntity<?> applyState(@RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
         List<ApplicationStatusResponseDto> userSearchResponseDto = applicationStatusService.applyState(email);
@@ -40,6 +43,7 @@ public class ApplicationStatusController {
 
     //내가쓴글
     @GetMapping("board/myboard")
+    @Operation(summary = "내가 쓴 글 API", description = "내가 작성한 글 보기")
     public ResponseEntity<?> myBoard(@RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
         List<BoardResponseDto> myBoards = applicationStatusService.myBoard(email);
@@ -49,6 +53,7 @@ public class ApplicationStatusController {
 
     //거절하기
     @PatchMapping("board/applications/refuse/{id}")
+    @Operation(summary = "과팅 거절하기 API", description = "내 게시물에 신청한 과팅신청을 거절합니다.")
     public ResponseEntity<?> refuse(@RequestHeader("Authorization") String token, @PathVariable Long id){
         String email=tokenProvider.getUserEmail(token.substring(7));
         String refuse=applicationStatusService.refuse(id,email);
