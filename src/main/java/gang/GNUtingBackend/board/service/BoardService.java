@@ -58,9 +58,14 @@ public class BoardService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         Gender gender = user.getGender();
         int page = pageable.getPageNumber() - 1;
-        int pageLimit = 20;
+        int pageLimit = pageable.getPageSize();
+
         Page<Board> links = boardRepository.findByGenderNot(gender,
                 PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "createdDate")));  //추후 close된 글들도 아래로 정렬
+
+        if (!links.hasContent()){
+            throw new BoardHandler(ErrorStatus.PAGE_NOT_FOUND);
+        }
 
         return links.stream()
                 .map(BoardShowAllResponseDto::toDto)

@@ -35,7 +35,7 @@ public class BoardController {
     //모든게시판 조회(사용자와 반대되는 성별의 게시글만 조회)
     @GetMapping("/board")
     @Operation(summary = "모든글 보기 API", description = "모든글을 볼 수 있습니다 (페이지네이션),(자신과 다른 성별이 올린 게시글만 볼 수 있음)")
-    public ResponseEntity<?> show(@PageableDefault(page = 1) Pageable pageable, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> show(@PageableDefault(page = 1,size=20) Pageable pageable, @RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
         List<BoardShowAllResponseDto> board = boardService.show(email, pageable);
         return ResponseEntity.ok()

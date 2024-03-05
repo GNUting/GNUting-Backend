@@ -28,6 +28,7 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_NOT_FOUND_IN_BOARD(HttpStatus.BAD_REQUEST,"BOARD5002", "권한이없습니다.(게시글을 작성한 유저가 아닙니다)"),
     USER_NOT_AUTHORITY(HttpStatus.BAD_REQUEST,"BOARD5003","권한이 없습니다."),
     INCORRECT_NUMBER_OF_PEOPLE(HttpStatus.BAD_REQUEST,"BOARD5002", "인원수가 맞지 않습니다."),
+    PAGE_NOT_FOUND(HttpStatus.BAD_REQUEST,"BOARD5003","페이지가 없습니다"),
 
     //Apply 관련 에러
     ALREADY_IN_USER(HttpStatus.BAD_REQUEST,"APLLY6001", "유저가 이미 참여해 있습니다."),
