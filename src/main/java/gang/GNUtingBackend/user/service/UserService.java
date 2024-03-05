@@ -39,6 +39,11 @@ public class UserService {
                     throw new UserHandler(ErrorStatus.USER_ALREADY_EXIST);
                 });
 
+        // 경상국립대학교 이메일을 사용하였는지 확인
+        if(!userSignupRequestDto.getEmail().endsWith("@gnu.ac.kr")) {
+            throw new UserHandler(ErrorStatus.INVALID_MAIL_ADDRESS);
+        }
+
         // 닉네임으로 이미 가입된 사용자가 있는지 확인
         userRepository.findByNickname(userSignupRequestDto.getNickname())
                 .ifPresent(user -> {
