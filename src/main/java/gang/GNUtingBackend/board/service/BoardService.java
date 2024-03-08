@@ -128,7 +128,7 @@ public class BoardService {
     */
 
     /**
-     * 특정글 보기 (참여맴버 API랑 나눠야하는지 ?)
+     * 특정글 보기
      * @param id 게시글 번호
      * @return
      */

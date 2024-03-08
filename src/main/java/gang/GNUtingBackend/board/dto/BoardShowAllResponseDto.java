@@ -1,5 +1,6 @@
 package gang.GNUtingBackend.board.dto;
 
+import com.google.firebase.database.core.UserWriteRecord;
 import gang.GNUtingBackend.board.entity.Board;
 import gang.GNUtingBackend.board.entity.enums.Status;
 import gang.GNUtingBackend.user.domain.User;
@@ -20,6 +21,7 @@ public class BoardShowAllResponseDto {
     private String detail;
     private Status status;
     private Gender gender;
+    private BoardWriterInfoDto user;
     private int inUserCount;
 
 
@@ -31,6 +33,7 @@ public class BoardShowAllResponseDto {
                 .status(board.getStatus())
                 .gender(board.getGender())
                 .inUserCount(board.getInUserCount())
+                .user(BoardWriterInfoDto.toDto(board.getUserId()))
                 .build();
     }
 
