@@ -157,6 +157,37 @@ public class BoardService {
      * @param email
      * @return 수정되었다는 맨트
      */
+//    @Transactional
+//    public String edit(Long id, BoardRequestDto boardRequestDto, String email) {
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+//        Board board = boardRepository.findById(id)
+//                .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
+//        if (board.getUserId().getId() == user.getId()) {
+//            BoardRequestDto changeBoard = BoardRequestDto.toDto(board);
+//            changeBoard.setTitle(boardRequestDto.getTitle());
+//            changeBoard.setDetail(boardRequestDto.getDetail());
+//            changeBoard.setInUser(boardRequestDto.getInUser());
+//            changeBoard.setUserId(user);
+//            Board changedBoard = changeBoard.toEntity();
+//            changedBoard.setCreatedDate(board.getCreatedDate());//기존 게시글생산시간 유지
+//            boardRepository.save(changedBoard);
+//
+//            List<BoardParticipant> users = boardParticipantRepository.findByBoardId(board);
+//            boardParticipantRepository.deleteAll(users);
+//
+//            for (User member : changeBoard.getInUser()) {
+//                BoardParticipantDto boardParticipantDto = BoardParticipantDto.toDto(changedBoard, member);
+//                BoardParticipant boardParticipantSave = boardParticipantDto.toEntity();
+//                boardParticipantRepository.save(boardParticipantSave);
+//            }
+//            return board.getId() + "번 게시글이 수정되었습니다";
+//        }
+//        else{
+//            throw new BoardHandler(ErrorStatus.USER_NOT_FOUND_IN_BOARD);
+//        }
+//    }
+
     @Transactional
     public String edit(Long id, BoardRequestDto boardRequestDto, String email) {
         User user = userRepository.findByEmail(email)
@@ -164,22 +195,12 @@ public class BoardService {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
         if (board.getUserId().getId() == user.getId()) {
-            BoardRequestDto changeBoard = BoardRequestDto.toDto(board);
-            changeBoard.setTitle(boardRequestDto.getTitle());
-            changeBoard.setDetail(boardRequestDto.getDetail());
-            changeBoard.setInUser(boardRequestDto.getInUser());
-            changeBoard.setUserId(user);
-            Board changedBoard = changeBoard.toEntity();
-            changedBoard.setCreatedDate(board.getCreatedDate()); //기존 게시글생산시간 유지
-            boardRepository.save(changedBoard);
-
-            List<BoardParticipant> users = boardParticipantRepository.findByBoardId(board);
-            boardParticipantRepository.deleteAll(users);
-
-            for (User member : changeBoard.getInUser()) {
-                BoardParticipantDto boardParticipantDto = BoardParticipantDto.toDto(changedBoard, member);
-                BoardParticipant boardParticipantSave = boardParticipantDto.toEntity();
-                boardParticipantRepository.save(boardParticipantSave);
+            board.updateBoard(id,boardRequestDto.getTitle(),boardRequestDto.getTitle());
+            List<BoardParticipant> boardParticipant=boardParticipantRepository.findByBoardId(board);
+            boardParticipantRepository.deleteAll(boardParticipant);
+            for (User member : boardRequestDto.getInUser()) {
+               BoardParticipantDto boardParticipantDto=BoardParticipantDto.toDto(board, member);
+               boardParticipantRepository.save(boardParticipantDto.toEntity());
             }
             return board.getId() + "번 게시글이 수정되었습니다";
         }
@@ -187,6 +208,7 @@ public class BoardService {
             throw new BoardHandler(ErrorStatus.USER_NOT_FOUND_IN_BOARD);
         }
     }
+
 
     /**
      * 유저검색

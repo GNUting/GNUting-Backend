@@ -16,7 +16,7 @@ import java.util.List;
 public class BoardApplyLeader {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
