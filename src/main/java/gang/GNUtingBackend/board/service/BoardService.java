@@ -76,7 +76,7 @@ public class BoardService {
      * 게시글 저장
      * @param boardRequestDto 작성한 글 전체 내용
      * @param email
-     * @return 게시글제목이 작성되었다는 맨트
+     * @return 게시글 제목이 작성되었다는 맨트
      */
     @Transactional
     public String save(BoardRequestDto boardRequestDto, String email) {

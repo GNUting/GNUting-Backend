@@ -2,6 +2,7 @@ package gang.GNUtingBackend.board.controller;
 
 import gang.GNUtingBackend.board.dto.ApplicationStatusResponseDto;
 import gang.GNUtingBackend.board.dto.BoardResponseDto;
+import gang.GNUtingBackend.board.dto.BoardShowAllResponseDto;
 import gang.GNUtingBackend.board.service.ApplicationStatusService;
 import gang.GNUtingBackend.response.ApiResponse;
 import gang.GNUtingBackend.user.token.TokenProvider;
@@ -46,7 +47,7 @@ public class ApplicationStatusController {
     @Operation(summary = "내가 쓴 글 API", description = "내가 작성한 글 보기")
     public ResponseEntity<?> myBoard(@RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
-        List<BoardResponseDto> myBoards = applicationStatusService.myBoard(email);
+        List<BoardShowAllResponseDto> myBoards = applicationStatusService.myBoard(email);
         return ResponseEntity.ok()
                 .body(ApiResponse.onSuccess(myBoards));
     }
