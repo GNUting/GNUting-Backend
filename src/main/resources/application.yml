@@ -75,7 +75,7 @@ jwt:
   duration: 30
 
 slack:
-  token: xoxb-6786312890577-6786320324161-noTDwW5SXipMIwJtxcbRnElQ
+  token: xoxb-6786312890577-6786320324161-hIb7eylVaskAyM3fLgkrMIsP
   channel:
     monitor: '#gnuting'
 

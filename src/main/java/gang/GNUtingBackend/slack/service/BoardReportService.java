@@ -16,13 +16,15 @@ import gang.GNUtingBackend.board.entity.Board;
 import gang.GNUtingBackend.board.repository.BoardRepository;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.SlackHandler;
+import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.slack.dto.BoardReportRequestDto;
 import gang.GNUtingBackend.user.domain.User;
+import gang.GNUtingBackend.user.repository.UserRepository;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,18 +39,22 @@ public class BoardReportService {
     private String channel;
 
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
 
-    public void postReport(BoardReportRequestDto boardReportRequestDto) throws IOException {
+    public void postReport(String email, BoardReportRequestDto boardReportRequestDto) throws IOException {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         Board board = boardRepository.findById(boardReportRequestDto.getBoardId())
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
 
-        User user = board.getUserId();
+        User boardUser = board.getUserId();
 
         // Slack 메세지 보내기
         try{
             List<TextObject> textObjects = new ArrayList<>();
-            textObjects.add(markdownText("*이름:*\n" + user.getName()));
+            textObjects.add(markdownText("*닉네임:*\n" + boardUser.getNickname()));
             textObjects.add(markdownText("*신고 날짜:*\n" + boardReportRequestDto.getCreatedDate()));
             textObjects.add(markdownText("*신고 글 제목:*\n" + board.getTitle()));
             textObjects.add(markdownText("*신고 사유:*\n" + boardReportRequestDto.getReportCategory()));
@@ -57,6 +63,7 @@ public class BoardReportService {
             MethodsClient methods = Slack.getInstance().methods(token);
             ChatPostMessageRequest request = ChatPostMessageRequest.builder()
                     .channel(channel)
+                    .text("신고가 접수되었습니다: " + user.getName() + " - " + boardReportRequestDto.getReportReason())
                     .blocks(asBlocks(
                             header(header -> header.text(plainText(user.getName() + "님이 문의를 남겨주셨습니다!"))),
                             divider(),
