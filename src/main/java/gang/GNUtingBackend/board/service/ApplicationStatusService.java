@@ -2,6 +2,7 @@ package gang.GNUtingBackend.board.service;
 
 import gang.GNUtingBackend.board.dto.ApplicationStatusResponseDto;
 import gang.GNUtingBackend.board.dto.BoardResponseDto;
+import gang.GNUtingBackend.board.dto.BoardShowAllResponseDto;
 import gang.GNUtingBackend.board.entity.ApplyUsers;
 import gang.GNUtingBackend.board.entity.Board;
 import gang.GNUtingBackend.board.entity.BoardApplyLeader;
@@ -120,18 +121,22 @@ public class ApplicationStatusService {
      */
 
     // 현재 BoardResponserDto에
-    public List<BoardResponseDto> myBoard(String email) {
+    public List<BoardShowAllResponseDto> myBoard(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         List<Board> board = boardRepository.findByUserId(user);
-        List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
-        for (Board boards : board) {
-            BoardResponseDto boardResponseDto = boardService.inshow(boards.getId());
-            boardResponseDtos.add(boardResponseDto);
-        }
-        return boardResponseDtos;
+
+        return board.stream()
+                .map(BoardShowAllResponseDto::toDto)
+                .collect(Collectors.toList());
     }
 
+    /**
+     * 거절하기
+     * @param id
+     * @param email
+     * @return String
+     */
     public String refuse(Long id, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));

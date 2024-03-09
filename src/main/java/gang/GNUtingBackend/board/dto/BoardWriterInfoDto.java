@@ -8,18 +8,17 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+//게시물 리스트들 볼 때 유저 이미지가 필요없을때 반환 dto
 public class BoardWriterInfoDto {
     private String nickname;
     private String department;
     private String studentId;
-    private String image;
 
     public static BoardWriterInfoDto toDto(User user){
        return BoardWriterInfoDto.builder()
                 .department(user.getDepartment())
                 .nickname(user.getNickname())
                 .studentId(user.getStudentId().substring(2,4)+"학번")
-                .image(user.getProfileImage())
                 .build();
     }
 

@@ -2,7 +2,6 @@ package gang.GNUtingBackend.board.dto;
 
 import gang.GNUtingBackend.board.entity.Board;
 import gang.GNUtingBackend.board.entity.enums.Status;
-import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.domain.enums.Gender;
 import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
 import lombok.*;
@@ -22,7 +21,7 @@ public class BoardResponseDto {
     private String title;
     private String detail;
     private List<UserSearchResponseDto> inUser;
-    private BoardWriterInfoDto user;
+    private BoardWriterImageInfoDto user;
     private Status status;
     private Gender gender;
     private int inUserCount;
@@ -38,7 +37,7 @@ public class BoardResponseDto {
                 .inUser(user)
                 .detail(board.getDetail())
                 .status(board.getStatus())
-                .user(BoardWriterInfoDto.toDto(board.getUserId()))
+                .user(BoardWriterImageInfoDto.toDto(board.getUserId()))
                 .gender(board.getGender())
                 .inUserCount(board.getInUserCount())
                 .time(elapsedTime)
