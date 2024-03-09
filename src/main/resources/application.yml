@@ -74,3 +74,8 @@ jwt:
   secret: b2394ad3c1101b896006157023d36e9bf9c98f60e54646c9c280efddea88521466817faee9d471cb0c6650e25b21c3282c44e427b74ed70b8295bca22f09c37a
   duration: 30
 
+slack:
+  token: xoxb-6786312890577-6786320324161-scWVozk3T4MJn0Y68alXqw18
+  channel:
+    monitor: '#gnuting'
+
