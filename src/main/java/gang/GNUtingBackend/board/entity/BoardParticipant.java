@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Builder
 public class BoardParticipant {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -28,5 +28,8 @@ public class BoardParticipant {
 
     @Column
     private int status;
-
+    public void updateBoardParticipant(Long id,User userId){
+        this.id=id;
+        this.userId=userId;
+    }
 }
