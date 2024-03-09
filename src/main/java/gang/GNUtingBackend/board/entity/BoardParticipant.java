@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Builder
 public class BoardParticipant {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne
