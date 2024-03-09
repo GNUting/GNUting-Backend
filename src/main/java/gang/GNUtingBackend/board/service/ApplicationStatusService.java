@@ -118,6 +118,8 @@ public class ApplicationStatusService {
      * @param email
      * @return
      */
+
+    // 현재 BoardResponserDto에
     public List<BoardResponseDto> myBoard(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
