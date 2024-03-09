@@ -34,7 +34,11 @@ public enum ErrorStatus implements BaseErrorCode {
     ALREADY_IN_USER(HttpStatus.BAD_REQUEST,"APLLY6001", "유저가 이미 참여해 있습니다."),
 
     // 메일 관련 에러
-    INVALID_MAIL_ADDRESS(HttpStatus.BAD_REQUEST, "MAIL4001", "경상국립대학교 이메일을 입력해주세요.");
+    INVALID_MAIL_ADDRESS(HttpStatus.BAD_REQUEST, "MAIL4001", "경상국립대학교 이메일을 입력해주세요."),
+
+    // slack 관련 에러
+    CANNOT_SEND_MESSAGE(HttpStatus.INTERNAL_SERVER_ERROR, "SLACK5001", "slack으로 메세지를 보내지 못하였습니다.");
+
 
 
     private final HttpStatus httpStatus;

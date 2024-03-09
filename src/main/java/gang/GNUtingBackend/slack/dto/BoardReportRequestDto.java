@@ -1,5 +1,6 @@
 package gang.GNUtingBackend.slack.dto;
 
+import gang.GNUtingBackend.board.entity.BaseTime;
 import gang.GNUtingBackend.slack.domain.ReportCategory;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,9 +13,9 @@ import lombok.NoArgsConstructor;
 /**
  * 게시물에 신고 버튼을 눌렀을때 해당 게시물의 작성자를 신고하는데 사용되는 dto
  */
-public class BoardReportRequestDto {
+public class BoardReportRequestDto extends BaseTime {
 
-    private Long postId;
+    private Long boardId;
     private ReportCategory reportCategory;
     private String reportReason;
 }
