@@ -22,9 +22,10 @@ import gang.GNUtingBackend.slack.dto.BoardReportRequestDto;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.repository.UserRepository;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -55,7 +56,7 @@ public class BoardReportService {
         try{
             List<TextObject> textObjects = new ArrayList<>();
             textObjects.add(markdownText("*닉네임:*\n" + boardUser.getNickname()));
-            textObjects.add(markdownText("*신고 날짜:*\n" + boardReportRequestDto.getCreatedDate()));
+            textObjects.add(markdownText("*신고 날짜:*\n" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
             textObjects.add(markdownText("*신고 글 제목:*\n" + board.getTitle()));
             textObjects.add(markdownText("*신고 사유:*\n" + boardReportRequestDto.getReportCategory()));
             textObjects.add(markdownText("*신고 내용:*\n" + boardReportRequestDto.getReportReason()));
