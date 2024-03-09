@@ -8,9 +8,13 @@ public enum ReportCategory {
     PRIVACY_VIOLATION("개인정보노출"),
     OTHER("기타");
 
-    private final String ReportReason;
+    private final String reportReason;
 
     ReportCategory(String reportReason) {
-        ReportReason = reportReason;
+        this.reportReason = reportReason;
+    }
+
+    public String getReportReason() {
+        return reportReason;
     }
 }
