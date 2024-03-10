@@ -103,7 +103,7 @@ public class BoardController {
     //게시글에 과팅신청
     @PostMapping("/board/apply/{id}")
     @Operation(summary = "과팅신청 API", description = "게시글을 대상으로 과팅신청 합니다., 신청시 자신의 정보와 신청할 유저들의 정보를 검색해서 추가해야합니다.")
-    public ResponseEntity<?> apply(@PathVariable Long id, @RequestBody List<UserSearchRequestDto> userSearchRequestDto, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> apply(@PathVariable Long id, @RequestBody List<UserSearchResponseDto> userSearchRequestDto, @RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
         String saved = boardService.apply(id, userSearchRequestDto, email);
         return ResponseEntity.ok()
