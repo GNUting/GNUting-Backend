@@ -88,12 +88,18 @@ public class BoardService {
         boardRequestDto.setGender(user.getGender());
         Board boardSave = boardRequestDto.toEntity();
         boardRepository.save(boardSave);
-
+        boolean boardParticipantInWriter=false;
         //참여자 테이블에 저장
         for (User member : boardRequestDto.getInUser()) {
+            if(member.getId()==user.getId()){
+                boardParticipantInWriter=true;
+            }
             BoardParticipantDto boardParticipantDto = BoardParticipantDto.toDto(boardSave, member);
             BoardParticipant boardParticipantSave = boardParticipantDto.toEntity();
             boardParticipantRepository.save(boardParticipantSave);
+        }
+        if(boardParticipantInWriter==false){
+            throw new BoardHandler(ErrorStatus.WRITER_NOT_IN_BOARDPARTICIPANT);
         }
        // return BoardRequestDto.toDto(boardSave);
         return boardSave.getTitle()+"게시글이 작성되었습니다."; //굳이 리턴값을 줄필요 없을듯 ???
@@ -231,22 +237,22 @@ public class BoardService {
     /**
      * 게시글에 과팅신청
      * @param id
-     * @param userSearchRequestDto
+     * @param userSearchResponsetDto
      * @param email
      * @return
      */
     @Transactional
-    public String apply(Long id, List<UserSearchRequestDto> userSearchRequestDto, String email) {
+    public String apply(Long id, List<UserSearchResponseDto> userSearchResponsetDto, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
         String nickname = "";
-       // String overlap = "";
+        boolean boardApplyUserInLeader=false;
         List<BoardApplyLeader> boardApplyUsers = boardApplyLeaderRepository.findByBoardId(board);
 
         //게시글의 참여자 인원과 신청자 인원이 맞지않을경우 예외처리 필요
-        if (board.getInUserCount() != userSearchRequestDto.size()) {
+        if (board.getInUserCount() != userSearchResponsetDto.size()) {
             throw new BoardHandler(ErrorStatus.INCORRECT_NUMBER_OF_PEOPLE);
         }
 
@@ -263,9 +269,9 @@ public class BoardService {
 //                }
 //            }
 //        }
-        for (UserSearchRequestDto userApply : userSearchRequestDto) {
+        for (UserSearchResponseDto userApply : userSearchResponsetDto) {
             User member = userRepository.findById(userApply.getId())
-                    .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을수 없습니다"));
+                    .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
             // 사용자가 이미 해당 게시판에 신청했는지 확인
             boolean isUserAlreadyApplied = boardApplyUsers.stream()
                     .flatMap(boardApplyLeader -> boardApplyLeader.getApplyUsers().stream())
@@ -274,6 +280,16 @@ public class BoardService {
             if (isUserAlreadyApplied) {
                 throw new UserAlreadyException(member.getNickname() + "님이 이미 참여해 있습니다.");
             }
+            if(userApply.getGender()==board.getGender()) {
+                throw new BoardHandler(ErrorStatus.NOT_MATCH_GENDER);
+            }
+
+            if(member==user){
+                boardApplyUserInLeader=true;
+            }
+        }
+        if(boardApplyUserInLeader==false){
+            throw new BoardHandler(ErrorStatus.LEADER_NOT_IN_APPLYUSER);
         }
 
         // 만약 overlap변수에 글이 1개라도 있을시(유저가1명이라도 있을시) 이미신청한 유저
@@ -290,7 +306,7 @@ public class BoardService {
         BoardApplyLeader savedBoardApplyLeader=boardApplyLeaderRepository.save(boardApplyLeaderDto.toEntity());
 
         // 게시글에 신청하는 유저 저장
-        for (UserSearchRequestDto userApply : userSearchRequestDto) {
+        for (UserSearchResponseDto userApply : userSearchResponsetDto) {
             User member = userRepository.findById(userApply.getId())
                     .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
             ApplyUsersDto applyUsers=new ApplyUsersDto();
