@@ -201,7 +201,7 @@ public class BoardService {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
         if (board.getUserId().getId() == user.getId()) {
-            board.updateBoard(id,boardRequestDto.getTitle(),boardRequestDto.getTitle());
+            board.updateBoard(id,boardRequestDto.getTitle(),boardRequestDto.getDetail());
             List<BoardParticipant> boardParticipant=boardParticipantRepository.findByBoardId(board);
             boardParticipantRepository.deleteAll(boardParticipant);
             for (User member : boardRequestDto.getInUser()) {
