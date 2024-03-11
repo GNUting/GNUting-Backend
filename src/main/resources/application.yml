@@ -79,3 +79,7 @@ slack:
   channel:
     monitor: '#gnuting'
 
+loggig:
+  level:
+    gang:
+      GNUtingBackend: INFO
