@@ -13,6 +13,7 @@ import java.time.LocalDate;
 public class UserSearchResponseDto {
 
     private final Long id;
+    private final String name;
     private final Gender gender;
     private final String age;
     private final String nickname;
@@ -26,13 +27,14 @@ public class UserSearchResponseDto {
     public static UserSearchResponseDto toDto(User user){
         return UserSearchResponseDto.builder()
                 .id(user.getId())
+                .name(user.getName())
                 .gender(user.getGender())
-                .age(LocalDate.now().getYear()-user.getBirthDate().getYear()+1+"살")
+                .age(LocalDate.now().getYear() - user.getBirthDate().getYear() + 1 + "살")
                 .nickname(user.getNickname())
                 .department(user.getDepartment())
                 .profileImage(user.getProfileImage())
                 .userRole(user.getUserRole())
-                .studentId(user.getStudentId().substring(2,4)+"학번")
+                .studentId(user.getStudentId().substring(2, 4) + "학번")
                 .userSelfIntroduction(user.getUserSelfIntroduction())
                 .build();
     }
