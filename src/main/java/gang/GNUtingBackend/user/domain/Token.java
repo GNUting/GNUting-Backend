@@ -1,5 +1,6 @@
 package gang.GNUtingBackend.user.domain;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import javax.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -24,5 +25,8 @@ public class Token {
     @TimeToLive(unit = TimeUnit.MILLISECONDS)
     private long expiration;
 
+    public static String createRefreshToken() {
+        return UUID.randomUUID().toString();
+    }
 
 }

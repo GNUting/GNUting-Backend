@@ -2,6 +2,7 @@ package gang.GNUtingBackend.user.service;
 
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
+import gang.GNUtingBackend.user.domain.Token;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.dto.UserDetailResponseDto;
 import gang.GNUtingBackend.user.dto.UserLoginResponseDto;
@@ -9,6 +10,7 @@ import gang.GNUtingBackend.user.dto.UserSignupRequestDto;
 import gang.GNUtingBackend.user.dto.UserSignupResponseDto;
 import gang.GNUtingBackend.user.dto.UserUpdateRequestDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
+import gang.GNUtingBackend.user.token.RefreshTokenService;
 import gang.GNUtingBackend.user.token.TokenProvider;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
+    private final RefreshTokenService refreshTokenService;
 
     /**
      * 사용자 회원가입 하기
@@ -85,6 +88,11 @@ public class UserService {
         // 이메일로 사용자 정보를 조회
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        String accessToken = issueAccessToken(user);
+        String refreshToken = issueRefreshToken();
+
+        refreshTokenService.saveToken(user.getEmail(), refreshToken, accessToken);
 
         // 입력한 비밀번호를 암호화된 비밀번호와 비교
         if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
@@ -173,5 +181,13 @@ public class UserService {
                 .userRole(user.getUserRole())
                 .userSelfIntroduction(user.getUserSelfIntroduction())
                 .build();
+    }
+
+    private String issueAccessToken(User user) {
+        return tokenProvider.createToken(user.getEmail(), user.getUserRole());
+    }
+
+    private String issueRefreshToken() {
+        return Token.createRefreshToken();
     }
 }
