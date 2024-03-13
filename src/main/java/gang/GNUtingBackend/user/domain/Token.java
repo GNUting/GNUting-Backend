@@ -29,4 +29,8 @@ public class Token {
         return UUID.randomUUID().toString();
     }
 
+    public void setAccessToken(String newAccessToken) {
+        this.accessToken = newAccessToken;
+    }
+
 }

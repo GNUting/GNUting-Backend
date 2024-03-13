@@ -1,5 +1,6 @@
 package gang.GNUtingBackend.user.service;
 
+import gang.GNUtingBackend.exception.handler.TokenHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.Token;
@@ -9,6 +10,7 @@ import gang.GNUtingBackend.user.dto.UserLoginResponseDto;
 import gang.GNUtingBackend.user.dto.UserSignupRequestDto;
 import gang.GNUtingBackend.user.dto.UserSignupResponseDto;
 import gang.GNUtingBackend.user.dto.UserUpdateRequestDto;
+import gang.GNUtingBackend.user.dto.token.ReIssueTokenResponseDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
 import gang.GNUtingBackend.user.token.RefreshTokenService;
 import gang.GNUtingBackend.user.token.TokenProvider;
@@ -189,5 +191,19 @@ public class UserService {
 
     private String issueRefreshToken() {
         return Token.createRefreshToken();
+    }
+
+    private ReIssueTokenResponseDto reissueAccessToken(String refreshToken) {
+        User user = refreshTokenService.getUserByRefreshToken(refreshToken);
+        Token token = refreshTokenService.findTokenByRefreshToken(refreshToken);
+        String oldAccessToken = token.getAccessToken();
+
+        if (tokenProvider.isExpiredAccessToken(oldAccessToken)) {
+            String newAccessToken = issueAccessToken(user);
+            token.setAccessToken(newAccessToken);
+            refreshTokenService.updateToken(token);
+            return new ReIssueTokenResponseDto(newAccessToken);
+        }
+        throw new TokenHandler(ErrorStatus.NOT_EXPIRED_ACCESS_TOKEN);
     }
 }

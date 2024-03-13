@@ -105,4 +105,13 @@ public class TokenProvider {
         }
         return false;
     }
+
+    public boolean isExpiredAccessToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
+        return false;
+    }
 }

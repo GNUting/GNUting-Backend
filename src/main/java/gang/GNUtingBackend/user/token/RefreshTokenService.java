@@ -51,4 +51,8 @@ public class RefreshTokenService {
         throw new TokenHandler(ErrorStatus.INVALID_REFRESH_TOKEN);
     }
 
+    public void updateToken(Token token) {
+        redisTemplate.opsForValue().set(token.getRefreshToken(), token, token.getExpiration(), TimeUnit.MILLISECONDS);
+    }
+
 }
