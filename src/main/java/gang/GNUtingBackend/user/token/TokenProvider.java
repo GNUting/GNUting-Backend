@@ -1,5 +1,7 @@
 package gang.GNUtingBackend.user.token;
 
+import gang.GNUtingBackend.exception.handler.TokenHandler;
+import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.enums.UserRole;
 import gang.GNUtingBackend.user.auth.PrincipalDetails;
 import gang.GNUtingBackend.user.auth.PrincipalDetailsService;
@@ -95,15 +97,15 @@ public class TokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("잘못된 JWT 서명입니다.");
+            throw new TokenHandler(ErrorStatus.INVALID_ACCESS_TOKEN);
         } catch (ExpiredJwtException e) {
-            log.info("만료된 JWT 토큰입니다.");
+            throw new TokenHandler(ErrorStatus.EXPIRED_ACCESS_TOKEN);
         } catch (UnsupportedJwtException e) {
-            log.info("지원되지 않는 JWT 토큰입니다.");
+            throw new TokenHandler(ErrorStatus.UNSUPPORTED_JWT_TOKEN);
         } catch (IllegalArgumentException e) {
-            log.info("JWT 토큰이 잘못되었습니다.");
+            throw new TokenHandler(ErrorStatus.INVALID_JWT_TOKEN);
         }
-        return false;
+
     }
 
     public boolean isExpiredAccessToken(String token) {

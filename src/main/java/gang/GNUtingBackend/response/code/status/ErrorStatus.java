@@ -47,7 +47,10 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "유효하지 않은 Access Token입니다."),
     EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "Refresh Token이 만료되었습니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "유효하지 않은 Refresh Token입니다."),
-    NOT_EXPIRED_ACCESS_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4000", "만료되지 않은 Access 토큰입니다.");
+    NOT_EXPIRED_ACCESS_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4000", "만료되지 않은 Access 토큰입니다."),
+    INVALID_JWT_SIGNATURE(HttpStatus.UNAUTHORIZED, "TOKEN4001", "잘못된 JWT 서명입니다."),
+    UNSUPPORTED_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "지원되지 않는 JWT 토큰입니다."),
+    INVALID_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "JWT 토큰이 잘못되었습니다.");
 
 
     private final HttpStatus httpStatus;
