@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 public class TokenProvider {
 
     // 토큰 만료 시간 (밀리초 단위)
+    // 24시간 (1일)
     private final long expiredDate = 60 * 60 * 1000 * 24;
 
     private final PrincipalDetailsService principalDetailsService;

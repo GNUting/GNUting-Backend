@@ -40,8 +40,13 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_MAIL_ADDRESS(HttpStatus.BAD_REQUEST, "MAIL4001", "경상국립대학교 이메일을 입력해주세요."),
 
     // slack 관련 에러
-    CANNOT_SEND_MESSAGE(HttpStatus.INTERNAL_SERVER_ERROR, "SLACK5001", "slack으로 메세지를 보내지 못하였습니다.");
+    CANNOT_SEND_MESSAGE(HttpStatus.INTERNAL_SERVER_ERROR, "SLACK5001", "slack으로 메세지를 보내지 못하였습니다."),
 
+    // token 관련 에러
+    EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "Access Token이 만료되었습니다."),
+    INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "유효하지 않은 Access Token입니다."),
+    EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "Refresh Token이 만료되었습니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "유효하지 않은 Refresh Token입니다.");
 
 
     private final HttpStatus httpStatus;
