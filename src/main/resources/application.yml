@@ -47,6 +47,10 @@ spring:
     project-id: charismatic-age-414606
     bucket: gnuting-develop-bucket
 
+  redis:
+    host: localhost
+    port: 6379
+
 app:
   firebase-configuration-file: ./charismatic-age-414606-08978a3bdbe0.json
   firebase-bucket: gnuting-develop-bucket
