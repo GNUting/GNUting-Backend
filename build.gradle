@@ -69,6 +69,8 @@ dependencies {
 	implementation("com.slack.api:bolt-jetty:1.18.0")
 
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 def querydslDir = "$buildDir/generated/querydsl"

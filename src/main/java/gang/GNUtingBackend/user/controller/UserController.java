@@ -11,18 +11,20 @@ import gang.GNUtingBackend.user.dto.UserLoginRequestDto;
 import gang.GNUtingBackend.user.dto.UserLoginResponseDto;
 import gang.GNUtingBackend.user.dto.UserSignupRequestDto;
 import gang.GNUtingBackend.user.dto.UserSignupResponseDto;
+import gang.GNUtingBackend.user.dto.token.ReIssueTokenRequestDto;
+import gang.GNUtingBackend.user.dto.token.ReIssueTokenResponseDto;
+import gang.GNUtingBackend.user.dto.token.TokenResponseDto;
 import gang.GNUtingBackend.user.service.UserService;
 import gang.GNUtingBackend.user.token.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import java.io.IOException;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,38 +45,33 @@ public class UserController {
     private final ImageService imageService;
 
     /**
-     * 사용자 로그인 요청을 처리하고, 로그인이 성공했을 때 응답 헤더에 토큰을 추가하여 반환한다.
+     * 사용자 로그인 요청을 처리하고, 로그인이 성공했을 때 토큰을 반환한다.
      *
      * @param userLoginRequestDto
      * @return
      */
     @PostMapping("/login")
     @Operation(summary = "로그인 API", description = "이메일과 비밀번호를 사용하여 로그인합니다.")
-    public ResponseEntity<ApiResponse<UserLoginResponseDto>> login(
+    public ResponseEntity<ApiResponse<TokenResponseDto>> login(
             @RequestBody UserLoginRequestDto userLoginRequestDto) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        UserLoginResponseDto userLoginResponseDto = userService.login(userLoginRequestDto.getEmail(),
+        TokenResponseDto response = userService.login(userLoginRequestDto.getEmail(),
                 userLoginRequestDto.getPassword());
-        String token = tokenProvider.createToken(userLoginResponseDto.getEmail(), userLoginResponseDto.getUserRole());
 
-        httpHeaders.add("Authorization", "Bearer " + token);
-
-        ApiResponse<UserLoginResponseDto> apiResponse = ApiResponse.onSuccess(userLoginResponseDto);
+        ApiResponse<TokenResponseDto> apiResponse = ApiResponse.onSuccess(response);
 
         return ResponseEntity.ok()
-                .headers(httpHeaders)
                 .body(apiResponse);
     }
 
     /**
-     * 사용자의 가입 요청을 처리하고, 가입이 성공했을 때, 응답 헤더에 토큰을 추가하여 반환한다.
+     * 사용자의 가입 요청을 처리하고, 가입이 성공했을 때, 토큰을 반환한다.
      *
      * @param
      * @return
      */
     @PostMapping("/signup")
     @Operation(summary = "회원가입 API", description = "사용자의 정보를 바탕으로 회원가입을 진행합니다.")
-    public ResponseEntity<ApiResponse<UserSignupResponseDto>> signup(
+    public ResponseEntity<ApiResponse<TokenResponseDto>> signup(
             @RequestParam("email") @Parameter(description = "경상국립대학교 이메일") String email,
             @RequestParam("password") @Parameter(description = "비밀번호") String password,
             @RequestParam("name") @Parameter(description = "이름") String name,
@@ -97,16 +94,11 @@ public class UserController {
                 email, password, name, phoneNumber, gender, birthDate, nickname, department, studentId, mediaLink,
                 UserRole.ROLE_USER, userSelfIntroduction);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        UserSignupResponseDto user = userService.signup(userSignupRequestDto);
-        String token = tokenProvider.createToken(user.getEmail(), user.getUserRole());
+        TokenResponseDto response = userService.signup(userSignupRequestDto);
 
-        httpHeaders.add("Authorization", "Bearer " + token);
-
-        ApiResponse<UserSignupResponseDto> apiResponse = ApiResponse.onSuccess(user);
+        ApiResponse<TokenResponseDto> apiResponse = ApiResponse.onSuccess(response);
 
         return ResponseEntity.ok()
-                .headers(httpHeaders)
                 .body(apiResponse);
     }
 
@@ -160,6 +152,45 @@ public class UserController {
 
         return ResponseEntity.ok()
                 .body(apiResponse);
+    }
+
+    @PostMapping("/reIssueAccessToken")
+    @Operation(summary = "토큰 재발급 API", description = "refresh 토큰으로 accessToken을 재발급합니다.")
+    public ResponseEntity<ApiResponse<ReIssueTokenResponseDto>> reIssueAccessToken(@RequestBody ReIssueTokenRequestDto reIssueTokenRequestDto) {
+        ReIssueTokenResponseDto response = userService.reissueAccessToken(
+                reIssueTokenRequestDto.getRefreshToken());
+
+        ApiResponse<ReIssueTokenResponseDto> apiResponse = ApiResponse.onSuccess(response);
+
+        return ResponseEntity.ok()
+                .body(apiResponse);
+    }
+
+    /**
+     * 로그아웃 API
+     * @param refreshToken 로그아웃 요청에 사용된 리프레시 토큰
+     * @return 로그아웃 성공 메시지
+     */
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃 API", description = "사용자 로그아웃을 처리합니다.")
+    public ResponseEntity<ApiResponse<String>> logout(@RequestBody String refreshToken) {
+        userService.logout(refreshToken);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess("정상적으로 로그아웃 처리 되었습니다."));
+    }
+
+    /**
+     * 회원 탈퇴 API
+     * @param token 회원 탈퇴 요청에 사용된 액세스 토큰
+     * @return 회원 탈퇴 성공 메시지
+     */
+    @DeleteMapping("/deleteUser")
+    @Operation(summary = "회원 탈퇴 API", description = "사용자 회원 탈퇴를 처리합니다.")
+    public ResponseEntity<ApiResponse<String>> deleteUser(@RequestHeader("Authorization") String token) {
+        String email = tokenProvider.getUserEmail(token.substring(7));
+        userService.deleteUser(email);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess("정상적으로 회원 탈퇴 되었습니다."));
     }
 }
 

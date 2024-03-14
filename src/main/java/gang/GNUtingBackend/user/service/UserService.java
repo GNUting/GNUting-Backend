@@ -1,20 +1,20 @@
 package gang.GNUtingBackend.user.service;
 
+import gang.GNUtingBackend.exception.handler.TokenHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
+import gang.GNUtingBackend.user.domain.Token;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.dto.UserDetailResponseDto;
-import gang.GNUtingBackend.user.dto.UserLoginResponseDto;
 import gang.GNUtingBackend.user.dto.UserSignupRequestDto;
 import gang.GNUtingBackend.user.dto.UserSignupResponseDto;
-import gang.GNUtingBackend.user.dto.UserUpdateRequestDto;
+import gang.GNUtingBackend.user.dto.token.ReIssueTokenResponseDto;
+import gang.GNUtingBackend.user.dto.token.TokenResponseDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
+import gang.GNUtingBackend.user.token.RefreshTokenService;
 import gang.GNUtingBackend.user.token.TokenProvider;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +25,7 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
+    private final RefreshTokenService refreshTokenService;
 
     /**
      * 사용자 회원가입 하기
@@ -32,7 +33,7 @@ public class UserService {
      * @return
      */
     @Transactional
-    public UserSignupResponseDto signup(UserSignupRequestDto userSignupRequestDto) {
+    public TokenResponseDto signup(UserSignupRequestDto userSignupRequestDto) {
         // 이메일로 이미 가입된 사용자가 있는지 확인
         userRepository.findByEmail(userSignupRequestDto.getEmail())
                 .ifPresent(user -> {
@@ -58,20 +59,13 @@ public class UserService {
         User user = userSignupRequestDto.toEntity();
         userRepository.save(user);
 
-        return UserSignupResponseDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .name(user.getName())
-                .phoneNumber(user.getPhoneNumber())
-                .gender(user.getGender())
-                .birthDate(user.getBirthDate())
-                .nickname(user.getNickname())
-                .department(user.getDepartment())
-                .studentId(user.getStudentId())
-                .profileImage(user.getProfileImage())
-                .userRole(user.getUserRole())
-                .userSelfIntroduction(user.getUserSelfIntroduction())
-                .build();
+        String accessToken = issueAccessToken(user);
+        String refreshToken = issueRefreshToken();
+
+        refreshTokenService.saveToken(user.getEmail(), refreshToken, accessToken);
+
+
+        return new TokenResponseDto(accessToken, refreshToken);
     }
 
     /**
@@ -81,7 +75,7 @@ public class UserService {
      * @return UserLoginResponseDto
      */
     @Transactional(readOnly = true)
-    public UserLoginResponseDto login(String email, String password) {
+    public TokenResponseDto login(String email, String password) {
         // 이메일로 사용자 정보를 조회
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -91,15 +85,13 @@ public class UserService {
             throw new UserHandler(ErrorStatus.PASSWORD_NOT_MATCH);
         }
 
-        return UserLoginResponseDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .name(user.getName())
-                .department(user.getDepartment())
-                .studentId(user.getStudentId())
-                .userRole(user.getUserRole())
-                .createDate(user.getCreateDate())
-                .build();
+        String accessToken = issueAccessToken(user);
+        String refreshToken = issueRefreshToken();
+
+        refreshTokenService.saveToken(user.getEmail(), refreshToken, accessToken);
+
+
+        return new TokenResponseDto(accessToken, refreshToken);
     }
 
     /**
@@ -173,5 +165,51 @@ public class UserService {
                 .userRole(user.getUserRole())
                 .userSelfIntroduction(user.getUserSelfIntroduction())
                 .build();
+    }
+
+    private String issueAccessToken(User user) {
+        return tokenProvider.createToken(user.getEmail(), user.getUserRole());
+    }
+
+    private String issueRefreshToken() {
+        return Token.createRefreshToken();
+    }
+
+    @Transactional
+    public ReIssueTokenResponseDto reissueAccessToken(String refreshToken) {
+        User user = refreshTokenService.getUserByRefreshToken(refreshToken);
+        Token token = refreshTokenService.findTokenByRefreshToken(refreshToken);
+        String oldAccessToken = token.getAccessToken();
+
+        if (tokenProvider.isExpiredAccessToken(oldAccessToken)) {
+            String newAccessToken = issueAccessToken(user);
+            token.setAccessToken(newAccessToken);
+            refreshTokenService.updateToken(token);
+            return new ReIssueTokenResponseDto(newAccessToken);
+        }
+        throw new TokenHandler(ErrorStatus.NOT_EXPIRED_ACCESS_TOKEN);
+    }
+
+    /**
+     * 로그아웃 로직
+     * @param refreshToken 로그아웃 요청한 사용자의 리프레시 토큰
+     */
+    @Transactional
+    public void logout(String refreshToken) {
+        refreshTokenService.logout(refreshToken);
+    }
+
+    /**
+     * 회원 탈퇴 로직
+     * @param email 탈퇴 요청한 사용자의 이메일
+     */
+    @Transactional
+    public void deleteUser(String email) {
+        // 사용자의 모든 리프레시 토큰 삭제
+        refreshTokenService.deleteUserRefreshTokens(email);
+        // 사용자 정보 삭제
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        userRepository.delete(user);
     }
 }
