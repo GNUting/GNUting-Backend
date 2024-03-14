@@ -70,7 +70,7 @@ public class UserController {
      */
     @PostMapping("/signup")
     @Operation(summary = "회원가입 API", description = "사용자의 정보를 바탕으로 회원가입을 진행합니다.")
-    public ResponseEntity<ApiResponse<UserSignupResponseDto>> signup(
+    public ResponseEntity<ApiResponse<TokenResponseDto>> signup(
             @RequestParam("email") @Parameter(description = "경상국립대학교 이메일") String email,
             @RequestParam("password") @Parameter(description = "비밀번호") String password,
             @RequestParam("name") @Parameter(description = "이름") String name,
@@ -93,16 +93,11 @@ public class UserController {
                 email, password, name, phoneNumber, gender, birthDate, nickname, department, studentId, mediaLink,
                 UserRole.ROLE_USER, userSelfIntroduction);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        UserSignupResponseDto user = userService.signup(userSignupRequestDto);
-        String token = tokenProvider.createToken(user.getEmail(), user.getUserRole());
+        TokenResponseDto response = userService.signup(userSignupRequestDto);
 
-        httpHeaders.add("Authorization", "Bearer " + token);
-
-        ApiResponse<UserSignupResponseDto> apiResponse = ApiResponse.onSuccess(user);
+        ApiResponse<TokenResponseDto> apiResponse = ApiResponse.onSuccess(response);
 
         return ResponseEntity.ok()
-                .headers(httpHeaders)
                 .body(apiResponse);
     }
 

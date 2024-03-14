@@ -33,7 +33,7 @@ public class UserService {
      * @return
      */
     @Transactional
-    public UserSignupResponseDto signup(UserSignupRequestDto userSignupRequestDto) {
+    public TokenResponseDto signup(UserSignupRequestDto userSignupRequestDto) {
         // 이메일로 이미 가입된 사용자가 있는지 확인
         userRepository.findByEmail(userSignupRequestDto.getEmail())
                 .ifPresent(user -> {
@@ -59,20 +59,13 @@ public class UserService {
         User user = userSignupRequestDto.toEntity();
         userRepository.save(user);
 
-        return UserSignupResponseDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .name(user.getName())
-                .phoneNumber(user.getPhoneNumber())
-                .gender(user.getGender())
-                .birthDate(user.getBirthDate())
-                .nickname(user.getNickname())
-                .department(user.getDepartment())
-                .studentId(user.getStudentId())
-                .profileImage(user.getProfileImage())
-                .userRole(user.getUserRole())
-                .userSelfIntroduction(user.getUserSelfIntroduction())
-                .build();
+        String accessToken = issueAccessToken(user);
+        String refreshToken = issueRefreshToken();
+
+        refreshTokenService.saveToken(user.getEmail(), refreshToken, accessToken);
+
+
+        return new TokenResponseDto(accessToken, refreshToken);
     }
 
     /**
@@ -182,6 +175,7 @@ public class UserService {
         return Token.createRefreshToken();
     }
 
+    @Transactional
     public ReIssueTokenResponseDto reissueAccessToken(String refreshToken) {
         User user = refreshTokenService.getUserByRefreshToken(refreshToken);
         Token token = refreshTokenService.findTokenByRefreshToken(refreshToken);
