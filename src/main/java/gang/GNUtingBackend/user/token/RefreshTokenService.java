@@ -6,6 +6,7 @@ import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.Token;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.repository.UserRepository;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -53,6 +54,19 @@ public class RefreshTokenService {
 
     public void updateToken(Token token) {
         redisTemplate.opsForValue().set(token.getRefreshToken(), token, token.getExpiration(), TimeUnit.MILLISECONDS);
+    }
+
+    public void logout(String refreshToken) {
+        redisTemplate.delete(refreshToken);
+    }
+
+    public void deleteUserRefreshTokens(String email) {
+        // 사용자 이메일을 기반으로 저장된 모든 Refresh Token 키를 조회
+        Set<String> refreshTokens = redisTemplate.keys("*" + email + "*");
+        if (refreshTokens != null && !refreshTokens.isEmpty()) {
+            // 조회된 모든 Refresh Token 삭제
+            redisTemplate.delete(refreshTokens);
+        }
     }
 
 }

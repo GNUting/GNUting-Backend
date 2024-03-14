@@ -5,20 +5,15 @@ import gang.GNUtingBackend.board.dto.BoardResponseDto;
 import gang.GNUtingBackend.board.dto.BoardSearchResultDto;
 import gang.GNUtingBackend.board.dto.BoardShowAllResponseDto;
 import gang.GNUtingBackend.board.service.BoardService;
-import gang.GNUtingBackend.board.entity.Board;
-
 import gang.GNUtingBackend.response.ApiResponse;
-import gang.GNUtingBackend.user.dto.UserSearchRequestDto;
 import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
 import gang.GNUtingBackend.user.token.TokenProvider;
-import io.opencensus.metrics.export.Summary;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

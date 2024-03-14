@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,7 +45,7 @@ public class UserController {
     private final ImageService imageService;
 
     /**
-     * 사용자 로그인 요청을 처리하고, 로그인이 성공했을 때 응답 헤더에 토큰을 추가하여 반환한다.
+     * 사용자 로그인 요청을 처리하고, 로그인이 성공했을 때 토큰을 반환한다.
      *
      * @param userLoginRequestDto
      * @return
@@ -63,7 +64,7 @@ public class UserController {
     }
 
     /**
-     * 사용자의 가입 요청을 처리하고, 가입이 성공했을 때, 응답 헤더에 토큰을 추가하여 반환한다.
+     * 사용자의 가입 요청을 처리하고, 가입이 성공했을 때, 토큰을 반환한다.
      *
      * @param
      * @return
@@ -163,6 +164,33 @@ public class UserController {
 
         return ResponseEntity.ok()
                 .body(apiResponse);
+    }
+
+    /**
+     * 로그아웃 API
+     * @param refreshToken 로그아웃 요청에 사용된 리프레시 토큰
+     * @return 로그아웃 성공 메시지
+     */
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃 API", description = "사용자 로그아웃을 처리합니다.")
+    public ResponseEntity<ApiResponse<String>> logout(@RequestBody String refreshToken) {
+        userService.logout(refreshToken);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess("정상적으로 로그아웃 처리 되었습니다."));
+    }
+
+    /**
+     * 회원 탈퇴 API
+     * @param token 회원 탈퇴 요청에 사용된 액세스 토큰
+     * @return 회원 탈퇴 성공 메시지
+     */
+    @DeleteMapping("/deleteUser")
+    @Operation(summary = "회원 탈퇴 API", description = "사용자 회원 탈퇴를 처리합니다.")
+    public ResponseEntity<ApiResponse<String>> deleteUser(@RequestHeader("Authorization") String token) {
+        String email = tokenProvider.getUserEmail(token.substring(7));
+        userService.deleteUser(email);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess("정상적으로 회원 탈퇴 되었습니다."));
     }
 }
 

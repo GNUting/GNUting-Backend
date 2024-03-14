@@ -189,4 +189,27 @@ public class UserService {
         }
         throw new TokenHandler(ErrorStatus.NOT_EXPIRED_ACCESS_TOKEN);
     }
+
+    /**
+     * 로그아웃 로직
+     * @param refreshToken 로그아웃 요청한 사용자의 리프레시 토큰
+     */
+    @Transactional
+    public void logout(String refreshToken) {
+        refreshTokenService.logout(refreshToken);
+    }
+
+    /**
+     * 회원 탈퇴 로직
+     * @param email 탈퇴 요청한 사용자의 이메일
+     */
+    @Transactional
+    public void deleteUser(String email) {
+        // 사용자의 모든 리프레시 토큰 삭제
+        refreshTokenService.deleteUserRefreshTokens(email);
+        // 사용자 정보 삭제
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        userRepository.delete(user);
+    }
 }
