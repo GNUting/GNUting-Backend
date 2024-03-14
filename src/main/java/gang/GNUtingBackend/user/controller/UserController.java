@@ -11,17 +11,16 @@ import gang.GNUtingBackend.user.dto.UserLoginRequestDto;
 import gang.GNUtingBackend.user.dto.UserLoginResponseDto;
 import gang.GNUtingBackend.user.dto.UserSignupRequestDto;
 import gang.GNUtingBackend.user.dto.UserSignupResponseDto;
+import gang.GNUtingBackend.user.dto.token.TokenResponseDto;
 import gang.GNUtingBackend.user.service.UserService;
 import gang.GNUtingBackend.user.token.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import java.io.IOException;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -50,19 +49,14 @@ public class UserController {
      */
     @PostMapping("/login")
     @Operation(summary = "로그인 API", description = "이메일과 비밀번호를 사용하여 로그인합니다.")
-    public ResponseEntity<ApiResponse<UserLoginResponseDto>> login(
+    public ResponseEntity<ApiResponse<TokenResponseDto>> login(
             @RequestBody UserLoginRequestDto userLoginRequestDto) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        UserLoginResponseDto userLoginResponseDto = userService.login(userLoginRequestDto.getEmail(),
+        TokenResponseDto response = userService.login(userLoginRequestDto.getEmail(),
                 userLoginRequestDto.getPassword());
-        String token = tokenProvider.createToken(userLoginResponseDto.getEmail(), userLoginResponseDto.getUserRole());
 
-        httpHeaders.add("Authorization", "Bearer " + token);
-
-        ApiResponse<UserLoginResponseDto> apiResponse = ApiResponse.onSuccess(userLoginResponseDto);
+        ApiResponse<TokenResponseDto> apiResponse = ApiResponse.onSuccess(response);
 
         return ResponseEntity.ok()
-                .headers(httpHeaders)
                 .body(apiResponse);
     }
 

@@ -6,19 +6,15 @@ import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.Token;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.dto.UserDetailResponseDto;
-import gang.GNUtingBackend.user.dto.UserLoginResponseDto;
 import gang.GNUtingBackend.user.dto.UserSignupRequestDto;
 import gang.GNUtingBackend.user.dto.UserSignupResponseDto;
-import gang.GNUtingBackend.user.dto.UserUpdateRequestDto;
 import gang.GNUtingBackend.user.dto.token.ReIssueTokenResponseDto;
+import gang.GNUtingBackend.user.dto.token.TokenResponseDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
 import gang.GNUtingBackend.user.token.RefreshTokenService;
 import gang.GNUtingBackend.user.token.TokenProvider;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,30 +82,23 @@ public class UserService {
      * @return UserLoginResponseDto
      */
     @Transactional(readOnly = true)
-    public UserLoginResponseDto login(String email, String password) {
+    public TokenResponseDto login(String email, String password) {
         // 이메일로 사용자 정보를 조회
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
-        String accessToken = issueAccessToken(user);
-        String refreshToken = issueRefreshToken();
-
-        refreshTokenService.saveToken(user.getEmail(), refreshToken, accessToken);
 
         // 입력한 비밀번호를 암호화된 비밀번호와 비교
         if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
             throw new UserHandler(ErrorStatus.PASSWORD_NOT_MATCH);
         }
 
-        return UserLoginResponseDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .name(user.getName())
-                .department(user.getDepartment())
-                .studentId(user.getStudentId())
-                .userRole(user.getUserRole())
-                .createDate(user.getCreateDate())
-                .build();
+        String accessToken = issueAccessToken(user);
+        String refreshToken = issueRefreshToken();
+
+        refreshTokenService.saveToken(user.getEmail(), refreshToken, accessToken);
+
+
+        return new TokenResponseDto(accessToken, refreshToken);
     }
 
     /**
