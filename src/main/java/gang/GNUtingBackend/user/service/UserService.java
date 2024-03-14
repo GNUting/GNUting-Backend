@@ -182,7 +182,7 @@ public class UserService {
         return Token.createRefreshToken();
     }
 
-    private ReIssueTokenResponseDto reissueAccessToken(String refreshToken) {
+    public ReIssueTokenResponseDto reissueAccessToken(String refreshToken) {
         User user = refreshTokenService.getUserByRefreshToken(refreshToken);
         Token token = refreshTokenService.findTokenByRefreshToken(refreshToken);
         String oldAccessToken = token.getAccessToken();

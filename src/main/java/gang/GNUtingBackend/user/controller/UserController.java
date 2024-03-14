@@ -11,6 +11,8 @@ import gang.GNUtingBackend.user.dto.UserLoginRequestDto;
 import gang.GNUtingBackend.user.dto.UserLoginResponseDto;
 import gang.GNUtingBackend.user.dto.UserSignupRequestDto;
 import gang.GNUtingBackend.user.dto.UserSignupResponseDto;
+import gang.GNUtingBackend.user.dto.token.ReIssueTokenRequestDto;
+import gang.GNUtingBackend.user.dto.token.ReIssueTokenResponseDto;
 import gang.GNUtingBackend.user.dto.token.TokenResponseDto;
 import gang.GNUtingBackend.user.service.UserService;
 import gang.GNUtingBackend.user.token.TokenProvider;
@@ -151,6 +153,18 @@ public class UserController {
         }
 
         ApiResponse<UserDetailResponseDto> apiResponse = ApiResponse.onSuccess(userService.userInfoUpdate(mediaLink, nickname, password, department, userSelfIntroduction, token));
+
+        return ResponseEntity.ok()
+                .body(apiResponse);
+    }
+
+    @PostMapping("/reIssueAccessToken")
+    @Operation(summary = "토큰 재발급 API", description = "refresh 토큰으로 accessToken을 재발급합니다.")
+    public ResponseEntity<ApiResponse<ReIssueTokenResponseDto>> reIssueAccessToken(@RequestBody ReIssueTokenRequestDto reIssueTokenRequestDto) {
+        ReIssueTokenResponseDto response = userService.reissueAccessToken(
+                reIssueTokenRequestDto.getRefreshToken());
+
+        ApiResponse<ReIssueTokenResponseDto> apiResponse = ApiResponse.onSuccess(response);
 
         return ResponseEntity.ok()
                 .body(apiResponse);
