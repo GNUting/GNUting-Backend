@@ -15,6 +15,7 @@ import gang.GNUtingBackend.board.repository.SearchBoardRepositoryImpl;
 import gang.GNUtingBackend.exception.UserAlreadyException;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
+import gang.GNUtingBackend.notification.service.FCMService;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.domain.enums.Gender;
@@ -29,6 +30,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +47,7 @@ public class BoardService {
     private final BoardApplyLeaderRepository boardApplyLeaderRepository;
     private final ApplyUsersRepository applyUsersRepository;
     private final SearchBoardRepositoryImpl searchBoardRepository;
+    private final FCMService fcmService;
 
     /**
      * 게시글 모두 보기
@@ -318,6 +321,12 @@ public class BoardService {
         }
 //        BoardApplyLeaderDto boardApplyLeaderDto=new BoardApplyLeaderDto();
 //        boardApplyLeaderRepository.save(boardApplyLeaderDto.toEntity(board,user));
+       try {
+           fcmService.sendMessageTo(board.getUserId(), "과팅 신청이 왔습니다", user.getDepartment() + "학과에서 과팅이 신청되었습니다");
+       }
+       catch (IOException e){
+           System.out.println("에러발생");
+       }
 
         // + 작성자에게 알림 날려줘야함 추가 알림코드 구현해야함
         return board.getId() + "게시물에 " + nickname + "유저들 신청완료";

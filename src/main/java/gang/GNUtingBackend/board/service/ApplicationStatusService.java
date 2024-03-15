@@ -12,6 +12,7 @@ import gang.GNUtingBackend.board.repository.BoardApplyLeaderRepository;
 import gang.GNUtingBackend.board.repository.BoardParticipantRepository;
 import gang.GNUtingBackend.board.repository.BoardRepository;
 import gang.GNUtingBackend.exception.handler.UserHandler;
+import gang.GNUtingBackend.notification.service.FCMService;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
@@ -32,6 +33,7 @@ public class ApplicationStatusService {
     private final UserRepository userRepository;
     private final BoardService boardService;
     private final BoardApplyLeaderRepository boardApplyLeaderRepository;
+
 
     /*
   내글에 신청한 현황보기 s
