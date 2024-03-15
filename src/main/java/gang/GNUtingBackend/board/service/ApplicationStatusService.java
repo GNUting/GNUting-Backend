@@ -13,6 +13,7 @@ import gang.GNUtingBackend.board.repository.BoardParticipantRepository;
 import gang.GNUtingBackend.board.repository.BoardRepository;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.service.FCMService;
+import gang.GNUtingBackend.notification.service.UserNotificationService;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
@@ -33,6 +34,8 @@ public class ApplicationStatusService {
     private final UserRepository userRepository;
     private final BoardService boardService;
     private final BoardApplyLeaderRepository boardApplyLeaderRepository;
+    private final FCMService fcmService;
+
 
 
     /*
@@ -149,9 +152,11 @@ public class ApplicationStatusService {
         }
         boardApplyLeader.setStatus(ApplyStatus.거절);
         boardApplyLeaderRepository.save(boardApplyLeader);
+        //fcmService.sendMessageTo(boardApplyLeader.getBoardId().getUserId(),"과팅신청자가 취소하였습니다",user.getDepartment()+"학과의 과팅이 취소되었습니다");
 
         return boardApplyLeader.getId()+"번 신청이 거절되었습니다.";
     }
+
 
 
     //이건 반환 클래스를 사용하지않고 리스트형으로 유저들만 반환하는 메소드

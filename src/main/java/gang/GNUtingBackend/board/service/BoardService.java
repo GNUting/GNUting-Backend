@@ -16,6 +16,7 @@ import gang.GNUtingBackend.exception.UserAlreadyException;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.service.FCMService;
+import gang.GNUtingBackend.notification.service.UserNotificationService;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.domain.enums.Gender;
@@ -48,6 +49,7 @@ public class BoardService {
     private final ApplyUsersRepository applyUsersRepository;
     private final SearchBoardRepositoryImpl searchBoardRepository;
     private final FCMService fcmService;
+
 
     /**
      * 게시글 모두 보기
@@ -166,36 +168,6 @@ public class BoardService {
      * @param email
      * @return 수정되었다는 맨트
      */
-//    @Transactional
-//    public String edit(Long id, BoardRequestDto boardRequestDto, String email) {
-//        User user = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-//        Board board = boardRepository.findById(id)
-//                .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
-//        if (board.getUserId().getId() == user.getId()) {
-//            BoardRequestDto changeBoard = BoardRequestDto.toDto(board);
-//            changeBoard.setTitle(boardRequestDto.getTitle());
-//            changeBoard.setDetail(boardRequestDto.getDetail());
-//            changeBoard.setInUser(boardRequestDto.getInUser());
-//            changeBoard.setUserId(user);
-//            Board changedBoard = changeBoard.toEntity();
-//            changedBoard.setCreatedDate(board.getCreatedDate());//기존 게시글생산시간 유지
-//            boardRepository.save(changedBoard);
-//
-//            List<BoardParticipant> users = boardParticipantRepository.findByBoardId(board);
-//            boardParticipantRepository.deleteAll(users);
-//
-//            for (User member : changeBoard.getInUser()) {
-//                BoardParticipantDto boardParticipantDto = BoardParticipantDto.toDto(changedBoard, member);
-//                BoardParticipant boardParticipantSave = boardParticipantDto.toEntity();
-//                boardParticipantRepository.save(boardParticipantSave);
-//            }
-//            return board.getId() + "번 게시글이 수정되었습니다";
-//        }
-//        else{
-//            throw new BoardHandler(ErrorStatus.USER_NOT_FOUND_IN_BOARD);
-//        }
-//    }
 
     @Transactional
     public String edit(Long id, BoardRequestDto boardRequestDto, String email) {
@@ -258,20 +230,6 @@ public class BoardService {
         if (board.getInUserCount() != userSearchResponsetDto.size()) {
             throw new BoardHandler(ErrorStatus.INCORRECT_NUMBER_OF_PEOPLE);
         }
-
-        //게시글에 이미 신청한 유저가 있을경우 신청이 안되게 구현
-        //중복검사하는 건데 이쁘게 코드수정 필요 ㅠㅠ...
-//        for (UserSearchRequestDto userApply : userSearchRequestDto) {
-//            User member = userRepository.findById(userApply.getId())
-//                    .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을수 없습니다"));
-//            for (BoardApplyLeader boardApplyAll : boardApplyUsers) {
-//                for (ApplyUsers applyUsers:boardApplyAll.getApplyUsers()) {
-//                    if(applyUsers.getUserId()==member){
-//                        throw new BoardHandler(ErrorStatus.ALREADY_IN_USER);
-//                    }
-//                }
-//            }
-//        }
         for (UserSearchResponseDto userApply : userSearchResponsetDto) {
             User member = userRepository.findById(userApply.getId())
                     .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -286,7 +244,6 @@ public class BoardService {
             if(userApply.getGender()==board.getGender()) {
                 throw new BoardHandler(ErrorStatus.NOT_MATCH_GENDER);
             }
-
             if(member==user){
                 boardApplyUserInLeader=true;
             }
@@ -294,14 +251,6 @@ public class BoardService {
         if(boardApplyUserInLeader==false){
             throw new BoardHandler(ErrorStatus.LEADER_NOT_IN_APPLYUSER);
         }
-
-        // 만약 overlap변수에 글이 1개라도 있을시(유저가1명이라도 있을시) 이미신청한 유저
-        //이미신청한 유저이름들을 같이 넘겨주게.. 고쳐주세요
-//        if (overlap.length() > 1) {
-//            //String message=overlap+"유저가 이미 신청했습니다";
-//            throw new BoardHandler(ErrorStatus.ALREADY_IN_USER);
-//        }
-
         BoardApplyLeaderDto boardApplyLeaderDto=new BoardApplyLeaderDto();
         boardApplyLeaderDto.setBoardId(board);
         boardApplyLeaderDto.setLeaderId(user);
@@ -315,20 +264,10 @@ public class BoardService {
             ApplyUsersDto applyUsers=new ApplyUsersDto();
             applyUsers.setBoardApplyLeaderId(savedBoardApplyLeader);
             applyUsers.setUserId(member);
-
             applyUsersRepository.save(applyUsers.toEntity());
             nickname = nickname + " " + member.getNickname();
         }
-//        BoardApplyLeaderDto boardApplyLeaderDto=new BoardApplyLeaderDto();
-//        boardApplyLeaderRepository.save(boardApplyLeaderDto.toEntity(board,user));
-       try {
-           fcmService.sendMessageTo(board.getUserId(), "과팅 신청이 왔습니다", user.getDepartment() + "학과에서 과팅이 신청되었습니다");
-       }
-       catch (IOException e){
-           System.out.println("에러발생");
-       }
-
-        // + 작성자에게 알림 날려줘야함 추가 알림코드 구현해야함
+        fcmService.sendMessageTo(board.getUserId(), "과팅 신청이 왔습니다",user.getDepartment() + "학과에서 과팅이 신청되었습니다");
         return board.getId() + "게시물에 " + nickname + "유저들 신청완료";
     }
 

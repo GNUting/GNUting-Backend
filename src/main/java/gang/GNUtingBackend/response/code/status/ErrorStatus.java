@@ -50,7 +50,13 @@ public enum ErrorStatus implements BaseErrorCode {
     NOT_EXPIRED_ACCESS_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4000", "만료되지 않은 Access 토큰입니다."),
     INVALID_JWT_SIGNATURE(HttpStatus.UNAUTHORIZED, "TOKEN4001", "잘못된 JWT 서명입니다."),
     UNSUPPORTED_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "지원되지 않는 JWT 토큰입니다."),
-    INVALID_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "JWT 토큰이 잘못되었습니다.");
+    INVALID_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "JWT 토큰이 잘못되었습니다."),
+
+    // notification 관련 에러
+    NOT_FOUND_FIREBASE_TOKEN(HttpStatus.BAD_REQUEST,"FIREBASE4001","신청하는 게시판 유저의 파이어베이스 토큰이 없습니다"),
+    FIREBASE_ERROR(HttpStatus.BAD_REQUEST,"FIREBASE5000","파이어베이스 에러 관리자에게 문의하세요."),
+    JSON_FILE_ROAD_FAIL(HttpStatus.BAD_REQUEST,"FIREBASE5001","서버의 JSON파일 로드 실패"),
+    INPUT_ERROR(HttpStatus.BAD_REQUEST,"FIREBASE5002","파일 입출 작업 에러");
 
 
     private final HttpStatus httpStatus;

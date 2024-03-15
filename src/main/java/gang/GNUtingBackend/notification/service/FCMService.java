@@ -8,6 +8,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.google.gson.JsonParseException;
+import gang.GNUtingBackend.board.entity.Board;
+import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.dto.FCMTokenSaveDto;
 import gang.GNUtingBackend.notification.dto.FcmMessage;
@@ -20,11 +22,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.apache.http.HttpHeaders;
+import org.aspectj.lang.annotation.Around;
+import org.hibernate.annotations.common.util.impl.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 
 @Service
@@ -34,33 +39,44 @@ public class FCMService {
     private final UserRepository userRepository;
     private final FCMRepository fcmRepository;
     private final ObjectMapper objectMapper;
-
+    private final UserNotificationService userNotificationService;
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/"+"1036172493674/messages:send";
-    public void sendMessageTo(User findId, String title, String body) throws IOException {
-
-        //board에 신청했다고 알림보낼때
-
-        System.out.println(findId.getId());
-        FCM fcmToken=fcmRepository.findByUserId(findId);
 
 
-        String message = makeMessage(fcmToken.getFcmToken(), title, body);
+    public void sendMessageTo(User findId, String title, String body) {
+        try {
+            //board에 신청했다고 알림보낼때
+            FCM fcmToken = fcmRepository.findByUserId(findId);
+            String message = makeMessage(fcmToken.getFcmToken(), title, body);
 
 
-        OkHttpClient client = new OkHttpClient();
-        RequestBody requestBody = RequestBody.create(message,
-                MediaType.get("application/json; charset=utf-8"));
-        Request request = new Request.Builder()
-                .url(API_URL)
-                .post(requestBody)
-                .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
-                .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
-                .build();
+            OkHttpClient client = new OkHttpClient();
+            RequestBody requestBody = RequestBody.create(message,
+                    MediaType.get("application/json; charset=utf-8"));
+            Request request = new Request.Builder()
+                    .url(API_URL)
+                    .post(requestBody)
+                    .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                    .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
+                    .build();
 
-        Response response = client.newCall(request).execute();
+            Response response = client.newCall(request).execute();
 
-        System.out.println(response.body().string());
-        System.out.println("전송완료");
+            System.out.println(response.body().string());
+            System.out.println("전송완료");
+            userNotificationService.saveNotification(findId,body);
+        } catch (JsonProcessingException e) {
+            throw new BoardHandler(ErrorStatus.JSON_FILE_ROAD_FAIL);
+        }
+        catch (IOException e) {
+            throw new BoardHandler(ErrorStatus.INPUT_ERROR);
+        }
+        catch (NullPointerException e) {
+           throw new BoardHandler(ErrorStatus.NOT_FOUND_FIREBASE_TOKEN);
+       } catch (Exception e) {
+           throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
+       }
+
     }
 
     private String makeMessage(String targetToken, String title, String body) throws JsonParseException, JsonProcessingException {
