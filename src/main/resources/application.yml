@@ -45,11 +45,12 @@ spring:
         bucket: gnuting-bucket
       region:
         static: ap-northeast-2
+        auto: false
       stack:
         auto: false
       credentials:
-        access-key: AKIA4B7AYCMQPHHTE7OW
-        secret-key: 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
+        access-key: AKIA4B7AYCMQGPLIUT22
+        secret-key: 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
 #    gcp:
 #      storage:
 #        credentials:
