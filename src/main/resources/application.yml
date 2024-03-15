@@ -49,8 +49,8 @@ spring:
       stack:
         auto: false
       credentials:
-        access-key: AKIA4B7AYCMQGPLIUT22
-        secret-key: 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
+        access-key: AKIA4B7AYCMQPHHTE7OW
+        secret-key: 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
 
   redis:
     host: localhost
