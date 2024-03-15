@@ -40,38 +40,21 @@ spring:
         millis: 2 * 60 * 1000
 
   cloud:
-    gcp:
-      storage:
-        credentials:
-          location: ./charismatic-age-414606-08978a3bdbe0.json
-    project-id: charismatic-age-414606
-    bucket: gnuting-develop-bucket
+    aws:
+      s3:
+        bucket: gnuting-bucket
+      region:
+        static: ap-northeast-2
+        auto: false
+      stack:
+        auto: false
+      credentials:
+        access-key: AKIA4B7AYCMQPHHTE7OW
+        secret-key: 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
 
   redis:
     host: localhost
     port: 6379
-
-app:
-  firebase-configuration-file: ./charismatic-age-414606-08978a3bdbe0.json
-  firebase-bucket: gnuting-develop-bucket
-
-#spring:
-#  datasource:
-#    driver-class-name: org.h2.Driver
-#    url: jdbc:h2:mem:testdb
-#    username: sa
-#    password:
-#
-#  h2:
-#    console:
-#      enabled: true
-#      path: /h2-console
-#    database:
-#      platform: h2
-#      console:
-#        settings:
-#          web-allow-others: false
-
 
 jwt:
   header: Authorization

@@ -1,16 +1,14 @@
 package gang.GNUtingBackend.user.controller;
 
 import gang.GNUtingBackend.exception.handler.UserHandler;
-import gang.GNUtingBackend.image.service.ImageService;
+import gang.GNUtingBackend.image.service.S3Uploader;
 import gang.GNUtingBackend.response.ApiResponse;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.enums.Gender;
 import gang.GNUtingBackend.user.domain.enums.UserRole;
 import gang.GNUtingBackend.user.dto.UserDetailResponseDto;
 import gang.GNUtingBackend.user.dto.UserLoginRequestDto;
-import gang.GNUtingBackend.user.dto.UserLoginResponseDto;
 import gang.GNUtingBackend.user.dto.UserSignupRequestDto;
-import gang.GNUtingBackend.user.dto.UserSignupResponseDto;
 import gang.GNUtingBackend.user.dto.token.ReIssueTokenRequestDto;
 import gang.GNUtingBackend.user.dto.token.ReIssueTokenResponseDto;
 import gang.GNUtingBackend.user.dto.token.TokenResponseDto;
@@ -22,7 +20,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,7 +39,7 @@ public class UserController {
 
     private final TokenProvider tokenProvider;
     private final UserService userService;
-    private final ImageService imageService;
+    private final S3Uploader s3Uploader;
 
     /**
      * 사용자 로그인 요청을 처리하고, 로그인이 성공했을 때 토큰을 반환한다.
@@ -87,7 +84,7 @@ public class UserController {
 
         String mediaLink = null;
         if (profileImage != null && !profileImage.isEmpty()) {
-            mediaLink = imageService.uploadProfileImage(profileImage, email);
+            mediaLink = s3Uploader.uploadProfileImage(profileImage, email);
         }
 
         UserSignupRequestDto userSignupRequestDto = new UserSignupRequestDto(
@@ -145,7 +142,7 @@ public class UserController {
 
         String mediaLink = null;
         if (profileImage != null && !profileImage.isEmpty()) {
-            mediaLink = imageService.uploadProfileImage(profileImage, email);
+            mediaLink = s3Uploader.uploadProfileImage(profileImage, email);
         }
 
         ApiResponse<UserDetailResponseDto> apiResponse = ApiResponse.onSuccess(userService.userInfoUpdate(mediaLink, nickname, password, department, userSelfIntroduction, token));
