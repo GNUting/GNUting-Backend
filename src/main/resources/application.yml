@@ -40,12 +40,22 @@ spring:
         millis: 2 * 60 * 1000
 
   cloud:
-    gcp:
-      storage:
-        credentials:
-          location: ./charismatic-age-414606-08978a3bdbe0.json
-    project-id: charismatic-age-414606
-    bucket: gnuting-develop-bucket
+    aws:
+      s3:
+        bucket: gnuting-bucket
+      region:
+        static: ap-northeast-2
+      stack:
+        auto: false
+      credentials:
+        access-key: AKIA4B7AYCMQPHHTE7OW
+        secret-key: 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
+#    gcp:
+#      storage:
+#        credentials:
+#          location: ./charismatic-age-414606-08978a3bdbe0.json
+#    project-id: charismatic-age-414606
+#    bucket: gnuting-develop-bucket
 
   redis:
     host: localhost
