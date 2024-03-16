@@ -164,7 +164,7 @@ public class UserService {
         }
 
         // 한 줄 소개 길이 검증
-        if (userSelfIntroduction.length() > 30) {
+        if (userSelfIntroduction != null && userSelfIntroduction.length() > 30) {
             throw new UserHandler(ErrorStatus.USER_SELF_INTRODUCTION_LENGTH_EXCEEDED);
         }
 
