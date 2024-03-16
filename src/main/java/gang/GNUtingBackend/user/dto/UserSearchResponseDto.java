@@ -34,7 +34,7 @@ public class UserSearchResponseDto {
                 .department(user.getDepartment())
                 .profileImage(user.getProfileImage())
                 .userRole(user.getUserRole())
-                .studentId(user.getStudentId().substring(2, 4) + "학번")
+                .studentId(user.getStudentId() + "학번")
                 .userSelfIntroduction(user.getUserSelfIntroduction())
                 .build();
     }
