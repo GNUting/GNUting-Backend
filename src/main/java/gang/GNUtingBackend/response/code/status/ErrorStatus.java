@@ -17,12 +17,16 @@ public enum ErrorStatus implements BaseErrorCode {
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
     // User 관련 에러
-    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER4001", "사용자가 없습니다."),
-    NICKNAME_INPUT_NOT_EXIST(HttpStatus.BAD_REQUEST, "USER4002", "닉네임을 입력해주세요"),
-    DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "USER4003", "이미 사용중인 닉네임입니다."),
-    USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "USER4004", "이미 가입된 사용자입니다."),
-    PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "USER4005", "비밀번호가 일치하지 않습니다."),
-    USER_GENDER_NOT_MATCH(HttpStatus.BAD_REQUEST, "USER4001", "사용자가 없습니다. (성별이 일치하지않거나 닉네임이 잘못됐습니다.)"),
+    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER4000", "사용자가 없습니다."),
+    NICKNAME_INPUT_NOT_EXIST(HttpStatus.BAD_REQUEST, "USER4000", "닉네임을 입력해주세요"),
+    DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "USER4000", "이미 사용중인 닉네임입니다."),
+    USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "USER4000", "이미 가입된 사용자입니다."),
+    PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "USER4000", "비밀번호가 일치하지 않습니다."),
+    USER_GENDER_NOT_MATCH(HttpStatus.BAD_REQUEST, "USER4000", "사용자가 없습니다. (성별이 일치하지않거나 닉네임이 잘못됐습니다.)"),
+    INVALID_STUDENT_ID(HttpStatus.BAD_REQUEST, "USER4000", "학번은 숫자 2자리로 입력해주세요."),
+    NICKNAME_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "USER4000", "닉네임은 최대 10자까지 가능합니다."),
+    USER_SELF_INTRODUCTION_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "USER4000", "한 줄 소개는 최대 30자까지 가능합니다."),
+
     // Board 관련 에러
     BOARD_NOT_FOUND(HttpStatus.BAD_REQUEST,"BOARD5001", "게시글이 없습니다"),
     USER_NOT_FOUND_IN_BOARD(HttpStatus.BAD_REQUEST,"BOARD5002", "권한이없습니다.(게시글을 작성한 유저가 아닙니다)"),

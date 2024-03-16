@@ -122,19 +122,17 @@ public class UserController {
      * @param token
      * @param profileImage
      * @param nickname
-     * @param password
      * @param department
      * @param userSelfIntroduction
      * @return
      * @throws IOException
      */
     @PatchMapping("/update")
-    @Operation(summary = "사용자 프로필 수정 API", description = "프로필 이미지, 닉네임, 비밀번호, 학과, 한 줄 소개를 수정합니다.")
+    @Operation(summary = "사용자 프로필 수정 API", description = "프로필 이미지, 닉네임, 학과, 한 줄 소개를 수정합니다.")
     public ResponseEntity<ApiResponse<UserDetailResponseDto>> userInfoUpdate(
             @RequestHeader("Authorization") String token,
             @RequestParam(value = "profileImage", required = false) @Parameter(description = "프로필 이미지") MultipartFile profileImage,
             @RequestParam("nickname") @Parameter(description = "닉네임") String nickname,
-            @RequestParam("password") @Parameter(description = "비밀번호") String password,
             @RequestParam("department") @Parameter(description = "학과") String department,
             @RequestParam("userSelfIntroduction") @Parameter(description = "한 줄 소개") String userSelfIntroduction) throws IOException {
         token = token.substring(7);
@@ -145,8 +143,8 @@ public class UserController {
             mediaLink = s3Uploader.uploadProfileImage(profileImage, email);
         }
 
-        ApiResponse<UserDetailResponseDto> apiResponse = ApiResponse.onSuccess(userService.userInfoUpdate(mediaLink, nickname, password, department, userSelfIntroduction, token));
 
+        ApiResponse<UserDetailResponseDto> apiResponse = ApiResponse.onSuccess(userService.userInfoUpdate(mediaLink, nickname, department, userSelfIntroduction, token));
         return ResponseEntity.ok()
                 .body(apiResponse);
     }

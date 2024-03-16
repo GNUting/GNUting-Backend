@@ -13,6 +13,7 @@ import gang.GNUtingBackend.user.dto.token.TokenResponseDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
 import gang.GNUtingBackend.user.token.RefreshTokenService;
 import gang.GNUtingBackend.user.token.TokenProvider;
+import jdk.jshell.spi.ExecutionControl.UserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,18 @@ public class UserService {
                     throw new UserHandler(ErrorStatus.DUPLICATE_NICKNAME);
                 });
 
+        if (!userSignupRequestDto.getStudentId().matches("^\\d{2}$")) {
+            throw new UserHandler(ErrorStatus.INVALID_STUDENT_ID);
+        }
+
+        if (userSignupRequestDto.getNickname().length() > 10) {
+            throw new UserHandler(ErrorStatus.NICKNAME_LENGTH_EXCEEDED);
+        }
+
+        if (userSignupRequestDto.getUserSelfIntroduction().length() > 30) {
+            throw new UserHandler(ErrorStatus.USER_SELF_INTRODUCTION_LENGTH_EXCEEDED);
+        }
+
         // 사용자가 존재하지 않으면 비밀번호를 암호화하여 저장
         String encodedPassword = bCryptPasswordEncoder.encode(userSignupRequestDto.getPassword());
         userSignupRequestDto.setPassword(encodedPassword);
@@ -63,7 +76,6 @@ public class UserService {
         String refreshToken = issueRefreshToken();
 
         refreshTokenService.saveToken(user.getEmail(), refreshToken, accessToken);
-
 
         return new TokenResponseDto(accessToken, refreshToken);
     }
@@ -135,21 +147,29 @@ public class UserService {
      * 사용자의 정보를 업데이트 한다.
      * @param profileImage
      * @param nickname
-     * @param password
      * @param department
      * @param userSelfIntroduction
      * @param token
      * @return
      */
     @Transactional
-    public UserDetailResponseDto userInfoUpdate(String profileImage, String nickname, String password, String department, String userSelfIntroduction, String token) {
+    public UserDetailResponseDto userInfoUpdate(String profileImage, String nickname, String department, String userSelfIntroduction, String token) {
         String email = tokenProvider.getUserEmail(token);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        String encodedPassword = bCryptPasswordEncoder.encode(password);
+        // 닉네임 길이 검증
+        if (nickname.length() > 10) {
+            throw new UserHandler(ErrorStatus.NICKNAME_LENGTH_EXCEEDED);
+        }
 
-        user.update(profileImage, nickname, encodedPassword, department, userSelfIntroduction);
+        // 한 줄 소개 길이 검증
+        if (userSelfIntroduction.length() > 30) {
+            throw new UserHandler(ErrorStatus.USER_SELF_INTRODUCTION_LENGTH_EXCEEDED);
+        }
+
+
+        user.update(profileImage, nickname, department, userSelfIntroduction);
 
         return UserDetailResponseDto.builder()
                 .id(user.getId())
