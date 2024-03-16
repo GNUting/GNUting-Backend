@@ -49,8 +49,8 @@ spring:
       stack:
         auto: false
       credentials:
-        access-key: AKIA4B7AYCMQPHHTE7OW
-        secret-key: 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
+        access-key: ${S3_ACCESS_KEY}
+        secret-key: ${S3_SECRET_KEY}
 
   redis:
     host: localhost
