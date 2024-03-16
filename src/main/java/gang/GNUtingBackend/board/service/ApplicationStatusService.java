@@ -11,6 +11,7 @@ import gang.GNUtingBackend.board.entity.enums.ApplyStatus;
 import gang.GNUtingBackend.board.repository.BoardApplyLeaderRepository;
 import gang.GNUtingBackend.board.repository.BoardParticipantRepository;
 import gang.GNUtingBackend.board.repository.BoardRepository;
+import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.service.FCMService;
 import gang.GNUtingBackend.notification.service.UserNotificationService;
@@ -155,6 +156,19 @@ public class ApplicationStatusService {
         //fcmService.sendMessageTo(boardApplyLeader.getBoardId().getUserId(),"과팅신청자가 취소하였습니다",user.getDepartment()+"학과의 과팅이 취소되었습니다");
 
         return boardApplyLeader.getId()+"번 신청이 거절되었습니다.";
+    }
+    public String cancel(Long id, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
+        BoardApplyLeader boardApplyLeader = boardApplyLeaderRepository.findByLeaderIdAndBoardId(user, board);
+        if (boardApplyLeader == null) {
+            throw new BoardHandler(ErrorStatus.USER_NOT_APPLY);
+        }
+        boardApplyLeaderRepository.delete(boardApplyLeader);
+        fcmService.sendMessageTo(board.getUserId(), "과팅신청 취소", user.getDepartment() + " 신청자가 과팅신청을 취소했습니다");
+        return board.getUserId().getDepartment() + "학과 신청이 취소되었습니다.";
     }
 
 
