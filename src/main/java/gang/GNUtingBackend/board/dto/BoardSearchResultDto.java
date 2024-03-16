@@ -24,6 +24,6 @@ public class BoardSearchResultDto {
         this.boardId = boardId;
         this.title = title;
         this.department = department;
-        this.studentId = studentId.substring(2, 4) + "학번";
+        this.studentId = studentId + "학번";
     }
 }
