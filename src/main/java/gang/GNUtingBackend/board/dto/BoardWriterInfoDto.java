@@ -18,7 +18,7 @@ public class BoardWriterInfoDto {
        return BoardWriterInfoDto.builder()
                 .department(user.getDepartment())
                 .nickname(user.getNickname())
-                .studentId(user.getStudentId().substring(2,4)+"학번")
+                .studentId(user.getStudentId()+"학번")
                 .build();
     }
 

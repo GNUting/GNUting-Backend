@@ -23,7 +23,7 @@ public class ApplicationStatusController {
 
 
     //신청 받은 현황
-    @GetMapping("board/applications/receivedstate")
+    @GetMapping("/board/applications/receivedstate")
     @Operation(summary = "과팅 신청받은 현황 API", description = "내가 작성한 글에 과팅신청을 받은 현황을 표시합니다.")
     public ResponseEntity<?> receivedState(@RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
@@ -33,7 +33,7 @@ public class ApplicationStatusController {
     }
 
     //내가 신청한 현황
-    @GetMapping("board/applications/applystate")
+    @GetMapping("/board/applications/applystate")
     @Operation(summary = "과팅을 신청한 현황 API", description = "내가 다른게시물에 신청한 현황을 표시합니다.")
     public ResponseEntity<?> applyState(@RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
@@ -43,7 +43,7 @@ public class ApplicationStatusController {
     }
 
     //내가쓴글
-    @GetMapping("board/myboard")
+    @GetMapping("/board/myboard")
     @Operation(summary = "내가 쓴 글 API", description = "내가 작성한 글 보기")
     public ResponseEntity<?> myBoard(@RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
@@ -53,13 +53,24 @@ public class ApplicationStatusController {
     }
 
     //거절하기
-    @PatchMapping("board/applications/refuse/{id}")
+    @PatchMapping("/board/applications/refuse/{id}")
     @Operation(summary = "과팅 거절하기 API", description = "내 게시물에 신청한 과팅신청을 거절합니다.")
     public ResponseEntity<?> refuse(@RequestHeader("Authorization") String token, @PathVariable Long id){
         String email=tokenProvider.getUserEmail(token.substring(7));
         String refuse=applicationStatusService.refuse(id,email);
         return ResponseEntity.ok()
                 .body(ApiResponse.onSuccess(refuse));
+    }
+
+
+    //취소하기
+    @DeleteMapping("/board/applications/cancel/{id}")
+    @Operation(summary = "과팅 신청 취소하기 API", description = "내가 신청했던 게시물의 과팅을 취소합니다")
+    public ResponseEntity<?> cancel(@RequestHeader("Authorization") String token, @PathVariable Long id){
+        String email=tokenProvider.getUserEmail(token.substring(7));
+        String cancel=applicationStatusService.cancel(id,email);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(cancel));
     }
 
 

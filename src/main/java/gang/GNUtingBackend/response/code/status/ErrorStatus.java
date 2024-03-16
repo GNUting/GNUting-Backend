@@ -26,6 +26,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_STUDENT_ID(HttpStatus.BAD_REQUEST, "USER4000", "학번은 숫자 2자리로 입력해주세요."),
     NICKNAME_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "USER4000", "닉네임은 최대 10자까지 가능합니다."),
     USER_SELF_INTRODUCTION_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "USER4000", "한 줄 소개는 최대 30자까지 가능합니다."),
+    PASSWORD_IS_NOT_VALID(HttpStatus.BAD_REQUEST,"USER4006","비밀번호를 특수문자,영문자 1개이상 포함 8~15자 이내로 작성하세요"),
 
     // Board 관련 에러
     BOARD_NOT_FOUND(HttpStatus.BAD_REQUEST,"BOARD5001", "게시글이 없습니다"),
@@ -39,6 +40,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //Apply 관련 에러
     ALREADY_IN_USER(HttpStatus.BAD_REQUEST,"APLLY6001", "유저가 이미 참여해 있습니다."),
+    USER_NOT_APPLY(HttpStatus.BAD_REQUEST,"APPLY4002","유저가 신청하지 않았습니다"),
 
     // 메일 관련 에러
     INVALID_MAIL_ADDRESS(HttpStatus.BAD_REQUEST, "MAIL4001", "경상국립대학교 이메일을 입력해주세요."),
