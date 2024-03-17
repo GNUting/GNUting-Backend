@@ -60,6 +60,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "JWT 토큰이 잘못되었습니다."),
 
     // notification 관련 에러
+    OVERLAP_USER_TOKEN(HttpStatus.BAD_REQUEST,"FIREBASE4000","이미 유저의 파이어베이스토큰이 저장되어 있습니다"),
     NOT_FOUND_FIREBASE_TOKEN(HttpStatus.BAD_REQUEST,"FIREBASE4001","신청하는 게시판 유저의 파이어베이스 토큰이 없습니다"),
     FIREBASE_ERROR(HttpStatus.BAD_REQUEST,"FIREBASE5000","파이어베이스 에러 관리자에게 문의하세요."),
     JSON_FILE_ROAD_FAIL(HttpStatus.BAD_REQUEST,"FIREBASE5001","서버의 JSON파일 로드 실패"),
