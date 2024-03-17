@@ -3,6 +3,7 @@ package gang.GNUtingBackend.board.service;
 import gang.GNUtingBackend.board.dto.ApplicationStatusResponseDto;
 import gang.GNUtingBackend.board.dto.BoardResponseDto;
 import gang.GNUtingBackend.board.dto.BoardShowAllResponseDto;
+import gang.GNUtingBackend.board.dto.ChatMemberDto;
 import gang.GNUtingBackend.board.entity.ApplyUsers;
 import gang.GNUtingBackend.board.entity.Board;
 import gang.GNUtingBackend.board.entity.BoardApplyLeader;
@@ -147,7 +148,7 @@ public class ApplicationStatusService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         BoardApplyLeader boardApplyLeader=boardApplyLeaderRepository.findById(id)
-                .orElseThrow(()->new UserHandler(ErrorStatus.USER_NOT_FOUND));
+                .orElseThrow(()->new UserHandler(ErrorStatus.USER_NOT_APPLY));
         if(boardApplyLeader.getBoardId().getUserId()!=user){
             throw new UserHandler(ErrorStatus.USER_NOT_AUTHORITY);
         }
@@ -171,6 +172,30 @@ public class ApplicationStatusService {
         return board.getUserId().getDepartment() + "학과 신청이 취소되었습니다.";
     }
 
+    public String accept(String email, Long id) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        BoardApplyLeader boardApplyLeader=boardApplyLeaderRepository.findById(id)
+                .orElseThrow(()->new UserHandler(ErrorStatus.USER_NOT_APPLY));
+        if(boardApplyLeader.getBoardId().getUserId()!=user){
+            throw new BoardHandler(ErrorStatus.USER_NOT_AUTHORITY);
+        }
+        List<User> applyUserList = boardApplyLeader.getApplyUsers().stream()
+                .map(ApplyUsers::getUserId)
+                .collect(Collectors.toList());
+
+        List<User> participantUserList = boardApplyLeader.getBoardId().getBoardParticipant().stream()
+                .map(BoardParticipant::getUserId)
+                .collect(Collectors.toList());
+        String applyUserDepartment=boardApplyLeader.getLeaderId().getDepartment();
+        String participantUserDepartment=boardApplyLeader.getBoardId().getUserId().getDepartment();
+        ChatMemberDto chatMemberDto=ChatMemberDto.toDto(applyUserDepartment,participantUserDepartment,applyUserList,participantUserList);
+        //채팅방 으로 쏴주고
+
+
+        //알림 날려주고
+        return null;
+    }
 
 
     //이건 반환 클래스를 사용하지않고 리스트형으로 유저들만 반환하는 메소드

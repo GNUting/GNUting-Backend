@@ -53,6 +53,9 @@ public class Board extends BaseTime {
     @OneToMany(mappedBy = "boardId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BoardApplyLeader> boardApplyLeader;
 
+    @OneToMany(mappedBy = "boardId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BoardParticipant> boardParticipant;
+
     public void updateBoard(Long id,String title,String detail){
         this.id=id;
         this.title=title;
