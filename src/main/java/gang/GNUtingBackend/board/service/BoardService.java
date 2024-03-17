@@ -1,7 +1,6 @@
 package gang.GNUtingBackend.board.service;
 
 import gang.GNUtingBackend.board.dto.*;
-import gang.GNUtingBackend.board.entity.ApplyUsers;
 import gang.GNUtingBackend.board.entity.BoardApplyLeader;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
 import gang.GNUtingBackend.board.entity.enums.ApplyStatus;
@@ -16,11 +15,9 @@ import gang.GNUtingBackend.exception.UserAlreadyException;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.service.FCMService;
-import gang.GNUtingBackend.notification.service.UserNotificationService;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.domain.enums.Gender;
-import gang.GNUtingBackend.user.dto.UserSearchRequestDto;
 import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,13 +27,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Service
 @RequiredArgsConstructor
@@ -104,7 +98,7 @@ public class BoardService {
             boardParticipantRepository.save(boardParticipantSave);
         }
         if(boardParticipantInWriter==false){
-            throw new BoardHandler(ErrorStatus.WRITER_NOT_IN_BOARDPARTICIPANT);
+            throw new BoardHandler(ErrorStatus.WRITER_NOT_IN_BOARD_PARTICIPANT);
         }
        // return BoardRequestDto.toDto(boardSave);
         return boardSave.getTitle()+"게시글이 작성되었습니다."; //굳이 리턴값을 줄필요 없을듯 ???
