@@ -34,7 +34,7 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_NOT_AUTHORITY(HttpStatus.BAD_REQUEST,"BOARD5003","권한이 없습니다."),
     INCORRECT_NUMBER_OF_PEOPLE(HttpStatus.BAD_REQUEST,"BOARD4002", "인원수가 맞지 않습니다."),
     PAGE_NOT_FOUND(HttpStatus.BAD_REQUEST,"BOARD4003","현재 페이지 내 표시할 게시글이 없습니다. "),
-    WRITER_NOT_IN_BOARDPARTICIPANT(HttpStatus.BAD_REQUEST,"BOARD4004","작성자가 포함되어 있지 않습니다."),
+    WRITER_NOT_IN_BOARD_PARTICIPANT(HttpStatus.BAD_REQUEST,"BOARD4004","작성자가 포함되어 있지 않습니다."),
     NOT_MATCH_GENDER(HttpStatus.BAD_REQUEST,"BOARD4005","신청자의 성별이 게시물의 성별과 동일합니다"),
     LEADER_NOT_IN_APPLYUSER(HttpStatus.BAD_REQUEST,"BOARD4006","신청자(리더)가 포함되어있지 않습니다."),
 
@@ -43,7 +43,8 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_NOT_APPLY(HttpStatus.BAD_REQUEST,"APPLY4002","유저가 신청하지 않았습니다"),
 
     // 메일 관련 에러
-    INVALID_MAIL_ADDRESS(HttpStatus.BAD_REQUEST, "MAIL4001", "경상국립대학교 이메일을 입력해주세요."),
+    INVALID_MAIL_ADDRESS(HttpStatus.BAD_REQUEST, "MAIL4000", "경상국립대학교 이메일을 입력해주세요."),
+    INVALID_VERIFY_NUMBER(HttpStatus.BAD_REQUEST, "MAIL4000", "인증번호가 올바르지 않습니다."),
 
     // slack 관련 에러
     CANNOT_SEND_MESSAGE(HttpStatus.INTERNAL_SERVER_ERROR, "SLACK5001", "slack으로 메세지를 보내지 못하였습니다."),

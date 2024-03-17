@@ -2,9 +2,11 @@ package gang.GNUtingBackend.mail.service;
 
 import gang.GNUtingBackend.exception.handler.MailHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
+import java.util.concurrent.TimeUnit;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +17,19 @@ public class MailService {
     private final JavaMailSender javaMailSender;
     private static final String senderEmail = "gnuting@gnuting.com";
     private static int number;
+    private final RedisTemplate<String, String> redisTemplate;
+    private static final long EXPIRE_SECONDS = 180;
 
     public static void createNumber() {
-        number = (int)(Math.random() * (900000)) + 100000;
+        number = (int) (Math.random() * (900000)) + 100000;
     }
 
-    public MimeMessage CreateMail(String email){
+    /**
+     * 해당 email로 보낼 인증 번호를 포함한 인증 메일을 생성한다.
+     * @param email
+     * @return
+     */
+    public MimeMessage CreateMail(String email) {
         createNumber();
         MimeMessage message = javaMailSender.createMimeMessage();
 
@@ -53,16 +62,38 @@ public class MailService {
         return message;
     }
 
+    /**
+     * 해당 이메일로 인증 메일을 전송한다.
+     * @param email
+     * @return
+     */
     public int sendMail(String email) {
         if (!isValidAddress(email)) {
             throw new MailHandler(ErrorStatus.INVALID_MAIL_ADDRESS);
         }
         MimeMessage message = CreateMail(email);
         javaMailSender.send(message);
+        redisTemplate.opsForValue().set(email, String.valueOf(number) , EXPIRE_SECONDS, TimeUnit.SECONDS);
         return number;
     }
 
     public boolean isValidAddress(String email) {
         return email.endsWith("@gnu.ac.kr");
+    }
+
+    /**
+     * 이메일 인증 번호를 검증한다.
+     * @param email
+     * @param number
+     * @return
+     */
+    public boolean verifyNumber(String email, String number) {
+        String storedNumber = redisTemplate.opsForValue().get(email);
+        if (storedNumber != null && storedNumber.equals(number)) {
+            redisTemplate.delete(email);
+            return true;
+        } else {
+            throw new MailHandler(ErrorStatus.INVALID_VERIFY_NUMBER);
+        }
     }
 }

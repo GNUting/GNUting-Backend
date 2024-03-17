@@ -2,6 +2,7 @@ package gang.GNUtingBackend.mail.controller;
 
 import gang.GNUtingBackend.mail.dto.MailSendRequestDto;
 import gang.GNUtingBackend.mail.dto.MailSendResponseDto;
+import gang.GNUtingBackend.mail.dto.MailVerifyRequestDto;
 import gang.GNUtingBackend.mail.service.MailService;
 import gang.GNUtingBackend.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,5 +33,15 @@ public class MailController {
 
         return ResponseEntity.ok()
                 .body(apiResponse);
+    }
+
+    @PostMapping("/mail/verify")
+    @Operation(summary = "이메일 인증번호 검증 API", description = "사용자가 입력한 인증번호를 검증합니다.")
+    public ResponseEntity<ApiResponse<?>> verifyMail(@RequestBody MailVerifyRequestDto mailVerifyRequestDto) {
+        boolean isVerified = mailService.verifyNumber(mailVerifyRequestDto.getEmail(), mailVerifyRequestDto.getNumber());
+
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess("인증되었습니다."));
+
     }
 }

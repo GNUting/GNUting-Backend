@@ -195,16 +195,22 @@ public class UserService {
         return Token.createRefreshToken();
     }
 
+    /**
+     * 이전에 발급된 accessToken이 만료되면 새로운 accessToken 발급
+     * @param refreshToken
+     * @param email
+     * @return
+     */
     @Transactional
-    public ReIssueTokenResponseDto reissueAccessToken(String refreshToken) {
-        User user = refreshTokenService.getUserByRefreshToken(refreshToken);
-        Token token = refreshTokenService.findTokenByRefreshToken(refreshToken);
+    public ReIssueTokenResponseDto reissueAccessToken(String refreshToken, String email) {
+        User user = refreshTokenService.getUserByRefreshToken(refreshToken, email);
+        Token token = refreshTokenService.findTokenByRefreshToken(refreshToken, email);
         String oldAccessToken = token.getAccessToken();
 
         if (tokenProvider.isExpiredAccessToken(oldAccessToken)) {
             String newAccessToken = issueAccessToken(user);
             token.setAccessToken(newAccessToken);
-            refreshTokenService.updateToken(token);
+            refreshTokenService.updateToken(refreshToken, newAccessToken, token.getExpiration(), email);
             return new ReIssueTokenResponseDto(newAccessToken);
         }
         throw new TokenHandler(ErrorStatus.NOT_EXPIRED_ACCESS_TOKEN);
@@ -214,9 +220,8 @@ public class UserService {
      * 로그아웃 로직
      * @param refreshToken 로그아웃 요청한 사용자의 리프레시 토큰
      */
-    @Transactional
-    public void logout(String refreshToken) {
-        refreshTokenService.logout(refreshToken);
+    public void logout(String refreshToken, String email) {
+        refreshTokenService.logout(refreshToken, email);
     }
 
     /**
