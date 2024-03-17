@@ -9,6 +9,7 @@ import gang.GNUtingBackend.user.domain.enums.UserRole;
 import gang.GNUtingBackend.user.dto.UserDetailResponseDto;
 import gang.GNUtingBackend.user.dto.UserLoginRequestDto;
 import gang.GNUtingBackend.user.dto.UserSignupRequestDto;
+import gang.GNUtingBackend.user.dto.token.LogoutRequestDto;
 import gang.GNUtingBackend.user.dto.token.ReIssueTokenRequestDto;
 import gang.GNUtingBackend.user.dto.token.ReIssueTokenResponseDto;
 import gang.GNUtingBackend.user.dto.token.TokenResponseDto;
@@ -164,9 +165,11 @@ public class UserController {
 
     @PostMapping("/reIssueAccessToken")
     @Operation(summary = "토큰 재발급 API", description = "refresh 토큰으로 accessToken을 재발급합니다.")
-    public ResponseEntity<ApiResponse<ReIssueTokenResponseDto>> reIssueAccessToken(@RequestBody ReIssueTokenRequestDto reIssueTokenRequestDto) {
+    public ResponseEntity<ApiResponse<ReIssueTokenResponseDto>> reIssueAccessToken(@RequestHeader("Authorization") String token,
+                                                                                   @RequestBody ReIssueTokenRequestDto reIssueTokenRequestDto) {
+        String email = tokenProvider.getUserEmail(token.substring(7));
         ReIssueTokenResponseDto response = userService.reissueAccessToken(
-                reIssueTokenRequestDto.getRefreshToken());
+                reIssueTokenRequestDto.getRefreshToken(), email);
 
         ApiResponse<ReIssueTokenResponseDto> apiResponse = ApiResponse.onSuccess(response);
 
@@ -176,13 +179,16 @@ public class UserController {
 
     /**
      * 로그아웃 API
-     * @param refreshToken 로그아웃 요청에 사용된 리프레시 토큰
+     * @param token
+     * @param logoutRequestDto 로그아웃 요청에 사용된 리프레시 토큰
      * @return 로그아웃 성공 메시지
      */
     @PostMapping("/logout")
     @Operation(summary = "로그아웃 API", description = "사용자 로그아웃을 처리합니다.")
-    public ResponseEntity<ApiResponse<String>> logout(@RequestBody String refreshToken) {
-        userService.logout(refreshToken);
+    public ResponseEntity<ApiResponse<String>> logout(@RequestHeader("Authorization") String token,
+                                                      @RequestBody LogoutRequestDto logoutRequestDto) {
+        String email = tokenProvider.getUserEmail(token.substring(7));
+        userService.logout(logoutRequestDto.getRefreshToken(), email);
         return ResponseEntity.ok()
                 .body(ApiResponse.onSuccess("정상적으로 로그아웃 처리 되었습니다."));
     }
