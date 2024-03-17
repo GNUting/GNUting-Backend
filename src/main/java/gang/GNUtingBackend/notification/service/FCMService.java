@@ -105,6 +105,10 @@ public class FCMService {
     public String saveFCMToken(FCMTokenSaveDto fcmEntity, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        FCM overlapCheck=fcmRepository.findByUserId(user);
+        if(overlapCheck!=null){
+            throw new BoardHandler(ErrorStatus.OVERLAP_USER_TOKEN);
+        }
         FCM saveEntity=FCMTokenSaveDto.toEntity(fcmEntity,user);
         fcmRepository.save(saveEntity);
         return user.getNickname()+"님의 토큰이 저장되었습니다";

@@ -52,6 +52,14 @@ public class ApplicationStatusController {
                 .body(ApiResponse.onSuccess(myBoards));
     }
 
+    @PostMapping("/board/applications/accept/{id}")
+    public ResponseEntity<?> accept(@RequestHeader("Authorization") String token,@PathVariable Long id) {
+        String email = tokenProvider.getUserEmail(token.substring(7));
+        String accept = applicationStatusService.accept(email,id);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(accept));
+    }
+
     //거절하기
     @PatchMapping("/board/applications/refuse/{id}")
     @Operation(summary = "과팅 거절하기 API", description = "내 게시물에 신청한 과팅신청을 거절합니다.")
