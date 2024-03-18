@@ -52,7 +52,9 @@ public class ApplicationStatusController {
                 .body(ApiResponse.onSuccess(myBoards));
     }
 
+    //승인하기
     @PostMapping("/board/applications/accept/{id}")
+    @Operation(summary = "과팅 승인하기 API", description = "과팅이 승인하고 채팅방이 만들어집니다.")
     public ResponseEntity<?> accept(@RequestHeader("Authorization") String token,@PathVariable Long id) {
         String email = tokenProvider.getUserEmail(token.substring(7));
         String accept = applicationStatusService.accept(email,id);

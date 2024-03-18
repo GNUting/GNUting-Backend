@@ -5,6 +5,7 @@ import gang.GNUtingBackend.notification.dto.UserNotificationResponseDto;
 import gang.GNUtingBackend.notification.service.UserNotificationService;
 import gang.GNUtingBackend.response.ApiResponse;
 import gang.GNUtingBackend.user.token.TokenProvider;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,6 +23,7 @@ public class UserNotificationController {
     private final TokenProvider tokenProvider;
     private final UserNotificationService userNotificationService;
     @GetMapping("/notification")
+    @Operation(summary = "알림 모두보기 API", description = "자신에게 온 알림을 봅니다.")
     public ResponseEntity<?> showNotification(@RequestHeader("Authorization") String token){
         String email=tokenProvider.getUserEmail(token.substring(7));
         List<UserNotificationResponseDto> notifications=userNotificationService.showNotification(email);
