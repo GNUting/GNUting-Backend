@@ -13,5 +13,5 @@ public interface BoardApplyLeaderRepository extends JpaRepository<BoardApplyLead
     void deleteByBoardId(Board boardDelete);
 
     List<BoardApplyLeader> findByLeaderId(User user);
-    BoardApplyLeader findByLeaderIdAndBoardId(User user, Board id);
+
 }
