@@ -5,6 +5,7 @@ import gang.GNUtingBackend.notification.dto.TestDto;
 import gang.GNUtingBackend.notification.service.FCMService;
 import gang.GNUtingBackend.response.ApiResponse;
 import gang.GNUtingBackend.user.token.TokenProvider;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,7 @@ public class FCMController {
 
 
     @PostMapping("/savetoken")
+    @Operation(summary = "FCM토큰 저장하기 API", description = "유저의 FCM토큰을 저장합니다.")
     public  ResponseEntity<?> saveFCMToken(@RequestBody FCMTokenSaveDto fcmEntity, @RequestHeader("Authorization") String token){
         String email = tokenProvider.getUserEmail(token.substring(7));
         String savetoken=fcmNotificationService.saveFCMToken(fcmEntity,email);
