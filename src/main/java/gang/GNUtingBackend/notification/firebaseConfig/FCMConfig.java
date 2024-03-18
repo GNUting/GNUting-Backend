@@ -12,9 +12,9 @@ import java.io.InputStream;
 @Configuration
 public class FCMConfig {
     @PostConstruct
-    public void init(){
+    public void init() {
 
-        try{
+        try {
             String firebaseConfigPath = "gnuting-firebase-adminsdk-tpoa0-7b6979293e.json";
 
             InputStream serviceAccount =
@@ -23,9 +23,8 @@ public class FCMConfig {
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .build();
 
-
             FirebaseApp.initializeApp(options);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

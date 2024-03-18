@@ -17,13 +17,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserNotificationService  {
+public class UserNotificationService {
 
-   private final UserNotificationRepository userNotificationRepository;
-   private final UserRepository userRepository;
+    private final UserNotificationRepository userNotificationRepository;
+    private final UserRepository userRepository;
 
-    public void saveNotification(User user,String notification){
-        UserNotification userNotification=UserNotification.builder()
+    public void saveNotification(User user, String notification) {
+        UserNotification userNotification = UserNotification.builder()
                 .userId(user)
                 .notification(notification)
                 .build();
@@ -31,9 +31,9 @@ public class UserNotificationService  {
     }
 
     public List<UserNotificationResponseDto> showNotification(String email) {
-        User user=userRepository.findByEmail(email)
-                .orElseThrow(()->new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        List<UserNotification> userNotifications=userNotificationRepository.findByUserId(user);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        List<UserNotification> userNotifications = userNotificationRepository.findByUserId(user);
         return userNotifications.stream().map(UserNotificationResponseDto::toDto).collect(Collectors.toList());
     }
 }

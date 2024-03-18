@@ -39,15 +39,16 @@ public class ApplicationStatusService {
     private final FCMService fcmService;
 
 
-
-    /*
-  내글에 신청한 현황보기 s
-  1. 유저가 쓴글들을 가져오고
-  2. 쓴글들의 참여자목록을 가져온다
-  3. 글에 신청한 유저들을 가져온다
-  4. 게시글에 대표로 신청한 리더를 찾아서 그 리더들을 기준으로 게시글에 신청한 유저들의 리스트를 만든다
-  5. 참여자와 게시글에 신청한 유저들을 리스트에 합쳐서 반환한다
-   */
+    /**
+     * 내글에 신청한 현황보기
+     * 1. 유저가 쓴글들을 가져오고
+     * 2. 쓴글들의 참여자목록을 가져온다
+     * 3. 글에 신청한 유저들을 가져온다
+     * 4. 게시글에 대표로 신청한 리더를 찾아서 그 리더들을 기준으로 게시글에 신청한 유저들의 리스트를 만든다
+     * 5. 참여자와 게시글에 신청한 유저들을 리스트에 합쳐서 반환한다
+     * @param email
+     * @return
+     */
     public List<ApplicationStatusResponseDto> receiveState(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -74,7 +75,9 @@ public class ApplicationStatusService {
                         .collect(Collectors.toList());
 
                 ApplicationStatusResponseDto savedResponseDto =
-                        ApplicationStatusResponseDto.toDto(boardApplyLeader.getId(), participantsUsers, applyUsers, boardApplyLeader.getLeaderId().getDepartment(), participantDepartment,boardApplyLeader.getStatus());
+                        ApplicationStatusResponseDto.toDto(boardApplyLeader.getId(), participantsUsers, applyUsers,
+                                boardApplyLeader.getLeaderId().getDepartment(), participantDepartment,
+                                boardApplyLeader.getStatus());
                 allUsersByLeader.add(savedResponseDto);
             }
         }
@@ -96,7 +99,8 @@ public class ApplicationStatusService {
 
         for (BoardApplyLeader boardApplyLeaders : boardApplyLeaderList) {
 
-            List<BoardParticipant> boardParticipantList = boardParticipantRepository.findByBoardId(boardApplyLeaders.getBoardId());
+            List<BoardParticipant> boardParticipantList = boardParticipantRepository.findByBoardId(
+                    boardApplyLeaders.getBoardId());
             List<ApplyUsers> applyUsersList = boardApplyLeaders.getApplyUsers();
             List<User> userList = new ArrayList<>();
             for (ApplyUsers applyUsers : applyUsersList) {
@@ -111,13 +115,14 @@ public class ApplicationStatusService {
                     .collect(Collectors.toList());
             ApplicationStatusResponseDto savedResponseDto =
                     ApplicationStatusResponseDto.toDto
-                            (boardApplyLeaders.getId(), participantsUsers, applyUsers, boardApplyLeaders.getLeaderId().getDepartment(), boardApplyLeaders.getBoardId().getUserId().getDepartment(),boardApplyLeaders.getStatus());
+                            (boardApplyLeaders.getId(), participantsUsers, applyUsers,
+                                    boardApplyLeaders.getLeaderId().getDepartment(),
+                                    boardApplyLeaders.getBoardId().getUserId().getDepartment(),
+                                    boardApplyLeaders.getStatus());
             allUsersByLeader.add(savedResponseDto);
         }
         return allUsersByLeader;
     }
-
-
 
 
     /**
@@ -140,6 +145,7 @@ public class ApplicationStatusService {
 
     /**
      * 거절하기
+     *
      * @param id
      * @param email
      * @return String
@@ -147,17 +153,18 @@ public class ApplicationStatusService {
     public String refuse(Long id, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        BoardApplyLeader boardApplyLeader=boardApplyLeaderRepository.findById(id)
-                .orElseThrow(()->new UserHandler(ErrorStatus.USER_NOT_APPLY));
-        if(boardApplyLeader.getBoardId().getUserId()!=user){
+        BoardApplyLeader boardApplyLeader = boardApplyLeaderRepository.findById(id)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_APPLY));
+        if (boardApplyLeader.getBoardId().getUserId() != user) {
             throw new UserHandler(ErrorStatus.USER_NOT_AUTHORITY);
         }
         boardApplyLeader.setStatus(ApplyStatus.거절);
         boardApplyLeaderRepository.save(boardApplyLeader);
         //fcmService.sendMessageTo(boardApplyLeader.getBoardId().getUserId(),"과팅신청자가 취소하였습니다",user.getDepartment()+"학과의 과팅이 취소되었습니다");
 
-        return boardApplyLeader.getId()+"번 신청이 거절되었습니다.";
+        return boardApplyLeader.getId() + "번 신청이 거절되었습니다.";
     }
+
     public String cancel(Long id, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -175,9 +182,9 @@ public class ApplicationStatusService {
     public String accept(String email, Long id) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        BoardApplyLeader boardApplyLeader=boardApplyLeaderRepository.findById(id)
-                .orElseThrow(()->new UserHandler(ErrorStatus.USER_NOT_APPLY));
-        if(boardApplyLeader.getBoardId().getUserId()!=user){
+        BoardApplyLeader boardApplyLeader = boardApplyLeaderRepository.findById(id)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_APPLY));
+        if (boardApplyLeader.getBoardId().getUserId() != user) {
             throw new BoardHandler(ErrorStatus.USER_NOT_AUTHORITY);
         }
         List<User> applyUserList = boardApplyLeader.getApplyUsers().stream()
@@ -187,45 +194,14 @@ public class ApplicationStatusService {
         List<User> participantUserList = boardApplyLeader.getBoardId().getBoardParticipant().stream()
                 .map(BoardParticipant::getUserId)
                 .collect(Collectors.toList());
-        String applyUserDepartment=boardApplyLeader.getLeaderId().getDepartment();
-        String participantUserDepartment=boardApplyLeader.getBoardId().getUserId().getDepartment();
-        ChatMemberDto chatMemberDto=ChatMemberDto.toDto(applyUserDepartment,participantUserDepartment,applyUserList,participantUserList);
+        String applyUserDepartment = boardApplyLeader.getLeaderId().getDepartment();
+        String participantUserDepartment = boardApplyLeader.getBoardId().getUserId().getDepartment();
+        ChatMemberDto chatMemberDto = ChatMemberDto.toDto(applyUserDepartment, participantUserDepartment, applyUserList,
+                participantUserList);
         //채팅방 으로 쏴주고
-
 
         //알림 날려주고
         return null;
     }
-
-
-    //이건 반환 클래스를 사용하지않고 리스트형으로 유저들만 반환하는 메소드
-//    public List<List<UserSearchResponseDto>> applyStatus(String email) {
-//        User user= userRepository.findByEmail(email).orElseThrow(()->new IllegalArgumentException("사용자를 찾을수 없습니다 토큰오류"));
-//        List<Board> board=boardRepository.findByUserId(user);
-//        List<List<UserSearchResponseDto>> allUsersByLeader = new ArrayList<>();
-//
-//        for (Board findBoard:board) {
-//            List<BoardParticipant> boardParticipants=boardParticipantRepository.findByBoardId(findBoard);
-//            List<BoardApplyUsers> boardApplyUsers=boardApplyUsersRepository.findByBoardId(findBoard);
-//            Map<User, List<BoardApplyUsers>> groupedByLeaderId = boardApplyUsers.stream()
-//                    .collect(Collectors.groupingBy(BoardApplyUsers::getLeader));
-//
-//            List<UserSearchResponseDto> participantsUsers=boardParticipants.stream()
-//                    .map(BoardParticipant::getUserId)
-//                    .map(UserSearchResponseDto::toDto)
-//                    .collect(Collectors.toList());
-//
-//            groupedByLeaderId.forEach((leader, users) -> {
-//                List<UserSearchResponseDto> userDtos = users.stream()
-//                        .map(BoardApplyUsers::getUserId)
-//                        .map(UserSearchResponseDto::toDto)
-//                        .collect(Collectors.toList());
-//                userDtos.addAll(participantsUsers);
-//                allUsersByLeader.add(userDtos);
-//            });
-//        }
-//        return allUsersByLeader;
-//    }
-
 
 }

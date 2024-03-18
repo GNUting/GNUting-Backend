@@ -6,6 +6,7 @@ import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
 import lombok.*;
 
 import java.util.List;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +18,8 @@ public class ChatMemberDto {
     private List<User> applyUser;
     private List<User> participantUser;
 
-    public static ChatMemberDto toDto(String applyUserDepartment,String participantUserDepartment,List<User> applyUser,List<User> participantUser){
+    public static ChatMemberDto toDto(String applyUserDepartment, String participantUserDepartment,
+                                      List<User> applyUser, List<User> participantUser) {
         return ChatMemberDto.builder()
                 .applyUserDepartment(applyUserDepartment)
                 .participantUserDepartment(participantUserDepartment)
@@ -25,5 +27,4 @@ public class ChatMemberDto {
                 .participantUser(participantUser)
                 .build();
     }
-
 }

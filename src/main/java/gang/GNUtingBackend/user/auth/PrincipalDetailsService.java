@@ -16,6 +16,7 @@ public class PrincipalDetailsService implements UserDetailsService {
 
     /**
      * 사용자 이름(이메일)을 기반으로 사용자 정보를 조회하고, 해당 정보를 바탕으로 UserDetails 객체 생성
+     *
      * @param email
      * @return PrincipalDetails 객체(사용자의 인증 정보를 담고 있다)
      * @throws UsernameNotFoundException

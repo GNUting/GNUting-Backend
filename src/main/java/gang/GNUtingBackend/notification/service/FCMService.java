@@ -40,7 +40,7 @@ public class FCMService {
     private final FCMRepository fcmRepository;
     private final ObjectMapper objectMapper;
     private final UserNotificationService userNotificationService;
-    private final String API_URL = "https://fcm.googleapis.com/v1/projects/"+"1036172493674/messages:send";
+    private final String API_URL = "https://fcm.googleapis.com/v1/projects/" + "1036172493674/messages:send";
 
 
     public void sendMessageTo(User findId, String title, String body) {
@@ -48,7 +48,6 @@ public class FCMService {
             //board에 신청했다고 알림보낼때
             FCM fcmToken = fcmRepository.findByUserId(findId);
             String message = makeMessage(fcmToken.getFcmToken(), title, body);
-
 
             OkHttpClient client = new OkHttpClient();
             RequestBody requestBody = RequestBody.create(message,
@@ -64,22 +63,21 @@ public class FCMService {
 
             System.out.println(response.body().string());
             System.out.println("전송완료");
-            userNotificationService.saveNotification(findId,body);
+            userNotificationService.saveNotification(findId, body);
         } catch (JsonProcessingException e) {
             throw new BoardHandler(ErrorStatus.JSON_FILE_ROAD_FAIL);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new BoardHandler(ErrorStatus.INPUT_ERROR);
+        } catch (NullPointerException e) {
+            throw new BoardHandler(ErrorStatus.NOT_FOUND_FIREBASE_TOKEN);
+        } catch (Exception e) {
+            throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
         }
-        catch (NullPointerException e) {
-           throw new BoardHandler(ErrorStatus.NOT_FOUND_FIREBASE_TOKEN);
-       } catch (Exception e) {
-           throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
-       }
 
     }
 
-    private String makeMessage(String targetToken, String title, String body) throws JsonParseException, JsonProcessingException {
+    private String makeMessage(String targetToken, String title, String body)
+            throws JsonParseException, JsonProcessingException {
         FcmMessage fcmMessage = FcmMessage.builder()
                 .message(FcmMessage.Message.builder()
                         .token(targetToken)
@@ -92,6 +90,7 @@ public class FCMService {
 
         return objectMapper.writeValueAsString(fcmMessage);
     }
+
     private String getAccessToken() throws IOException {
         String firebaseConfigPath = "gnuting-firebase-adminsdk-tpoa0-7b6979293e.json";
 
@@ -102,15 +101,16 @@ public class FCMService {
         googleCredentials.refreshIfExpired();
         return googleCredentials.getAccessToken().getTokenValue();
     }
+
     public String saveFCMToken(FCMTokenSaveDto fcmEntity, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        FCM overlapCheck=fcmRepository.findByUserId(user);
-        if(overlapCheck!=null){
+        FCM overlapCheck = fcmRepository.findByUserId(user);
+        if (overlapCheck != null) {
             throw new BoardHandler(ErrorStatus.OVERLAP_USER_TOKEN);
         }
-        FCM saveEntity=FCMTokenSaveDto.toEntity(fcmEntity,user);
+        FCM saveEntity = FCMTokenSaveDto.toEntity(fcmEntity, user);
         fcmRepository.save(saveEntity);
-        return user.getNickname()+"님의 토큰이 저장되었습니다";
+        return user.getNickname() + "님의 토큰이 저장되었습니다";
     }
 }

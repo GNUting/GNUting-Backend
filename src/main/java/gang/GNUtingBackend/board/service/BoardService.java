@@ -47,7 +47,8 @@ public class BoardService {
 
     /**
      * 게시글 모두 보기
-     * @param email 현재 사용자
+     *
+     * @param email    현재 사용자
      * @param pageable 페이지번호
      * @return 로그인한 유저의 성별과 반대되는 성별이 쓴 글들
      */
@@ -62,7 +63,7 @@ public class BoardService {
         Page<Board> links = boardRepository.findByGenderNot(gender,
                 PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "createdDate")));  //추후 close된 글들도 아래로 정렬
 
-        if (!links.hasContent()){
+        if (!links.hasContent()) {
             throw new BoardHandler(ErrorStatus.PAGE_NOT_FOUND);
         }
 
@@ -73,6 +74,7 @@ public class BoardService {
 
     /**
      * 게시글 저장
+     *
      * @param boardRequestDto 작성한 글 전체 내용
      * @param email
      * @return 게시글 제목이 작성되었다는 맨트
@@ -87,26 +89,27 @@ public class BoardService {
         boardRequestDto.setGender(user.getGender());
         Board boardSave = boardRequestDto.toEntity();
         boardRepository.save(boardSave);
-        boolean boardParticipantInWriter=false;
+        boolean boardParticipantInWriter = false;
         //참여자 테이블에 저장
         for (User member : boardRequestDto.getInUser()) {
-            if(member.getId()==user.getId()){
-                boardParticipantInWriter=true;
+            if (member.getId() == user.getId()) {
+                boardParticipantInWriter = true;
             }
             BoardParticipantDto boardParticipantDto = BoardParticipantDto.toDto(boardSave, member);
             BoardParticipant boardParticipantSave = boardParticipantDto.toEntity();
             boardParticipantRepository.save(boardParticipantSave);
         }
-        if(boardParticipantInWriter==false){
+        if (boardParticipantInWriter == false) {
             throw new BoardHandler(ErrorStatus.WRITER_NOT_IN_BOARD_PARTICIPANT);
         }
-       // return BoardRequestDto.toDto(boardSave);
-        return boardSave.getTitle()+"게시글이 작성되었습니다."; //굳이 리턴값을 줄필요 없을듯 ???
+        // return BoardRequestDto.toDto(boardSave);
+        return boardSave.getTitle() + "게시글이 작성되었습니다."; //굳이 리턴값을 줄필요 없을듯 ???
     }
 
     /**
      * 게시글 삭제
-     * @param id 게시글 번호
+     *
+     * @param id    게시글 번호
      * @param email
      * @return 게시글이 삭제되었다는 맨트
      */
@@ -114,7 +117,8 @@ public class BoardService {
     public String delete(Long id, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        Board boardDelete = boardRepository.findById(id).orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));;
+        Board boardDelete = boardRepository.findById(id)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
 
         if (boardDelete.getUserId().getId() != user.getId()) {
             throw new BoardHandler(ErrorStatus.USER_NOT_FOUND_IN_BOARD);
@@ -134,6 +138,7 @@ public class BoardService {
 
     /**
      * 특정글 보기
+     *
      * @param id 게시글 번호
      * @return
      */
@@ -157,7 +162,8 @@ public class BoardService {
 
     /**
      * 게시글 수정
-     * @param id 게시글 번호
+     *
+     * @param id              게시글 번호
      * @param boardRequestDto 수정한 내용
      * @param email
      * @return 수정되었다는 맨트
@@ -170,16 +176,15 @@ public class BoardService {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
         if (board.getUserId().getId() == user.getId()) {
-            board.updateBoard(id,boardRequestDto.getTitle(),boardRequestDto.getDetail());
-            List<BoardParticipant> boardParticipant=boardParticipantRepository.findByBoardId(board);
+            board.updateBoard(id, boardRequestDto.getTitle(), boardRequestDto.getDetail());
+            List<BoardParticipant> boardParticipant = boardParticipantRepository.findByBoardId(board);
             boardParticipantRepository.deleteAll(boardParticipant);
             for (User member : boardRequestDto.getInUser()) {
-               BoardParticipantDto boardParticipantDto=BoardParticipantDto.toDto(board, member);
-               boardParticipantRepository.save(boardParticipantDto.toEntity());
+                BoardParticipantDto boardParticipantDto = BoardParticipantDto.toDto(board, member);
+                boardParticipantRepository.save(boardParticipantDto.toEntity());
             }
             return board.getId() + "번 게시글이 수정되었습니다";
-        }
-        else{
+        } else {
             throw new BoardHandler(ErrorStatus.USER_NOT_FOUND_IN_BOARD);
         }
     }
@@ -187,6 +192,7 @@ public class BoardService {
 
     /**
      * 유저검색
+     *
      * @param email
      * @param nickname 닉네임으로 검색
      * @return 검색한 유저 반환
@@ -205,6 +211,7 @@ public class BoardService {
 
     /**
      * 게시글에 과팅신청
+     *
      * @param id
      * @param userSearchResponsetDto
      * @param email
@@ -217,7 +224,7 @@ public class BoardService {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
         String nickname = "";
-        boolean boardApplyUserInLeader=false;
+        boolean boardApplyUserInLeader = false;
         List<BoardApplyLeader> boardApplyUsers = boardApplyLeaderRepository.findByBoardId(board);
 
         //게시글의 참여자 인원과 신청자 인원이 맞지않을경우 예외처리 필요
@@ -235,33 +242,33 @@ public class BoardService {
             if (isUserAlreadyApplied) {
                 throw new UserAlreadyException(member.getNickname() + "님이 이미 참여해 있습니다.");
             }
-            if(userApply.getGender()==board.getGender()) {
+            if (userApply.getGender() == board.getGender()) {
                 throw new BoardHandler(ErrorStatus.NOT_MATCH_GENDER);
             }
-            if(member==user){
-                boardApplyUserInLeader=true;
+            if (member == user) {
+                boardApplyUserInLeader = true;
             }
         }
-        if(boardApplyUserInLeader==false){
+        if (boardApplyUserInLeader == false) {
             throw new BoardHandler(ErrorStatus.LEADER_NOT_IN_APPLYUSER);
         }
-        BoardApplyLeaderDto boardApplyLeaderDto=new BoardApplyLeaderDto();
+        BoardApplyLeaderDto boardApplyLeaderDto = new BoardApplyLeaderDto();
         boardApplyLeaderDto.setBoardId(board);
         boardApplyLeaderDto.setLeaderId(user);
         boardApplyLeaderDto.setStatus(ApplyStatus.대기중);
-        BoardApplyLeader savedBoardApplyLeader=boardApplyLeaderRepository.save(boardApplyLeaderDto.toEntity());
+        BoardApplyLeader savedBoardApplyLeader = boardApplyLeaderRepository.save(boardApplyLeaderDto.toEntity());
 
         // 게시글에 신청하는 유저 저장
         for (UserSearchResponseDto userApply : userSearchResponsetDto) {
             User member = userRepository.findById(userApply.getId())
                     .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-            ApplyUsersDto applyUsers=new ApplyUsersDto();
+            ApplyUsersDto applyUsers = new ApplyUsersDto();
             applyUsers.setBoardApplyLeaderId(savedBoardApplyLeader);
             applyUsers.setUserId(member);
             applyUsersRepository.save(applyUsers.toEntity());
             nickname = nickname + " " + member.getNickname();
         }
-        fcmService.sendMessageTo(board.getUserId(), "과팅 신청이 왔습니다",user.getDepartment() + "학과에서 과팅이 신청되었습니다");
+        fcmService.sendMessageTo(board.getUserId(), "과팅 신청이 왔습니다", user.getDepartment() + "학과에서 과팅이 신청되었습니다");
         return board.getId() + "게시물에 " + nickname + "유저들 신청완료";
     }
 

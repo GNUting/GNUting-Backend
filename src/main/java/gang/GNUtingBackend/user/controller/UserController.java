@@ -43,7 +43,8 @@ public class UserController {
     private final TokenProvider tokenProvider;
     private final UserService userService;
     private final S3Uploader s3Uploader;
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,15}$");
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile(
+            "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,15}$");
 
 
     /**
@@ -92,7 +93,7 @@ public class UserController {
             @RequestParam(value = "profileImage", required = false) @Parameter(description = "프로필 이미지") MultipartFile profileImage,
             @RequestParam("userSelfIntroduction") @Parameter(description = "한 줄 소개") String userSelfIntroduction
     ) throws IOException {
-        if(!isValidPassword(password)){
+        if (!isValidPassword(password)) {
             throw new UserHandler(ErrorStatus.PASSWORD_IS_NOT_VALID);
         }
 
@@ -121,7 +122,8 @@ public class UserController {
      */
     @GetMapping("/check-nickname")
     @Operation(summary = "회원가입 시 닉네임 중복 체크 API", description = "이미 사용중인 닉네임인지 확인합니다.")
-    public ResponseEntity<ApiResponse<Boolean>> checkNicknameAvailability(@RequestParam("nickname") @Parameter(description = "닉네임") String nickname) {
+    public ResponseEntity<ApiResponse<Boolean>> checkNicknameAvailability(
+            @RequestParam("nickname") @Parameter(description = "닉네임") String nickname) {
         boolean isAvailable = userService.isNicknameAvailable(nickname);
 
         if (!isAvailable) {
@@ -133,6 +135,7 @@ public class UserController {
 
     /**
      * 사용자 프로필사진, 비밀번호, 닉네임, 학과, 한줄소개를 수정한다.
+     *
      * @param token
      * @param profileImage
      * @param nickname
@@ -148,7 +151,8 @@ public class UserController {
             @RequestParam(value = "profileImage", required = false) @Parameter(description = "프로필 이미지") MultipartFile profileImage,
             @RequestParam("nickname") @Parameter(description = "닉네임") String nickname,
             @RequestParam("department") @Parameter(description = "학과") String department,
-            @RequestParam("userSelfIntroduction") @Parameter(description = "한 줄 소개") String userSelfIntroduction) throws IOException {
+            @RequestParam("userSelfIntroduction") @Parameter(description = "한 줄 소개") String userSelfIntroduction)
+            throws IOException {
         token = token.substring(7);
         String email = tokenProvider.getUserEmail(token);
 
@@ -157,16 +161,23 @@ public class UserController {
             mediaLink = s3Uploader.uploadProfileImage(profileImage, email);
         }
 
-
-        ApiResponse<UserDetailResponseDto> apiResponse = ApiResponse.onSuccess(userService.userInfoUpdate(mediaLink, nickname, department, userSelfIntroduction, token));
+        ApiResponse<UserDetailResponseDto> apiResponse = ApiResponse.onSuccess(
+                userService.userInfoUpdate(mediaLink, nickname, department, userSelfIntroduction, token));
         return ResponseEntity.ok()
                 .body(apiResponse);
     }
 
+    /**
+     * accessToken이 만료되면 refreshToken을 통해 accessToken을 재발급한다.
+     * @param token
+     * @param reIssueTokenRequestDto
+     * @return
+     */
     @PostMapping("/reIssueAccessToken")
     @Operation(summary = "토큰 재발급 API", description = "refresh 토큰으로 accessToken을 재발급합니다.")
-    public ResponseEntity<ApiResponse<ReIssueTokenResponseDto>> reIssueAccessToken(@RequestHeader("Authorization") String token,
-                                                                                   @RequestBody ReIssueTokenRequestDto reIssueTokenRequestDto) {
+    public ResponseEntity<ApiResponse<ReIssueTokenResponseDto>> reIssueAccessToken(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ReIssueTokenRequestDto reIssueTokenRequestDto) {
         String email = tokenProvider.getUserEmail(token.substring(7));
         ReIssueTokenResponseDto response = userService.reissueAccessToken(
                 reIssueTokenRequestDto.getRefreshToken(), email);
@@ -179,6 +190,7 @@ public class UserController {
 
     /**
      * 로그아웃 API
+     *
      * @param token
      * @param logoutRequestDto 로그아웃 요청에 사용된 리프레시 토큰
      * @return 로그아웃 성공 메시지
@@ -195,6 +207,7 @@ public class UserController {
 
     /**
      * 회원 탈퇴 API
+     *
      * @param token 회원 탈퇴 요청에 사용된 액세스 토큰
      * @return 회원 탈퇴 성공 메시지
      */

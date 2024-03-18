@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class SearchBoardRepositoryImpl implements SearchBoardRepository{
+public class SearchBoardRepositoryImpl implements SearchBoardRepository {
 
     private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;

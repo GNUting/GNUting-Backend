@@ -53,10 +53,11 @@ public class BoardReportService {
         User boardUser = board.getUserId();
 
         // Slack 메세지 보내기
-        try{
+        try {
             List<TextObject> textObjects = new ArrayList<>();
             textObjects.add(markdownText("*닉네임:*\n" + boardUser.getNickname()));
-            textObjects.add(markdownText("*신고 날짜:*\n" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
+            textObjects.add(markdownText(
+                    "*신고 날짜:*\n" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
             textObjects.add(markdownText("*신고 글 제목:*\n" + board.getTitle()));
             textObjects.add(markdownText("*신고 사유:*\n" + boardReportRequestDto.getReportCategory().getReportReason()));
             textObjects.add(markdownText("*신고 내용:*\n" + boardReportRequestDto.getReportReason()));

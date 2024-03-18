@@ -30,6 +30,7 @@ public class UserService {
 
     /**
      * 사용자 회원가입 하기
+     *
      * @param userSignupRequestDto
      * @return
      */
@@ -42,7 +43,7 @@ public class UserService {
                 });
 
         // 경상국립대학교 이메일을 사용하였는지 확인
-        if(!userSignupRequestDto.getEmail().endsWith("@gnu.ac.kr")) {
+        if (!userSignupRequestDto.getEmail().endsWith("@gnu.ac.kr")) {
             throw new UserHandler(ErrorStatus.INVALID_MAIL_ADDRESS);
         }
 
@@ -82,6 +83,7 @@ public class UserService {
 
     /**
      * 사용자 로그인 하기
+     *
      * @param email
      * @param password
      * @return UserLoginResponseDto
@@ -102,12 +104,12 @@ public class UserService {
 
         refreshTokenService.saveToken(user.getEmail(), refreshToken, accessToken);
 
-
         return new TokenResponseDto(accessToken, refreshToken);
     }
 
     /**
      * 토큰으로 사용자 정보 조회하기
+     *
      * @param token
      * @return UserDetailResponseDto
      */
@@ -135,6 +137,7 @@ public class UserService {
 
     /**
      * 닉네임이 사용가능한지 여부를 판단한다.
+     *
      * @param nickname
      * @return 닉네임이 사용가능하면 true, 사용 불가능하면 false
      */
@@ -145,6 +148,7 @@ public class UserService {
 
     /**
      * 사용자의 정보를 업데이트 한다.
+     *
      * @param profileImage
      * @param nickname
      * @param department
@@ -153,7 +157,8 @@ public class UserService {
      * @return
      */
     @Transactional
-    public UserDetailResponseDto userInfoUpdate(String profileImage, String nickname, String department, String userSelfIntroduction, String token) {
+    public UserDetailResponseDto userInfoUpdate(String profileImage, String nickname, String department,
+                                                String userSelfIntroduction, String token) {
         String email = tokenProvider.getUserEmail(token);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -167,7 +172,6 @@ public class UserService {
         if (userSelfIntroduction != null && userSelfIntroduction.length() > 30) {
             throw new UserHandler(ErrorStatus.USER_SELF_INTRODUCTION_LENGTH_EXCEEDED);
         }
-
 
         user.update(profileImage, nickname, department, userSelfIntroduction);
 
@@ -197,6 +201,7 @@ public class UserService {
 
     /**
      * 이전에 발급된 accessToken이 만료되면 새로운 accessToken 발급
+     *
      * @param refreshToken
      * @param email
      * @return
@@ -218,6 +223,7 @@ public class UserService {
 
     /**
      * 로그아웃 로직
+     *
      * @param refreshToken 로그아웃 요청한 사용자의 리프레시 토큰
      */
     public void logout(String refreshToken, String email) {
@@ -226,6 +232,7 @@ public class UserService {
 
     /**
      * 회원 탈퇴 로직
+     *
      * @param email 탈퇴 요청한 사용자의 이메일
      */
     @Transactional
