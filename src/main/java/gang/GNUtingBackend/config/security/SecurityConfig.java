@@ -1,5 +1,6 @@
 package gang.GNUtingBackend.config.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gang.GNUtingBackend.user.filter.JwtFilter;
 import gang.GNUtingBackend.user.token.TokenProvider;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final TokenProvider tokenProvider;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public BCryptPasswordEncoder encodePwd() {
@@ -58,7 +60,7 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
 
                 .and()
-                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(tokenProvider, objectMapper), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

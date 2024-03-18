@@ -203,11 +203,11 @@ public class UserService {
      * 이전에 발급된 accessToken이 만료되면 새로운 accessToken 발급
      *
      * @param refreshToken
-     * @param email
      * @return
      */
     @Transactional
-    public ReIssueTokenResponseDto reissueAccessToken(String refreshToken, String email) {
+    public ReIssueTokenResponseDto reissueAccessToken(String refreshToken) {
+        String email = refreshTokenService.getEmailByRefreshToken(refreshToken);
         User user = refreshTokenService.getUserByRefreshToken(refreshToken, email);
         Token token = refreshTokenService.findTokenByRefreshToken(refreshToken, email);
         String oldAccessToken = token.getAccessToken();

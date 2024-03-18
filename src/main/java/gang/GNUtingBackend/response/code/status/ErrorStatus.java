@@ -17,15 +17,15 @@ public enum ErrorStatus implements BaseErrorCode {
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
     // User 관련 에러
-    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER4000", "사용자가 없습니다."),
-    NICKNAME_INPUT_NOT_EXIST(HttpStatus.BAD_REQUEST, "USER4000", "닉네임을 입력해주세요"),
-    DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "USER4000", "이미 사용중인 닉네임입니다."),
-    USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "USER4000", "이미 가입된 사용자입니다."),
-    PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "USER4000", "비밀번호가 일치하지 않습니다."),
-    USER_GENDER_NOT_MATCH(HttpStatus.BAD_REQUEST, "USER4000", "사용자가 없습니다. (성별이 일치하지않거나 닉네임이 잘못됐습니다.)"),
-    INVALID_STUDENT_ID(HttpStatus.BAD_REQUEST, "USER4000", "학번은 숫자 2자리로 입력해주세요."),
-    NICKNAME_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "USER4000", "닉네임은 최대 10자까지 가능합니다."),
-    USER_SELF_INTRODUCTION_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "USER4000", "한 줄 소개는 최대 30자까지 가능합니다."),
+    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER4000-1", "사용자가 없습니다."),
+    NICKNAME_INPUT_NOT_EXIST(HttpStatus.BAD_REQUEST, "USER4000-2", "닉네임을 입력해주세요"),
+    DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "USER4000-3", "이미 사용중인 닉네임입니다."),
+    USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "USER4000-4", "이미 가입된 사용자입니다."),
+    PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "USER4000-5", "비밀번호가 일치하지 않습니다."),
+    USER_GENDER_NOT_MATCH(HttpStatus.BAD_REQUEST, "USER4000-6", "사용자가 없습니다. (성별이 일치하지않거나 닉네임이 잘못됐습니다.)"),
+    INVALID_STUDENT_ID(HttpStatus.BAD_REQUEST, "USER4000-7", "학번은 숫자 2자리로 입력해주세요."),
+    NICKNAME_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "USER4000-8", "닉네임은 최대 10자까지 가능합니다."),
+    USER_SELF_INTRODUCTION_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "USER4000-9", "한 줄 소개는 최대 30자까지 가능합니다."),
     PASSWORD_IS_NOT_VALID(HttpStatus.BAD_REQUEST,"USER4006","비밀번호를 특수문자,영문자 1개이상 포함 8~15자 이내로 작성하세요"),
 
     // Board 관련 에러
@@ -50,14 +50,14 @@ public enum ErrorStatus implements BaseErrorCode {
     CANNOT_SEND_MESSAGE(HttpStatus.INTERNAL_SERVER_ERROR, "SLACK5001", "slack으로 메세지를 보내지 못하였습니다."),
 
     // token 관련 에러
-    EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "Access Token이 만료되었습니다."),
-    INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "유효하지 않은 Access Token입니다."),
-    EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "Refresh Token이 만료되었습니다."),
-    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "유효하지 않은 Refresh Token입니다."),
+    EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001-1", "Access Token이 만료되었습니다."),
+    INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001-2", "유효하지 않은 Access Token입니다."),
+    EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001-3", "Refresh Token이 만료되었습니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001-4", "유효하지 않은 Refresh Token입니다."),
     NOT_EXPIRED_ACCESS_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN4000", "만료되지 않은 Access 토큰입니다."),
-    INVALID_JWT_SIGNATURE(HttpStatus.UNAUTHORIZED, "TOKEN4001", "잘못된 JWT 서명입니다."),
-    UNSUPPORTED_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "지원되지 않는 JWT 토큰입니다."),
-    INVALID_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001", "JWT 토큰이 잘못되었습니다."),
+    INVALID_JWT_SIGNATURE(HttpStatus.UNAUTHORIZED, "TOKEN4001-5", "잘못된 JWT 서명입니다."),
+    UNSUPPORTED_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001-6", "지원되지 않는 JWT 토큰입니다."),
+    INVALID_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN4001-7", "JWT 토큰이 잘못되었습니다."),
 
     // notification 관련 에러
     OVERLAP_USER_TOKEN(HttpStatus.BAD_REQUEST,"FIREBASE4000","이미 유저의 파이어베이스토큰이 저장되어 있습니다"),
