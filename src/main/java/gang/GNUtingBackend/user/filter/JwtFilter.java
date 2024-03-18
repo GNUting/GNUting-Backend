@@ -1,5 +1,8 @@
 package gang.GNUtingBackend.user.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gang.GNUtingBackend.exception.handler.TokenHandler;
+import gang.GNUtingBackend.response.ApiResponse;
 import gang.GNUtingBackend.user.token.TokenProvider;
 import java.io.IOException;
 import javax.servlet.FilterChain;
@@ -7,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,20 +23,30 @@ import org.springframework.web.filter.GenericFilterBean;
 public class JwtFilter extends GenericFilterBean {
 
     private final TokenProvider tokenProvider;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
         try {
-            // 헤더에서 토큰 가져오기
-            String token = resolveToken((HttpServletRequest) request);
+            String token = resolveToken(httpServletRequest);
 
-            // 토큰이 유효한 경우 Security Context에 인증 정보 설정
             if (token != null && tokenProvider.validateToken(token)) {
                 Authentication authentication = tokenProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+        } catch (TokenHandler e) {
+            logger.error(e.getMessage());
+            // 만료된 토큰에 대한 응답 설정
+            httpServletResponse.setStatus(e.getErrorReasonHttpStatus().getHttpStatus().value());
+            httpServletResponse.setContentType("application/json;charset=UTF-8");
+            ApiResponse<Object> apiResponse = ApiResponse.onFailure(e.getErrorReason().getCode(), e.getErrorReason().getMessage());
+            String json = objectMapper.writeValueAsString(apiResponse);
+            httpServletResponse.getWriter().write(json);
+            return; // 필터 체인의 나머지 부분을 실행하지 않고 반환
         } catch (Exception e) {
             logger.error("Security context에 설정되지 않음", e);
         }

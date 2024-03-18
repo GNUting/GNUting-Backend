@@ -169,18 +169,15 @@ public class UserController {
 
     /**
      * accessToken이 만료되면 refreshToken을 통해 accessToken을 재발급한다.
-     * @param token
      * @param reIssueTokenRequestDto
      * @return
      */
     @PostMapping("/reIssueAccessToken")
     @Operation(summary = "토큰 재발급 API", description = "refresh 토큰으로 accessToken을 재발급합니다.")
     public ResponseEntity<ApiResponse<ReIssueTokenResponseDto>> reIssueAccessToken(
-            @RequestHeader("Authorization") String token,
             @RequestBody ReIssueTokenRequestDto reIssueTokenRequestDto) {
-        String email = tokenProvider.getUserEmail(token.substring(7));
         ReIssueTokenResponseDto response = userService.reissueAccessToken(
-                reIssueTokenRequestDto.getRefreshToken(), email);
+                reIssueTokenRequestDto.getRefreshToken());
 
         ApiResponse<ReIssueTokenResponseDto> apiResponse = ApiResponse.onSuccess(response);
 

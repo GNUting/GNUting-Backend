@@ -27,9 +27,15 @@ public class RefreshTokenService {
         return String.format("refreshToken:%s:%s", email, refreshToken);
     }
 
+    public void saveEmail(String email, String refreshToken) {
+        String key = "refreshToken:" + refreshToken;
+        redisTemplate.opsForValue().set(key, email, expiredDate, TimeUnit.MILLISECONDS);
+    }
+
     public void saveToken(String email, String refreshToken, String accessToken) {
         String key = generateKey(email, refreshToken);
         redisTemplate.opsForValue().set(key, accessToken, expiredDate, TimeUnit.MILLISECONDS);
+        saveEmail(email, refreshToken);
     }
 
     public Token findTokenByRefreshToken(String refreshToken, String email) {
@@ -40,6 +46,11 @@ public class RefreshTokenService {
         } else {
             throw new TokenHandler(ErrorStatus.INVALID_REFRESH_TOKEN);
         }
+    }
+
+    public String getEmailByRefreshToken(String refreshToken) {
+        String key = "refreshToken:" + refreshToken;
+        return redisTemplate.opsForValue().get(key);
     }
 
     public User getUserByRefreshToken(String refreshToken, String email) {
