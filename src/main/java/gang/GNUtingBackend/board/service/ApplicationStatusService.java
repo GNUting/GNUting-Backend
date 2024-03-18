@@ -161,15 +161,18 @@ public class ApplicationStatusService {
     public String cancel(Long id, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        Board board = boardRepository.findById(id)
-                .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
-        BoardApplyLeader boardApplyLeader = boardApplyLeaderRepository.findByLeaderIdAndBoardId(user, board);
+        BoardApplyLeader boardApplyLeader = boardApplyLeaderRepository.findById(id)
+                .orElseThrow();
+
         if (boardApplyLeader == null) {
             throw new BoardHandler(ErrorStatus.USER_NOT_APPLY);
         }
+        if(boardApplyLeader.getLeaderId()!=user){
+            throw new BoardHandler(ErrorStatus.USER_NOT_APPLY);
+        }
         boardApplyLeaderRepository.delete(boardApplyLeader);
-        fcmService.sendMessageTo(board.getUserId(), "과팅신청 취소", user.getDepartment() + " 신청자가 과팅신청을 취소했습니다");
-        return board.getUserId().getDepartment() + "학과 신청이 취소되었습니다.";
+        fcmService.sendMessageTo(boardApplyLeader.getBoardId().getUserId(), "과팅신청 취소", user.getDepartment() + " 신청자가 과팅신청을 취소했습니다");
+        return boardApplyLeader.getBoardId().getUserId().getDepartment() + "학과 신청이 취소되었습니다.";
     }
 
     public String accept(String email, Long id) {
