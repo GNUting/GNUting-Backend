@@ -1,6 +1,6 @@
 package gang.GNUtingBackend.chat.domain;
 
-import java.time.LocalDateTime;
+import gang.GNUtingBackend.user.domain.User;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,9 +16,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class Chat {
+@AllArgsConstructor
+public class ChatRoomUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ public class Chat {
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
 
-    private String sender;
-    private String message;
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
