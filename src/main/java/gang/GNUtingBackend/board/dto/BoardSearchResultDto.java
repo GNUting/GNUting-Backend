@@ -20,10 +20,14 @@ public class BoardSearchResultDto {
     // 작성자 학번
     private String studentId;
 
-    public BoardSearchResultDto(Long boardId, String title, String department, String studentId) {
+    // 참여 인원 수
+    private int inUserCount;
+
+    public BoardSearchResultDto(Long boardId, String title, String department, String studentId, int inUserCount) {
         this.boardId = boardId;
         this.title = title;
         this.department = department;
         this.studentId = studentId + "학번";
+        this.inUserCount = inUserCount;
     }
 }
