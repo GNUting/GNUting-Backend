@@ -1,6 +1,7 @@
 package gang.GNUtingBackend.user.token;
 
 import gang.GNUtingBackend.exception.handler.TokenHandler;
+import gang.GNUtingBackend.notification.service.FCMService;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.enums.UserRole;
 import gang.GNUtingBackend.user.auth.PrincipalDetails;
@@ -67,6 +68,7 @@ public class TokenProvider {
 
     // 토큰을 파싱하여 사용자의 이메일(토큰의 subject)을 반환한다
     public String getUserEmail(String token) {
+
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()

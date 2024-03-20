@@ -160,7 +160,7 @@ public class ApplicationStatusService {
         }
         boardApplyLeader.setStatus(ApplyStatus.거절);
         boardApplyLeaderRepository.save(boardApplyLeader);
-        //fcmService.sendMessageTo(boardApplyLeader.getBoardId().getUserId(),"과팅신청자가 취소하였습니다",user.getDepartment()+"학과의 과팅이 취소되었습니다");
+        fcmService.sendMessageTo(boardApplyLeader.getLeaderId(),"과팅신청이 거절되었습니다",user.getDepartment()+" "+user.getNickname()+"님이 과팅을 거절했습니다.");
 
         return boardApplyLeader.getId() + "번 신청이 거절되었습니다.";
     }
@@ -177,7 +177,7 @@ public class ApplicationStatusService {
             throw new BoardHandler(ErrorStatus.USER_NOT_APPLY);
         }
         boardApplyLeaderRepository.delete(boardApplyLeader);
-        fcmService.sendMessageTo(boardApplyLeader.getBoardId().getUserId(), "과팅신청 취소", user.getDepartment() + " 신청자가 과팅신청을 취소했습니다");
+        fcmService.sendMessageTo(boardApplyLeader.getBoardId().getUserId(), "과팅신청자가 과팅을 취소했습니다.", user.getDepartment() + user.getNickname()+"님이 과팅을 취소했습니다.");
         return boardApplyLeader.getBoardId().getUserId().getDepartment() + "학과 신청이 취소되었습니다.";
     }
 

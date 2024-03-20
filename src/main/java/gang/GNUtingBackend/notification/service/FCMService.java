@@ -18,6 +18,7 @@ import gang.GNUtingBackend.notification.repository.FCMRepository;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.repository.UserRepository;
+import gang.GNUtingBackend.user.token.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -48,7 +49,6 @@ public class FCMService {
             //board에 신청했다고 알림보낼때
             FCM fcmToken = fcmRepository.findByUserId(findId);
             String message = makeMessage(fcmToken.getFcmToken(), title, body);
-
             OkHttpClient client = new OkHttpClient();
             RequestBody requestBody = RequestBody.create(message,
                     MediaType.get("application/json; charset=utf-8"));
@@ -112,5 +112,11 @@ public class FCMService {
         FCM saveEntity = FCMTokenSaveDto.toEntity(fcmEntity, user);
         fcmRepository.save(saveEntity);
         return user.getNickname() + "님의 토큰이 저장되었습니다";
+    }
+
+    public void deleteFCMToken(String email){
+        User user=userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        fcmRepository.delete(user.getFcms());
     }
 }

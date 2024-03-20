@@ -19,7 +19,8 @@ public class UserNotification extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn
+    @JoinColumn(name = "user_id")
+
     @ManyToOne
     private User userId;
     @Column
