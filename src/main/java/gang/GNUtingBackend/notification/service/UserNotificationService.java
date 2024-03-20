@@ -1,5 +1,6 @@
 package gang.GNUtingBackend.notification.service;
 
+import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.dto.UserNotificationResponseDto;
 import gang.GNUtingBackend.notification.entity.UserNotification;
@@ -35,5 +36,18 @@ public class UserNotificationService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         List<UserNotification> userNotifications = userNotificationRepository.findByUserId(user);
         return userNotifications.stream().map(UserNotificationResponseDto::toDto).collect(Collectors.toList());
+    }
+
+    public String deleteNotification(String email, Long id) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        UserNotification userNotification=userNotificationRepository.findById(id)
+                .orElseThrow(()-> new BoardHandler(ErrorStatus.INVALID_ACCESS));
+        if(user!=userNotification.getUserId()){
+            throw new BoardHandler(ErrorStatus.INVALID_ACCESS);
+        }
+        userNotificationRepository.deleteById(id);
+
+        return id+"알림이 삭제되었습니다";
     }
 }

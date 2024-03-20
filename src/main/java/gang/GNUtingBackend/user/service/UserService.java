@@ -2,6 +2,7 @@ package gang.GNUtingBackend.user.service;
 
 import gang.GNUtingBackend.exception.handler.TokenHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
+import gang.GNUtingBackend.notification.service.FCMService;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.Token;
 import gang.GNUtingBackend.user.domain.User;
@@ -27,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
     private final RefreshTokenService refreshTokenService;
+    private final FCMService fcmService;
 
     /**
      * 사용자 회원가입 하기
@@ -227,6 +229,7 @@ public class UserService {
      * @param refreshToken 로그아웃 요청한 사용자의 리프레시 토큰
      */
     public void logout(String refreshToken, String email) {
+        fcmService.deleteFCMToken(email);
         refreshTokenService.logout(refreshToken, email);
     }
 

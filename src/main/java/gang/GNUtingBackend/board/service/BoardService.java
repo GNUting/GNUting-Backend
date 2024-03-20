@@ -252,6 +252,7 @@ public class BoardService {
         if (boardApplyUserInLeader == false) {
             throw new BoardHandler(ErrorStatus.LEADER_NOT_IN_APPLYUSER);
         }
+
         BoardApplyLeaderDto boardApplyLeaderDto = new BoardApplyLeaderDto();
         boardApplyLeaderDto.setBoardId(board);
         boardApplyLeaderDto.setLeaderId(user);
@@ -268,7 +269,7 @@ public class BoardService {
             applyUsersRepository.save(applyUsers.toEntity());
             nickname = nickname + " " + member.getNickname();
         }
-        fcmService.sendMessageTo(board.getUserId(), "과팅 신청이 왔습니다", user.getDepartment() + "학과에서 과팅이 신청되었습니다");
+        fcmService.sendMessageTo(board.getUserId(), "과팅 신청이 도착했습니다.", user.getDepartment()+" "+user.getNickname() + "님이 과팅을 신청했습니다.");
         return board.getId() + "게시물에 " + nickname + "유저들 신청완료";
     }
 

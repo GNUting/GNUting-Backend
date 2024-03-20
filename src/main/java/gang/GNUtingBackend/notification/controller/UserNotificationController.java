@@ -9,10 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,5 +26,13 @@ public class UserNotificationController {
         List<UserNotificationResponseDto> notifications=userNotificationService.showNotification(email);
         return ResponseEntity.ok()
                 .body(ApiResponse.onSuccess(notifications));
+    }
+
+    @DeleteMapping("/notification/{id}")
+    public ResponseEntity<?> deleteNotification(@RequestHeader("Authorization") String token,@PathVariable Long id){
+        String email=tokenProvider.getUserEmail(token.substring(7));
+        String notificationdeleted=userNotificationService.deleteNotification(email,id);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(notificationdeleted));
     }
 }

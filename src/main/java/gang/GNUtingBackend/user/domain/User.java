@@ -1,9 +1,16 @@
 package gang.GNUtingBackend.user.domain;
 
+import gang.GNUtingBackend.board.entity.ApplyUsers;
+import gang.GNUtingBackend.board.entity.Board;
+import gang.GNUtingBackend.board.entity.BoardApplyLeader;
+import gang.GNUtingBackend.board.entity.BoardParticipant;
+import gang.GNUtingBackend.notification.entity.FCM;
+import gang.GNUtingBackend.notification.entity.UserNotification;
 import gang.GNUtingBackend.user.domain.enums.Gender;
 import gang.GNUtingBackend.user.domain.enums.UserRole;
 import gang.GNUtingBackend.user.dto.UserUpdateRequestDto;
 import java.time.LocalDate;
+import java.util.List;
 import javax.persistence.*;
 
 import javax.validation.constraints.Pattern;
@@ -79,6 +86,21 @@ public class User extends BaseEntity {
     @Column(length = 30)
     @Size(max = 30, message = "한 줄 소개는 최대 30자까지 가능합니다.")
     private String userSelfIntroduction;
+
+    @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<UserNotification> userNotifications;
+
+    @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Board> boards;
+
+    @OneToOne(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private FCM fcms;
+
+    @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BoardParticipant> boardParticipants;
+
+    @OneToMany(mappedBy = "leaderId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BoardApplyLeader> boardApplyLeaders;
 
     public void update(String profileImage, String nickname, String department, String userSelfIntroduction) {
         this.profileImage = profileImage;
