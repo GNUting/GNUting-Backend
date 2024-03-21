@@ -14,6 +14,8 @@ import gang.GNUtingBackend.user.dto.token.TokenResponseDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
 import gang.GNUtingBackend.user.token.RefreshTokenService;
 import gang.GNUtingBackend.user.token.TokenProvider;
+import java.util.Optional;
+import java.util.regex.Pattern;
 import jdk.jshell.spi.ExecutionControl.UserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,6 +31,8 @@ public class UserService {
     private final TokenProvider tokenProvider;
     private final RefreshTokenService refreshTokenService;
     private final FCMService fcmService;
+    private final Pattern PASSWORD_PATTERN = Pattern.compile(
+            "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,15}$");
 
     /**
      * 사용자 회원가입 하기
@@ -65,6 +69,10 @@ public class UserService {
 
         if (userSignupRequestDto.getUserSelfIntroduction().length() > 30) {
             throw new UserHandler(ErrorStatus.USER_SELF_INTRODUCTION_LENGTH_EXCEEDED);
+        }
+
+        if (!isValidPassword(userSignupRequestDto.getPassword())) {
+            throw new UserHandler(ErrorStatus.PASSWORD_IS_NOT_VALID);
         }
 
         // 사용자가 존재하지 않으면 비밀번호를 암호화하여 저장
@@ -246,5 +254,29 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         userRepository.delete(user);
+    }
+
+    //비밀번호 정규화
+    public boolean isValidPassword(String password) {
+        return PASSWORD_PATTERN.matcher(password).matches();
+    }
+
+    /**
+     * 새로운 비밀번호 설정
+     * @param email
+     * @param newPassword
+     */
+    @Transactional
+    public void setNewPassword (String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        if (!isValidPassword(newPassword)) {
+            throw new UserHandler(ErrorStatus.PASSWORD_IS_NOT_VALID);
+        }
+
+        String encodedNewPassword = bCryptPasswordEncoder.encode(newPassword);
+        user.updatePassword(encodedNewPassword);
+        userRepository.save(user);
     }
 }

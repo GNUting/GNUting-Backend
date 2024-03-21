@@ -8,6 +8,7 @@ import gang.GNUtingBackend.user.domain.enums.Gender;
 import gang.GNUtingBackend.user.domain.enums.UserRole;
 import gang.GNUtingBackend.user.dto.UserDetailResponseDto;
 import gang.GNUtingBackend.user.dto.UserLoginRequestDto;
+import gang.GNUtingBackend.user.dto.UserSetNewPasswordDto;
 import gang.GNUtingBackend.user.dto.UserSignupRequestDto;
 import gang.GNUtingBackend.user.dto.token.LogoutRequestDto;
 import gang.GNUtingBackend.user.dto.token.ReIssueTokenRequestDto;
@@ -19,8 +20,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.regex.Pattern;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -43,9 +42,6 @@ public class UserController {
     private final TokenProvider tokenProvider;
     private final UserService userService;
     private final S3Uploader s3Uploader;
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile(
-            "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,15}$");
-
 
     /**
      * 사용자 로그인 요청을 처리하고, 로그인이 성공했을 때 토큰을 반환한다.
@@ -72,12 +68,6 @@ public class UserController {
      * @param
      * @return
      */
-
-    //비밀번호 정규화
-    public static boolean isValidPassword(String password) {
-        return PASSWORD_PATTERN.matcher(password).matches();
-    }
-
     @PostMapping("/signup")
     @Operation(summary = "회원가입 API", description = "사용자의 정보를 바탕으로 회원가입을 진행합니다.")
     public ResponseEntity<ApiResponse<TokenResponseDto>> signup(
@@ -93,9 +83,6 @@ public class UserController {
             @RequestParam(value = "profileImage", required = false) @Parameter(description = "프로필 이미지") MultipartFile profileImage,
             @RequestParam("userSelfIntroduction") @Parameter(description = "한 줄 소개") String userSelfIntroduction
     ) throws IOException {
-        if (!isValidPassword(password)) {
-            throw new UserHandler(ErrorStatus.PASSWORD_IS_NOT_VALID);
-        }
 
         String mediaLink = null;
         if (profileImage != null && !profileImage.isEmpty()) {
@@ -215,6 +202,16 @@ public class UserController {
         userService.deleteUser(email);
         return ResponseEntity.ok()
                 .body(ApiResponse.onSuccess("정상적으로 회원 탈퇴 되었습니다."));
+    }
+
+    @PatchMapping("/setNewPassword")
+    @Operation(summary = "새로운 비밀번호 설정 API", description = "사용자의 비밀번호를 새로 설정합니다.")
+    public ResponseEntity<ApiResponse<String>> changeNewPassword(
+            @RequestBody UserSetNewPasswordDto userSetNewPasswordDto) {
+        userService.setNewPassword(userSetNewPasswordDto.getEmail(), userSetNewPasswordDto.getPassword());
+
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess("새로운 비밀번호가 설정되었습니다."));
     }
 }
 
