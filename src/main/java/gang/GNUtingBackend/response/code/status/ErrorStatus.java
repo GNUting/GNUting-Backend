@@ -65,9 +65,14 @@ public enum ErrorStatus implements BaseErrorCode {
     FIREBASE_ERROR(HttpStatus.BAD_REQUEST,"FIREBASE5000","파이어베이스 에러 관리자에게 문의하세요."),
     JSON_FILE_ROAD_FAIL(HttpStatus.BAD_REQUEST,"FIREBASE5001","서버의 JSON파일 로드 실패"),
     INVALID_ACCESS(HttpStatus.BAD_REQUEST,"NOTIFICATION5001","잘못된 접근입니다."),
-    NOT_FOUND_NOTIFICATION(HttpStatus.BAD_REQUEST,"NOTIFICATION5001","알림을 찾을수가 없습니다"),
-    INPUT_ERROR(HttpStatus.BAD_REQUEST,"FIREBASE5002","파일 입출 작업 에러");
 
+    // websocket 관련 에러
+    SESSION_ATTRIBUTES_IS_NULL(HttpStatus.INTERNAL_SERVER_ERROR, "WEBSOCKET5001", "session attributes가 null 입니다."),
+    SESSION_ATTRIBUTE_NOT_FOUND(HttpStatus.BAD_REQUEST, "WEBSOCKET4001", "요청한 session attributes에 해당하는 값이 없습니다."),
+    NOT_FOUND_CHAT_ROOM_USER(HttpStatus.BAD_REQUEST, "WEBSOCKET4002", "채팅방에 해당 이메일을 가진 유저가 없습니다."),
+
+    // chatRoom 관련 에러
+    CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHATROOM4001", "채팅방을 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
