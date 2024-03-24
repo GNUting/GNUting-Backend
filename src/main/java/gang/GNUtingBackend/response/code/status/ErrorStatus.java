@@ -65,7 +65,6 @@ public enum ErrorStatus implements BaseErrorCode {
     FIREBASE_ERROR(HttpStatus.BAD_REQUEST,"FIREBASE5000","파이어베이스 에러 관리자에게 문의하세요."),
     JSON_FILE_ROAD_FAIL(HttpStatus.BAD_REQUEST,"FIREBASE5001","서버의 JSON파일 로드 실패"),
     INVALID_ACCESS(HttpStatus.BAD_REQUEST,"NOTIFICATION5001","잘못된 접근입니다."),
-    INPUT_ERROR(HttpStatus.BAD_REQUEST,"FIREBASE5002","파일 입출 작업 에러"),
 
     // websocket 관련 에러
     SESSION_ATTRIBUTES_IS_NULL(HttpStatus.INTERNAL_SERVER_ERROR, "WEBSOCKET5001", "session attributes가 null 입니다."),

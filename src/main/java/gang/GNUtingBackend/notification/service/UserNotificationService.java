@@ -42,7 +42,7 @@ public class UserNotificationService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         UserNotification userNotification=userNotificationRepository.findById(id)
-                .orElseThrow(()-> new BoardHandler(ErrorStatus.INVALID_ACCESS));
+                .orElseThrow(()-> new BoardHandler(ErrorStatus.NOT_FOUND_NOTIFICATION));
         if(user!=userNotification.getUserId()){
             throw new BoardHandler(ErrorStatus.INVALID_ACCESS);
         }

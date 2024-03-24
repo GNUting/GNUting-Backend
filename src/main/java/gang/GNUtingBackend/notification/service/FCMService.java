@@ -107,7 +107,8 @@ public class FCMService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         FCM overlapCheck = fcmRepository.findByUserId(user);
         if (overlapCheck != null) {
-            throw new BoardHandler(ErrorStatus.OVERLAP_USER_TOKEN);
+            fcmRepository.delete(overlapCheck);
+           //throw new BoardHandler(ErrorStatus.OVERLAP_USER_TOKEN);
         }
         FCM saveEntity = FCMTokenSaveDto.toEntity(fcmEntity, user);
         fcmRepository.save(saveEntity);

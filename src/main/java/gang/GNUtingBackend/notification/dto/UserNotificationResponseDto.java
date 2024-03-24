@@ -9,10 +9,12 @@ import lombok.*;
 @Builder
 @Setter
 public class UserNotificationResponseDto {
+    private Long id;
     private String notification;
 
     public static UserNotificationResponseDto toDto(UserNotification notification) {
        return UserNotificationResponseDto.builder()
+               .id(notification.getId())
                 .notification(notification.getNotification())
                .build();
     }
