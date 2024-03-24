@@ -1,7 +1,6 @@
 package gang.GNUtingBackend.board.service;
 
 import gang.GNUtingBackend.board.dto.ApplicationStatusResponseDto;
-import gang.GNUtingBackend.board.dto.BoardResponseDto;
 import gang.GNUtingBackend.board.dto.BoardShowAllResponseDto;
 import gang.GNUtingBackend.board.dto.ChatMemberDto;
 import gang.GNUtingBackend.board.entity.ApplyUsers;
@@ -12,10 +11,10 @@ import gang.GNUtingBackend.board.entity.enums.ApplyStatus;
 import gang.GNUtingBackend.board.repository.BoardApplyLeaderRepository;
 import gang.GNUtingBackend.board.repository.BoardParticipantRepository;
 import gang.GNUtingBackend.board.repository.BoardRepository;
+import gang.GNUtingBackend.chat.service.ChatRoomService;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.service.FCMService;
-import gang.GNUtingBackend.notification.service.UserNotificationService;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
@@ -37,6 +36,7 @@ public class ApplicationStatusService {
     private final BoardService boardService;
     private final BoardApplyLeaderRepository boardApplyLeaderRepository;
     private final FCMService fcmService;
+    private final ChatRoomService chatRoomService;
 
 
     /**
@@ -198,9 +198,10 @@ public class ApplicationStatusService {
                 .collect(Collectors.toList());
         String applyUserDepartment = boardApplyLeader.getLeaderId().getDepartment();
         String participantUserDepartment = boardApplyLeader.getBoardId().getUserId().getDepartment();
-        ChatMemberDto chatMemberDto = ChatMemberDto.toDto(applyUserDepartment, participantUserDepartment, applyUserList,
+        ChatMemberDto chatMemberDto = ChatMemberDto.toDto(boardApplyLeader.getBoardId(), applyUserDepartment, participantUserDepartment, applyUserList,
                 participantUserList);
-        //채팅방 으로 쏴주고
+
+        chatRoomService.createChatRoom(chatMemberDto);
 
         //알림 날려주고
         return null;
