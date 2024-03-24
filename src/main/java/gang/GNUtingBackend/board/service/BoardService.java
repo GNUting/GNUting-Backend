@@ -242,9 +242,11 @@ public class BoardService {
             if (isUserAlreadyApplied) {
                 throw new UserAlreadyException(member.getNickname() + "님이 이미 참여해 있습니다.");
             }
+            //사용자가 성별이 다를때
             if (userApply.getGender() == board.getGender()) {
                 throw new BoardHandler(ErrorStatus.NOT_MATCH_GENDER);
             }
+            //신청자 리더가 안에 포함되어있는지 확인
             if (member == user) {
                 boardApplyUserInLeader = true;
             }
