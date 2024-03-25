@@ -2,7 +2,6 @@ package gang.GNUtingBackend.chat.dto;
 
 
 import java.util.List;
-import java.util.Set;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,5 +13,4 @@ public class ChatRoomResponseDto {
     private String title;
     private String leaderUserDepartment;
     private String applyLeaderDepartment;
-    private List<ChatRoomUserDto> chatroomUsers;
 }

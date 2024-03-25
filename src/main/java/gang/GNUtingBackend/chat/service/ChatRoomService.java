@@ -8,9 +8,7 @@ import gang.GNUtingBackend.chat.dto.ChatRoomUserDto;
 import gang.GNUtingBackend.chat.repository.ChatRoomRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +21,6 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserService chatRoomUserService;
     private final ChatRoomUserRepository chatRoomUserRepository;
-    private final ChatRoomUserDto chatRoomUserDto;
 
     /**
      * 채팅방 생성
@@ -73,7 +70,6 @@ public class ChatRoomService {
                         .title(cru.getChatRoom().getTitle())
                         .leaderUserDepartment(cru.getChatRoom().getLeaderUserDepartment())
                         .applyLeaderDepartment(cru.getChatRoom().getApplyLeaderDepartment())
-                        .chatroomUsers(chatRoomUserDto.toDto(cru.getChatRoom().getChatRoomUsers()))
                         .build())
                 .collect(Collectors.toList());
     }
