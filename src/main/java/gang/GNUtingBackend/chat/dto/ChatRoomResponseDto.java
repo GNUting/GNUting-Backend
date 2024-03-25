@@ -1,16 +1,18 @@
 package gang.GNUtingBackend.chat.dto;
 
-import java.util.List;
+import gang.GNUtingBackend.chat.domain.ChatRoomUser;
+import java.util.Set;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class ChatRoomResponse {
+public class ChatRoomResponseDto {
 
     private Long id;
     private String title;
     private String leaderUserDepartment;
     private String applyLeaderDepartment;
+    private Set<ChatRoomUser> chatroomUsers;
 
 }

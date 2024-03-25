@@ -46,7 +46,7 @@ public class WebSocketEventListener {
 
         ChatRequestDto chatRequest = new ChatRequestDto(MessageType.ENTER,
                 userNickname + " 님이 채팅방에 입장했습니다.");
-        messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, chatRequest);
+        messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, chatRequest);
 
     }
 
@@ -64,7 +64,7 @@ public class WebSocketEventListener {
         ChatRequestDto chatRequest = new ChatRequestDto(MessageType.LEAVE,
                 userNickname + "님이 채팅방을 떠났습니다.");
 
-        messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, chatRequest);
+        messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, chatRequest);
     }
 
     private Object getValue(StompHeaderAccessor accessor, String key) {

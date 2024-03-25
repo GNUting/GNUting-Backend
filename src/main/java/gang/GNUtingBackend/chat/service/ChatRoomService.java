@@ -3,10 +3,13 @@ package gang.GNUtingBackend.chat.service;
 import gang.GNUtingBackend.board.dto.ChatMemberDto;
 import gang.GNUtingBackend.chat.domain.ChatRoom;
 import gang.GNUtingBackend.chat.domain.ChatRoomUser;
-import gang.GNUtingBackend.chat.dto.ChatRoomResponse;
+import gang.GNUtingBackend.chat.dto.ChatRoomResponseDto;
 import gang.GNUtingBackend.chat.repository.ChatRoomRepository;
+import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,9 +20,15 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserService chatRoomUserService;
+    private final ChatRoomUserRepository chatRoomUserRepository;
 
+    /**
+     * 채팅방 생성
+     * @param chatMemberDto
+     * @return
+     */
     @Transactional
-    public ChatRoomResponse createChatRoom(ChatMemberDto chatMemberDto) {
+    public ChatRoomResponseDto createChatRoom(ChatMemberDto chatMemberDto) {
         ChatRoom chatRoom = ChatRoom.builder()
                 .title(chatMemberDto.getBoard().getTitle())
                 .leaderUserDepartment(chatMemberDto.getParticipantUserDepartment())
@@ -39,12 +48,31 @@ public class ChatRoomService {
         chatRoom.setChatRoomUsers(chatRoomUsers);
         chatRoomRepository.save(chatRoom);
 
-        return ChatRoomResponse.builder()
+        return ChatRoomResponseDto.builder()
                 .id(chatRoom.getId())
                 .title(chatRoom.getTitle())
                 .leaderUserDepartment(chatRoom.getLeaderUserDepartment())
                 .applyLeaderDepartment(chatRoom.getApplyLeaderDepartment())
                 .build();
+    }
+
+    /**
+     * 해당 이메일을 가진 유저가 참여중인 모든 채팅방을 조회
+     * @param email
+     * @return
+     */
+    public List<ChatRoomResponseDto> findChatRoomsByUserEmail(String email) {
+        List<ChatRoomUser> allByUserEmail = chatRoomUserRepository.findAllByUserEmail(email);
+
+        return allByUserEmail.stream()
+                .map(cru -> ChatRoomResponseDto.builder()
+                        .id(cru.getChatRoom().getId())
+                        .title(cru.getChatRoom().getTitle())
+                        .leaderUserDepartment(cru.getChatRoom().getLeaderUserDepartment())
+                        .applyLeaderDepartment(cru.getChatRoom().getApplyLeaderDepartment())
+                        .chatroomUsers(cru.getChatRoom().getChatRoomUsers())
+                        .build())
+                .collect(Collectors.toList());
     }
 
 }
