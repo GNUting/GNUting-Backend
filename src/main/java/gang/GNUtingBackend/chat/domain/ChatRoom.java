@@ -1,7 +1,9 @@
 package gang.GNUtingBackend.chat.domain;
 
 import gang.GNUtingBackend.user.domain.BaseEntity;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,9 +31,9 @@ public class ChatRoom extends BaseEntity {
     private String applyLeaderDepartment;
 
     @OneToMany(mappedBy = "chatRoom")
-    private Set<ChatRoomUser> chatRoomUsers = new HashSet<>();
+    private List<ChatRoomUser> chatRoomUsers = new ArrayList<>();
 
-    public void setChatRoomUsers(Set<ChatRoomUser> chatRoomUsers) {
+    public void setChatRoomUsers(List<ChatRoomUser> chatRoomUsers) {
         this.chatRoomUsers = chatRoomUsers;
     }
 }

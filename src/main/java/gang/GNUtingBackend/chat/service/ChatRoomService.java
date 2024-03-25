@@ -4,8 +4,10 @@ import gang.GNUtingBackend.board.dto.ChatMemberDto;
 import gang.GNUtingBackend.chat.domain.ChatRoom;
 import gang.GNUtingBackend.chat.domain.ChatRoomUser;
 import gang.GNUtingBackend.chat.dto.ChatRoomResponseDto;
+import gang.GNUtingBackend.chat.dto.ChatRoomUserDto;
 import gang.GNUtingBackend.chat.repository.ChatRoomRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +23,7 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserService chatRoomUserService;
     private final ChatRoomUserRepository chatRoomUserRepository;
+    private final ChatRoomUserDto chatRoomUserDto;
 
     /**
      * 채팅방 생성
@@ -37,7 +40,7 @@ public class ChatRoomService {
 
         chatRoom = chatRoomRepository.save(chatRoom);
 
-        Set<ChatRoomUser> chatRoomUsers = new HashSet<>();
+        List<ChatRoomUser> chatRoomUsers = new ArrayList<>();
         ChatRoom finalChatRoom = chatRoom;
         chatMemberDto.getApplyUser().forEach(user ->
                 chatRoomUsers.add(chatRoomUserService.createChatRoomUser(finalChatRoom, user)));
@@ -70,9 +73,8 @@ public class ChatRoomService {
                         .title(cru.getChatRoom().getTitle())
                         .leaderUserDepartment(cru.getChatRoom().getLeaderUserDepartment())
                         .applyLeaderDepartment(cru.getChatRoom().getApplyLeaderDepartment())
-                        .chatroomUsers(cru.getChatRoom().getChatRoomUsers())
+                        .chatroomUsers(chatRoomUserDto.toDto(cru.getChatRoom().getChatRoomUsers()))
                         .build())
                 .collect(Collectors.toList());
     }
-
 }

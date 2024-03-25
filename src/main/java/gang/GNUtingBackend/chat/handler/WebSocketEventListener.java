@@ -45,7 +45,7 @@ public class WebSocketEventListener {
         logger.info("{}({})님이 ChatRoomId : {}를 구독하였습니다.", userNickname, userEmail, chatRoomId);
 
         ChatRequestDto chatRequest = new ChatRequestDto(MessageType.ENTER,
-                userNickname + " 님이 채팅방에 입장했습니다.");
+                userNickname + "님이 채팅방에 입장했습니다.");
         messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, chatRequest);
 
     }
