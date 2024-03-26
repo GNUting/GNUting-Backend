@@ -5,7 +5,6 @@ import gang.GNUtingBackend.chat.dto.ChatRequestDto;
 import gang.GNUtingBackend.exception.handler.WebSocketHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import java.util.Map;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -18,73 +17,60 @@ import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class WebSocketEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
     private final SimpMessageSendingOperations messagingTemplate;
 
-    // 연결 요청
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-        logger.info("새로운 웹 소켓에 연결되었습니다.");
+        logger.info("새로운 웹 소켓 연결이 생성되었습니다.");
     }
 
-    // 구독 요청(입장)
     @EventListener
     public void handleWebSocketSubscribeListener(SessionSubscribeEvent event) {
-        logger.info("새로운 웹 소켓에 구독되었습니다.");
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
+        try {
+            String userEmail = safelyGetValue(accessor, "userEmail", String.class);
+            String userNickname = safelyGetValue(accessor, "userNickname", String.class);
+            Long chatRoomId = safelyGetValue(accessor, "chatRoomId", Long.class);
 
-        String userEmail = (String)getValue(accessor, "userEmail");
-        String userNickname = (String)getValue(accessor, "userNickname");
-        Long chatRoomId = (Long)getValue(accessor, "chatRoomId");
+            logger.info("{}({})님이 ChatRoomId : {}를 구독하였습니다.", userNickname, userEmail, chatRoomId);
 
-        logger.info("{}({})님이 ChatRoomId : {}를 구독하였습니다.", userNickname, userEmail, chatRoomId);
-
-        ChatRequestDto chatRequest = new ChatRequestDto(MessageType.ENTER,
-                userNickname + "님이 채팅방에 입장했습니다.");
-        messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, chatRequest);
-
+            ChatRequestDto chatRequest = new ChatRequestDto(MessageType.ENTER, userNickname + "님이 채팅방에 입장했습니다.");
+            messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, chatRequest);
+        } catch (Exception e) { // WebSocketHandler 대신 Exception을 사용하여 모든 예외를 포착합니다.
+            logger.error("구독 처리 중 예외 발생: {}", e.getMessage(), e);
+            // 필요한 예외 처리 로직을 추가할 수 있습니다.
+        }
     }
 
-    // 연결 해제
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-
-        String userEmail = (String)getValue(accessor, "userEmail");
-        String userNickname = (String)getValue(accessor, "userNickname");
-        Long chatRoomId = (Long)getValue(accessor, "chatRoomId");
+        String userEmail = safelyGetValue(accessor, "userEmail", String.class);
+        String userNickname = safelyGetValue(accessor, "userNickname", String.class);
+        Long chatRoomId = safelyGetValue(accessor, "chatRoomId", Long.class);
 
         logger.info("{}({})님이 ChatRoomId : {}를 떠났습니다.", userNickname, userEmail, chatRoomId);
 
         ChatRequestDto chatRequest = new ChatRequestDto(MessageType.LEAVE,
                 userNickname + "님이 채팅방을 떠났습니다.");
-
         messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, chatRequest);
     }
 
-    private Object getValue(StompHeaderAccessor accessor, String key) {
-        Map<String, Object> sessionAttributes = getSessionAttributes(accessor);
-        Object value = sessionAttributes.get(key);
-
-        if (Objects.isNull(value)) {
-            throw new WebSocketHandler(ErrorStatus.SESSION_ATTRIBUTE_NOT_FOUND);
-        }
-
-        return value;
-    }
-
-    private Map<String, Object> getSessionAttributes(StompHeaderAccessor accessor) {
+    private <T> T safelyGetValue(StompHeaderAccessor accessor, String key, Class<T> type) {
         Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
-
-        if (Objects.isNull(sessionAttributes)) {
-            throw new WebSocketHandler(ErrorStatus.SESSION_ATTRIBUTES_IS_NULL);
+        if (sessionAttributes == null) {
+            throw new IllegalArgumentException("Session attributes are null");
         }
-
-        return sessionAttributes;
+        Object value = sessionAttributes.get(key);
+        if (value == null) {
+            throw new IllegalArgumentException("Session attribute for key '" + key + "' not found");
+        }
+        return type.cast(value);
     }
 }

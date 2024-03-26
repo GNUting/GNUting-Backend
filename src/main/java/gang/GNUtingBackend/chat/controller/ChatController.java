@@ -1,6 +1,5 @@
 package gang.GNUtingBackend.chat.controller;
 
-import com.google.protobuf.Api;
 import gang.GNUtingBackend.chat.dto.ChatRequestDto;
 import gang.GNUtingBackend.chat.dto.ChatResponseDto;
 import gang.GNUtingBackend.chat.dto.ChatRoomResponseDto;
@@ -9,15 +8,17 @@ import gang.GNUtingBackend.chat.service.ChatService;
 import gang.GNUtingBackend.response.ApiResponse;
 import gang.GNUtingBackend.user.token.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import java.util.List;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,15 +36,14 @@ public class ChatController {
     // /pub/chatRoom/{chatRoomId}
     @MessageMapping("/chatRoom/{chatRoomId}")
     @Operation(summary = "채팅 메시지 보내기", description = "해당 채팅방에 채팅 메시지를 보냅니다")
-    public ResponseEntity<ApiResponse<ChatResponseDto>> sendMessage(
-            @RequestHeader("Authorization") String token,
-            @RequestBody ChatRequestDto chatRequestDto,
-            @PathVariable Long chatRoomId) {
+    public ChatResponseDto sendMessage(
+            @Header("Authorization") String token,
+            @Payload ChatRequestDto chatRequestDto,
+            @DestinationVariable(value = "chatRoomId") Long chatRoomId) {
 
         String email = tokenProvider.getUserEmail(token.substring(7));
 
-        return ResponseEntity.ok()
-                .body(ApiResponse.onSuccess(chatService.sendMessage(chatRequestDto, chatRoomId, email)));
+        return chatService.sendMessage(chatRequestDto, chatRoomId, email);
     }
 
     @GetMapping("/chatRoom/{chatRoomId}/chats")

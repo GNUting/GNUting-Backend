@@ -57,6 +57,11 @@ public class SecurityConfig {
                 // swagger 허용
                 .antMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll()
                 .antMatchers("/board").hasRole("USER") //테스트용
+                .antMatchers("/ws/**").permitAll()
+                .antMatchers("/chat/**").permitAll()
+                .antMatchers("/pub/**").permitAll()
+                .antMatchers("/sub/**").permitAll()
+                .antMatchers("/chatRoom").permitAll()
                 .anyRequest().permitAll()
 
                 .and()

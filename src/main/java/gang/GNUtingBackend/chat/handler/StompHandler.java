@@ -7,98 +7,88 @@ import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.repository.UserRepository;
 import gang.GNUtingBackend.user.token.TokenProvider;
-import java.util.Map;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
+
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class StompHandler implements ChannelInterceptor {
-
     private final TokenProvider tokenProvider;
-    private UserRepository userRepository;
-    private ChatRoomUserRepository chatRoomUserRepository;
-    private static final String DEFAULT_DESTINATION = "/sub/chat/";
+    private final UserRepository userRepository;
+    private final ChatRoomUserRepository chatRoomUserRepository;
 
-
-    /**
-     * webSocket을 통해 들어온 요청이 처리 되기전에 실행된다.
-     *
-     * @param message
-     * @param channel
-     * @return
-     */
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
-
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-        StompCommand command = accessor.getCommand();
-
-        if (StompCommand.CONNECT.equals(command)) {
-            String jwtToken = accessor.getFirstNativeHeader("Authorization").substring(7);
-            String email = tokenProvider.getUserEmail(jwtToken);
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
-            setValue(accessor, "userEmail", user.getEmail());
-            setValue(accessor, "userNickname", user.getNickname());
-            setValue(accessor, "profileImgUrl", user.getProfileImage());
-        } else if(StompCommand.SUBSCRIBE.equals(command)) {
-
-            String userEmail = (String)getValue(accessor, "userEmail");
-            Long chatRoomId = parseChatRoomIdFromPath(accessor);
-            setValue(accessor, "chatRoomId", chatRoomId);
-            chatRoomUserRepository.findByChatRoomIdAndUserEmail(chatRoomId, userEmail)
-                    .orElseThrow(() -> new WebSocketHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER));
-
-        } else if (StompCommand.DISCONNECT.equals(command)) {
-
-            String userNickname = (String)getValue(accessor, "userNickname");
-            log.info("DISCONNECTED userNickname : {}", userNickname);
-
+        try {
+            switch (accessor.getCommand()) {
+                case CONNECT:
+                    handleConnect(accessor);
+                    break;
+                case SUBSCRIBE:
+                    handleSubscribe(accessor);
+                    break;
+                case DISCONNECT:
+                    handleDisconnect(accessor);
+                    break;
+                default:
+                    log.debug("Unhandled STOMP command: {}", accessor.getCommand());
+            }
+        } catch (Exception e) {
+            log.error("Error during WebSocket message handling: {}", e.getMessage(), e);
+            // Depending on your error handling policy, you might want to return null or rethrow the exception
         }
-
-        log.info("header : " + message.getHeaders());
-        log.info("message:" + message);
-
         return message;
+    }
+
+    private void handleConnect(StompHeaderAccessor accessor) {
+        String jwtToken = getJwtTokenFromHeader(accessor);
+        String email = tokenProvider.getUserEmail(jwtToken);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        log.info("CONNECT - userEmail: {} | nickName: {} | profileImage: {}", user.getEmail(), user.getNickname(), user.getProfileImage());
+
+        accessor.getSessionAttributes().put("userEmail", user.getEmail());
+        accessor.getSessionAttributes().put("userNickname", user.getNickname());
+        accessor.getSessionAttributes().put("profileImageUrl", user.getProfileImage());
+    }
+
+    private void handleSubscribe(StompHeaderAccessor accessor) {
+        String userEmail = (String) accessor.getSessionAttributes().get("userEmail");
+        Long chatRoomId = parseChatRoomIdFromPath(accessor);
+        accessor.getSessionAttributes().put("chatRoomId", chatRoomId);
+        chatRoomUserRepository.findByChatRoomIdAndUserEmail(chatRoomId, userEmail)
+                .orElseThrow(() -> new WebSocketHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER));
+
+        log.info("SUBSCRIBE - ChatRoomId: {} | userEmail: {}", chatRoomId, userEmail);
+    }
+
+    private void handleDisconnect(StompHeaderAccessor accessor) {
+        String userNickname = (String) accessor.getSessionAttributes().get("userNickname");
+        log.info("DISCONNECTED userNickname: {}", userNickname);
+    }
+
+    private String getJwtTokenFromHeader(StompHeaderAccessor accessor) {
+        String jwtToken = accessor.getFirstNativeHeader("Authorization");
+        if (jwtToken == null || !jwtToken.startsWith("Bearer ")) {
+            throw new WebSocketHandler(ErrorStatus.INVALID_ACCESS_TOKEN);
+        }
+        return jwtToken.substring(7);
     }
 
     private Long parseChatRoomIdFromPath(StompHeaderAccessor accessor) {
         String destination = accessor.getDestination();
-        return Long.parseLong(destination.substring(DEFAULT_DESTINATION.length()));
-    }
-
-    private Map<String, Object> getSessionAttributes(StompHeaderAccessor accessor) {
-        Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
-
-        if (Objects.isNull(sessionAttributes)) {
-            throw new WebSocketHandler(ErrorStatus.SESSION_ATTRIBUTES_IS_NULL);
+        if (destination == null) {
+            throw new WebSocketHandler(ErrorStatus.INVALID_DESTINATION);
         }
-        return sessionAttributes;
-    }
-
-    private void setValue(StompHeaderAccessor accessor, String key, Object value) {
-        Map<String, Object> sessionAttributes = getSessionAttributes(accessor);
-        sessionAttributes.put(key, value);
-    }
-
-    private Object getValue(StompHeaderAccessor accessor, String key) {
-        Map<String, Object> sessionAttributes = getSessionAttributes(accessor);
-        Object value = sessionAttributes.get(key);
-
-        if (Objects.isNull(value)) {
-            throw new WebSocketHandler(ErrorStatus.SESSION_ATTRIBUTE_NOT_FOUND);
-        }
-
-        return value;
+        return Long.parseLong(destination.split("/")[3]); // Assuming the destination format is "/sub/chatRoom/{id}"
     }
 }

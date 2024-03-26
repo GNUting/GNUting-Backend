@@ -72,6 +72,7 @@ public enum ErrorStatus implements BaseErrorCode {
     SESSION_ATTRIBUTES_IS_NULL(HttpStatus.INTERNAL_SERVER_ERROR, "WEBSOCKET5001", "session attributes가 null 입니다."),
     SESSION_ATTRIBUTE_NOT_FOUND(HttpStatus.BAD_REQUEST, "WEBSOCKET4001", "요청한 session attributes에 해당하는 값이 없습니다."),
     NOT_FOUND_CHAT_ROOM_USER(HttpStatus.BAD_REQUEST, "WEBSOCKET4002", "채팅방에 해당 이메일을 가진 유저가 없습니다."),
+    INVALID_DESTINATION(HttpStatus.BAD_REQUEST, "WEBSOCKET4003", "잘못된 경로입니다."),
 
 
     // chatRoom 관련 에러

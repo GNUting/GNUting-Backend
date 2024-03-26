@@ -57,7 +57,7 @@ public class ChatService {
                 .createdDate(chat.getCreateDate())
                 .build();
 
-        messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, chatResponse);
+        messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, chatResponse);
 
         return chatResponse;
     }

@@ -9,6 +9,6 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class ChatRequestDto {
-    MessageType messageType;
+    private MessageType messageType;
     private String message;
 }
