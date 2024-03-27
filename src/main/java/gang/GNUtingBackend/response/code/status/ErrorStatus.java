@@ -41,6 +41,7 @@ public enum ErrorStatus implements BaseErrorCode {
     //Apply 관련 에러
     ALREADY_IN_USER(HttpStatus.BAD_REQUEST,"APLLY6001", "유저가 이미 참여해 있습니다."),
     USER_NOT_APPLY(HttpStatus.BAD_REQUEST,"APPLY4002","유저가 신청하지 않았습니다"),
+    ALREADY_SUCCESS_APPLY(HttpStatus.BAD_REQUEST,"APPL5003","이미 승인된 신청입니다."),
 
     // 메일 관련 에러
     INVALID_MAIL_ADDRESS(HttpStatus.BAD_REQUEST, "MAIL4000", "경상국립대학교 이메일을 입력해주세요."),

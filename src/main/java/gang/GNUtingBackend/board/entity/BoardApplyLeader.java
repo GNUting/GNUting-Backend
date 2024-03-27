@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Builder
-@Setter
+
 public class BoardApplyLeader {
 
     @Id
@@ -34,5 +34,8 @@ public class BoardApplyLeader {
     @OneToMany(mappedBy = "boardApplyLeaderId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ApplyUsers> applyUsers;
 
+    public void setStatus(ApplyStatus applyStatus){
+        this.status=applyStatus;
+    }
 
 }

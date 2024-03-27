@@ -8,6 +8,7 @@ import gang.GNUtingBackend.board.entity.Board;
 import gang.GNUtingBackend.board.entity.BoardApplyLeader;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
 import gang.GNUtingBackend.board.entity.enums.ApplyStatus;
+import gang.GNUtingBackend.board.entity.enums.Status;
 import gang.GNUtingBackend.board.repository.BoardApplyLeaderRepository;
 import gang.GNUtingBackend.board.repository.BoardParticipantRepository;
 import gang.GNUtingBackend.board.repository.BoardRepository;
@@ -189,6 +190,9 @@ public class ApplicationStatusService {
         if (boardApplyLeader.getBoardId().getUserId() != user) {
             throw new BoardHandler(ErrorStatus.USER_NOT_AUTHORITY);
         }
+        if(boardApplyLeader.getStatus()==ApplyStatus.승인){
+            throw new BoardHandler(ErrorStatus.ALREADY_SUCCESS_APPLY);
+        }
         List<User> applyUserList = boardApplyLeader.getApplyUsers().stream()
                 .map(ApplyUsers::getUserId)
                 .collect(Collectors.toList());
@@ -203,8 +207,20 @@ public class ApplicationStatusService {
 
         chatRoomService.createChatRoom(chatMemberDto);
 
-        //알림 날려주고
-        return null;
+        //알림보내기 전체보내기 확인필요
+        List<User> notificationUser=new ArrayList<>();
+        notificationUser.addAll(chatMemberDto.getApplyUser());
+        notificationUser.addAll(chatMemberDto.getParticipantUser());
+
+        fcmService.sendAllMessage(notificationUser,"과팅이 성사되었습니다",chatMemberDto.getApplyUserDepartment()+"와"+chatMemberDto.getParticipantUserDepartment()+" 의 과팅이 성사되어 채팅방이 만들어졌습니다..");
+        boardApplyLeader.setStatus(ApplyStatus.승인);
+        Board board = boardRepository.findById(boardApplyLeader.getBoardId().getId())
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
+        board.closeState();
+        boardRepository.save(board);
+        boardApplyLeaderRepository.save(boardApplyLeader);
+
+        return "과팅이 성사되었습니다.";
     }
 
 }

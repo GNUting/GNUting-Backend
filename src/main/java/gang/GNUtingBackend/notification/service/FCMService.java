@@ -3,10 +3,7 @@ package gang.GNUtingBackend.notification.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.messaging.BatchResponse;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
 import com.google.gson.JsonParseException;
 import gang.GNUtingBackend.board.entity.Board;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
@@ -29,6 +26,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -68,10 +66,36 @@ public class FCMService {
             throw new BoardHandler(ErrorStatus.JSON_FILE_ROAD_FAIL);
         } catch (IOException e) {
             throw new BoardHandler(ErrorStatus.INPUT_ERROR);
-        } catch (NullPointerException e) {
-            throw new BoardHandler(ErrorStatus.NOT_FOUND_FIREBASE_TOKEN);
+//        } catch (NullPointerException e) {
+//            throw new BoardHandler(ErrorStatus.NOT_FOUND_FIREBASE_TOKEN);
         } catch (Exception e) {
             throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
+        }
+
+    }
+
+    public void sendAllMessage(List<User> findId, String title, String body) {
+        try {
+            List<String> fcms = new ArrayList<>();
+            for (User user : findId) {
+                FCM fcmToken = fcmRepository.findByUserId(user);
+                fcms.add(fcmToken.getFcmToken());
+            }
+            MulticastMessage message = MulticastMessage.builder()
+                    .setNotification(Notification.builder()
+                            .setTitle(title)
+                            .setBody(body)
+                            .build())
+                    .addAllTokens(fcms)
+                    .build();
+            BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
+            System.out.println(response.getSuccessCount() + " messages were sent successfully");
+            for (User user : findId) {
+                userNotificationService.saveNotification(user, body);
+            }
+
+        }catch (Exception e){
+            System.out.println(e+"@@@@@@@@@@@@@에러떳다 씨빨@@@@@@@@@@@@");
         }
 
     }
