@@ -61,16 +61,26 @@ public class ChatRoomService {
      * @param email
      * @return
      */
+    @Transactional(readOnly = true)
     public List<ChatRoomResponseDto> findChatRoomsByUserEmail(String email) {
         List<ChatRoomUser> allByUserEmail = chatRoomUserRepository.findAllByUserEmail(email);
 
         return allByUserEmail.stream()
-                .map(cru -> ChatRoomResponseDto.builder()
-                        .id(cru.getChatRoom().getId())
-                        .title(cru.getChatRoom().getTitle())
-                        .leaderUserDepartment(cru.getChatRoom().getLeaderUserDepartment())
-                        .applyLeaderDepartment(cru.getChatRoom().getApplyLeaderDepartment())
-                        .build())
+                .map(cru -> {
+                    ChatRoom chatRoom = cru.getChatRoom();
+                    List<String> chatRoomUserProfileImages = chatRoom.getChatRoomUsers().stream()
+                            .filter(chatRoomUser -> !chatRoomUser.getUser().getEmail().equals(email))
+                            .map(chatRoomUser -> chatRoomUser.getUser().getProfileImage())
+                            .collect(Collectors.toList());
+
+                    return ChatRoomResponseDto.builder()
+                            .id(chatRoom.getId())
+                            .title(chatRoom.getTitle())
+                            .leaderUserDepartment(chatRoom.getLeaderUserDepartment())
+                            .applyLeaderDepartment(chatRoom.getApplyLeaderDepartment())
+                            .ChatRoomUserProfileImages(chatRoomUserProfileImages)
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 }
