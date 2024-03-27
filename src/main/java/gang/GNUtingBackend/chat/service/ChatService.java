@@ -64,20 +64,27 @@ public class ChatService {
 
     @Transactional(readOnly = true)
     public List<ChatResponseDto> findAllChatByChatRoomId(Long chatRoomId, String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         List<Chat> chats = chatRepository.findByChatRoomId(chatRoomId);
 
-        return chats.stream().map(chat -> ChatResponseDto.builder()
-                        .id(chat.getId())
-                        .chatRoomId(chatRoomId)
-                        .messageType(chat.getMessageType())
-                        .email(email)
-                        .profileImage(user.getProfileImage())
-                        .nickname(user.getNickname())
-                        .message(chat.getMessage())
-                        .createdDate(chat.getCreateDate())
-                        .build())
-                .collect(Collectors.toList());
+        boolean isMember = chatRoomUserRepository.findByChatRoomIdAndUserEmail(chatRoomId, email).isPresent();
+        if (!isMember) {
+            throw new ChatRoomHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER);
+        }
+
+        return chats.stream().map(chat -> {
+            User user = userRepository.findByNickname(chat.getSender())
+                    .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+            return ChatResponseDto.builder()
+                    .id(chat.getId())
+                    .chatRoomId(chatRoomId)
+                    .messageType(chat.getMessageType())
+                    .email(user.getEmail())
+                    .profileImage(user.getProfileImage())
+                    .nickname(user.getNickname())
+                    .message(chat.getMessage())
+                    .createdDate(chat.getCreateDate())
+                    .build();
+        }).collect(Collectors.toList());
     }
 }

@@ -1,6 +1,7 @@
 package gang.GNUtingBackend.chat.handler;
 
 import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
+import gang.GNUtingBackend.exception.handler.ChatRoomHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.exception.handler.WebSocketHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
@@ -66,7 +67,7 @@ public class StompHandler implements ChannelInterceptor {
         Long chatRoomId = parseChatRoomIdFromPath(accessor);
         accessor.getSessionAttributes().put("chatRoomId", chatRoomId);
         chatRoomUserRepository.findByChatRoomIdAndUserEmail(chatRoomId, userEmail)
-                .orElseThrow(() -> new WebSocketHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER));
+                .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER));
 
         log.info("SUBSCRIBE - ChatRoomId: {} | userEmail: {}", chatRoomId, userEmail);
     }
