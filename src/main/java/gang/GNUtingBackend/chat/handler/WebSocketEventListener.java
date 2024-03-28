@@ -2,8 +2,6 @@ package gang.GNUtingBackend.chat.handler;
 
 import gang.GNUtingBackend.chat.domain.enums.MessageType;
 import gang.GNUtingBackend.chat.dto.ChatRequestDto;
-import gang.GNUtingBackend.exception.handler.WebSocketHandler;
-import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
