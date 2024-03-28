@@ -62,4 +62,8 @@ public class Board extends BaseTime {
         this.detail=detail;
     }
 
+    public void closeState(){
+        this.status=Status.CLOSE;
+    }
+
 }

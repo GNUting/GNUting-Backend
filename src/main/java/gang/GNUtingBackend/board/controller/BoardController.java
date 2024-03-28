@@ -125,5 +125,7 @@ public class BoardController {
                 .body(ApiResponse.onSuccess(boardSearchResultDtos));
 
     }
+
+
 }
 
