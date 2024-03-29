@@ -89,9 +89,10 @@ public class ChatService {
         }).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public boolean hasNewMessages(String email, Long chatRoomId) {
         LocalDateTime lastDisconnectedTime = chatRoomUserRepository.findLastDisconnectedTimeByUserEmailAndChatRoomId(email, chatRoomId);
-        Long newMessagesCount = chatRepository.countByChatRoomIdAndCreatedAtAfter(chatRoomId, lastDisconnectedTime);
+        Long newMessagesCount = chatRepository.countByChatRoomIdAndCreateDateAfter(chatRoomId, lastDisconnectedTime);
 
         return newMessagesCount > 0;
     }

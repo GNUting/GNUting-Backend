@@ -9,5 +9,5 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     List<Chat> findByChatRoomId(Long chatRoomId);
 
-    Long countByChatRoomIdAndCreatedAtAfter(Long chatRoomId, LocalDateTime lastDisconnectedTime);
+    Long countByChatRoomIdAndCreateDateAfter(Long chatRoomId, LocalDateTime lastDisconnectedTime);
 }
