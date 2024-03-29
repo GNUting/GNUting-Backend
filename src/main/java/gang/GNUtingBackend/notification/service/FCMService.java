@@ -42,7 +42,7 @@ public class FCMService {
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/" + "1036172493674/messages:send";
 
 
-    public void sendMessageTo(User findId, String title, String body) {
+    public boolean sendMessageTo(User findId, String title, String body) {
         try {
             //board에 신청했다고 알림보낼때
             FCM fcmToken = fcmRepository.findByUserId(findId);
@@ -61,13 +61,14 @@ public class FCMService {
 
             System.out.println(response.body().string());
             System.out.println("전송완료");
-            userNotificationService.saveNotification(findId, body);
+            userNotificationService.saveNotification(findId, title, body);
+            return true;
         } catch (JsonProcessingException e) {
             throw new BoardHandler(ErrorStatus.JSON_FILE_ROAD_FAIL);
         } catch (IOException e) {
             throw new BoardHandler(ErrorStatus.INPUT_ERROR);
-//        } catch (NullPointerException e) {
-//            throw new BoardHandler(ErrorStatus.NOT_FOUND_FIREBASE_TOKEN);
+        } catch (NullPointerException e) {
+            return false;
         } catch (Exception e) {
             throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
         }
@@ -91,11 +92,11 @@ public class FCMService {
             BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
             System.out.println(response.getSuccessCount() + " messages were sent successfully");
             for (User user : findId) {
-                userNotificationService.saveNotification(user, body);
+                userNotificationService.saveNotification(user, title, body);
             }
 
-        }catch (Exception e){
-            System.out.println(e+"@@@@@@@@@@@@@에러떳다 씨빨@@@@@@@@@@@@");
+        } catch (Exception e) {
+            System.out.println(e + "@@@@@@@@@@@@@에러떳다 씨빨@@@@@@@@@@@@");
         }
 
     }
@@ -132,15 +133,15 @@ public class FCMService {
         FCM overlapCheck = fcmRepository.findByUserId(user);
         if (overlapCheck != null) {
             fcmRepository.delete(overlapCheck);
-           //throw new BoardHandler(ErrorStatus.OVERLAP_USER_TOKEN);
+            //throw new BoardHandler(ErrorStatus.OVERLAP_USER_TOKEN);
         }
         FCM saveEntity = FCMTokenSaveDto.toEntity(fcmEntity, user);
         fcmRepository.save(saveEntity);
         return user.getNickname() + "님의 토큰이 저장되었습니다";
     }
 
-    public void deleteFCMToken(String email){
-        User user=userRepository.findByEmail(email)
+    public void deleteFCMToken(String email) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         fcmRepository.delete(user.getFcms());
     }

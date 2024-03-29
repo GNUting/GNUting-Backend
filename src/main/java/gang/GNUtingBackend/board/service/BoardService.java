@@ -61,7 +61,10 @@ public class BoardService {
         int pageLimit = pageable.getPageSize();
 
         Page<Board> links = boardRepository.findByGenderNot(gender,
-                PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "createdDate")));  //추후 close된 글들도 아래로 정렬
+                PageRequest.of(page, pageLimit, Sort.by(
+                        Sort.Order.desc("status").ignoreCase(), // 상태가 "open"인 것을 먼저 보여줌
+                        Sort.Order.desc("createdDate")   ))); // "createdDate"를 내림차순으로 정렬
+        //추후 close된 글들도 아래로 정렬
 
         if (!links.hasContent()) {
             throw new BoardHandler(ErrorStatus.PAGE_NOT_FOUND);
@@ -231,6 +234,10 @@ public class BoardService {
         if (board.getInUserCount() != userSearchResponsetDto.size()) {
             throw new BoardHandler(ErrorStatus.INCORRECT_NUMBER_OF_PEOPLE);
         }
+        //게시글이 close 일 경우 (게시글이 이미 과팅이 승인된 경우)
+        if(board.getStatus()==Status.CLOSE){
+            throw new BoardHandler(ErrorStatus.BOARD_CLOSE);
+        }
         for (UserSearchResponseDto userApply : userSearchResponsetDto) {
             User member = userRepository.findById(userApply.getId())
                     .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -271,8 +278,13 @@ public class BoardService {
             applyUsersRepository.save(applyUsers.toEntity());
             nickname = nickname + " " + member.getNickname();
         }
-        fcmService.sendMessageTo(board.getUserId(), "과팅 신청이 도착했습니다.", user.getDepartment()+" "+user.getNickname() + "님이 과팅을 신청했습니다.");
-        return board.getId() + "게시물에 " + nickname + "유저들 신청완료";
+        boolean fcmReturn=fcmService.sendMessageTo(board.getUserId(), "과팅 신청이 도착했습니다.", user.getDepartment()+" "+user.getNickname() + "님이 과팅을 신청했습니다.");
+        if(fcmReturn==true){
+            return board.getId() + "게시물에 " + nickname + "유저들 신청완료";
+        }else{
+            return board.getId() + "게시물에 " + nickname + "유저들 신청완료 (작성자에게 알림은 날라가지 않았습니다)";
+        }
+
     }
 
     public UserSearchResponseDto myInfo(String email) {
