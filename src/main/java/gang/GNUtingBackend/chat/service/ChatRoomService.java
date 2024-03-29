@@ -27,6 +27,7 @@ public class ChatRoomService {
 
     /**
      * 채팅방 생성
+     *
      * @param chatMemberDto
      * @return
      */
@@ -58,7 +59,6 @@ public class ChatRoomService {
         ChatRequestDto enterMessage = new ChatRequestDto(MessageType.ENTER, enterChatRoomUsers);
         messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoom.getId(), enterMessage);
 
-
         return ChatRoomResponseDto.builder()
                 .id(chatRoom.getId())
                 .title(chatRoom.getTitle())
@@ -69,6 +69,7 @@ public class ChatRoomService {
 
     /**
      * 해당 이메일을 가진 유저가 참여중인 모든 채팅방을 조회
+     *
      * @param email
      * @return
      */

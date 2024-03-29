@@ -12,6 +12,7 @@ import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -86,5 +87,12 @@ public class ChatService {
                     .createdDate(chat.getCreateDate())
                     .build();
         }).collect(Collectors.toList());
+    }
+
+    public boolean hasNewMessages(String email, Long chatRoomId) {
+        LocalDateTime lastDisconnectedTime = chatRoomUserRepository.findLastDisconnectedTimeByUserEmailAndChatRoomId(email, chatRoomId);
+        Long newMessagesCount = chatRepository.countByChatRoomIdAndCreatedAtAfter(chatRoomId, lastDisconnectedTime);
+
+        return newMessagesCount > 0;
     }
 }

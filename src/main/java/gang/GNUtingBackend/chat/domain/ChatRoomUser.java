@@ -2,6 +2,7 @@ package gang.GNUtingBackend.chat.domain;
 
 import gang.GNUtingBackend.user.domain.BaseEntity;
 import gang.GNUtingBackend.user.domain.User;
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -32,4 +33,10 @@ public class ChatRoomUser extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    private LocalDateTime lastDisconnectedTime;
+
+    public void setLastDisconnectedTime(LocalDateTime lastDisconnectedTime) {
+        this.lastDisconnectedTime = lastDisconnectedTime;
+    }
 }

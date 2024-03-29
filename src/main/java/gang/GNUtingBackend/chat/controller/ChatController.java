@@ -68,5 +68,13 @@ public class ChatController {
                 .body(ApiResponse.onSuccess(chatRoomService.findChatRoomsByUserEmail(email)));
     }
 
+    @GetMapping("/{chatRoomId}/hasNewMessages")
+    public ResponseEntity<?> hasNewMessages(
+            @PathVariable Long chatRoomId,
+            @RequestHeader("Authorization") String token) {
+        String email = tokenProvider.getUserEmail(token.substring(7));
 
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(chatService.hasNewMessages(email, chatRoomId)));
+    }
 }
