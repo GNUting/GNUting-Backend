@@ -12,13 +12,9 @@ import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.model.block.composition.TextObject;
-import gang.GNUtingBackend.board.entity.Board;
-import gang.GNUtingBackend.board.repository.BoardRepository;
-import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.SlackHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
-import gang.GNUtingBackend.slack.dto.BoardReportRequestDto;
 import gang.GNUtingBackend.slack.dto.UserReportRequestDto;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.repository.UserRepository;
@@ -33,43 +29,38 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class BoardReportService {
+public class UserReportService {
 
     @Value(value = "${slack.token}")
     private String token;
     @Value(value = "${slack.channel.monitor}")
     private String channel;
 
-    private final BoardRepository boardRepository;
     private final UserRepository userRepository;
 
-    public void postReport(String email, BoardReportRequestDto boardReportRequestDto) throws IOException {
-
+    public void ReportUser(String email, UserReportRequestDto userReportRequestDto) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        Board board = boardRepository.findById(boardReportRequestDto.getBoardId())
-                .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
-
-        User boardUser = board.getUserId();
+        User reportedUser = userRepository.findByNickname(userReportRequestDto.getNickName())
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         // Slack 메세지 보내기
         try {
             List<TextObject> textObjects = new ArrayList<>();
-            textObjects.add(markdownText("*신고 글 제목:*\n" + board.getTitle()));
-            textObjects.add(markdownText("*신고 글 사용자 이름:*\n" + boardUser.getName()));
-            textObjects.add(markdownText("*신고 글 사용자 닉네임:*\n" + boardUser.getNickname()));
+            textObjects.add(markdownText("*신고 사용자 이름:*\n" + reportedUser.getName()));
+            textObjects.add(markdownText("*신고 사용자 닉네임:*\n" + reportedUser.getNickname()));
             textObjects.add(markdownText(
                     "*신고 날짜:*\n" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
-            textObjects.add(markdownText("*신고 사유:*\n" + boardReportRequestDto.getReportCategory().getReportReason()));
-            textObjects.add(markdownText("*신고 내용:*\n" + boardReportRequestDto.getReportReason()));
+            textObjects.add(markdownText("*신고 사유:*\n" + userReportRequestDto.getReportReason()));
+            textObjects.add(markdownText("*신고 내용:*\n" + userReportRequestDto.getReportReason()));
 
             MethodsClient methods = Slack.getInstance().methods(token);
             ChatPostMessageRequest request = ChatPostMessageRequest.builder()
                     .channel(channel)
-                    .text("신고가 접수되었습니다: " + user.getName() + " - " + boardReportRequestDto.getReportReason())
+                    .text("신고가 접수되었습니다: " + user.getName() + " - " + userReportRequestDto.getReportReason())
                     .blocks(asBlocks(
-                            header(header -> header.text(plainText(user.getName() + "님이 게시글을 신고하셨습니다!"))),
+                            header(header -> header.text(plainText(user.getName() + "님이 " + reportedUser.getName() + "님을 신고하셨습니다!"))),
                             divider(),
                             section(section -> section.fields(textObjects)
                             ))).build();
