@@ -20,9 +20,10 @@ public class UserNotification extends BaseTime {
     private Long id;
 
     @JoinColumn(name = "user_id")
-
     @ManyToOne
     private User userId;
     @Column
-    private String notification;
+    private String title;
+    @Column
+    private String body;
 }

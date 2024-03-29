@@ -23,10 +23,11 @@ public class UserNotificationService {
     private final UserNotificationRepository userNotificationRepository;
     private final UserRepository userRepository;
 
-    public void saveNotification(User user, String notification) {
+    public void saveNotification(User user, String title,String body) {
         UserNotification userNotification = UserNotification.builder()
                 .userId(user)
-                .notification(notification)
+                .title(title)
+                .body(body)
                 .build();
         userNotificationRepository.save(userNotification);
     }

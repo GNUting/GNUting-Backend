@@ -37,6 +37,7 @@ public enum ErrorStatus implements BaseErrorCode {
     WRITER_NOT_IN_BOARD_PARTICIPANT(HttpStatus.BAD_REQUEST,"BOARD4004","작성자가 포함되어 있지 않습니다."),
     NOT_MATCH_GENDER(HttpStatus.BAD_REQUEST,"BOARD4005","신청자의 성별이 게시물의 성별과 동일합니다"),
     LEADER_NOT_IN_APPLYUSER(HttpStatus.BAD_REQUEST,"BOARD4006","신청자(리더)가 포함되어있지 않습니다."),
+    BOARD_CLOSE(HttpStatus.BAD_REQUEST,"BOARD5003","게시물의 신청이 닫혔습니다."),
 
     //Apply 관련 에러
     ALREADY_IN_USER(HttpStatus.BAD_REQUEST,"APLLY6001", "유저가 이미 참여해 있습니다."),
