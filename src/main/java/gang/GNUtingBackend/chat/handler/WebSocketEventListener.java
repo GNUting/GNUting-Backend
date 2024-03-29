@@ -1,16 +1,19 @@
 package gang.GNUtingBackend.chat.handler;
 
-import gang.GNUtingBackend.chat.domain.enums.MessageType;
-import gang.GNUtingBackend.chat.dto.ChatRequestDto;
+import gang.GNUtingBackend.chat.domain.ChatRoomUser;
+import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
+import gang.GNUtingBackend.exception.handler.ChatRoomHandler;
+import gang.GNUtingBackend.response.code.status.ErrorStatus;
+import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
@@ -21,7 +24,7 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 public class WebSocketEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
-    private final SimpMessageSendingOperations messagingTemplate;
+    private final ChatRoomUserRepository chatRoomUserRepository;
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
@@ -38,14 +41,13 @@ public class WebSocketEventListener {
 
             logger.info("{}({})님이 ChatRoomId : {}를 구독하였습니다.", userNickname, userEmail, chatRoomId);
 
-            ChatRequestDto chatRequest = new ChatRequestDto(MessageType.ENTER, userNickname + "님이 채팅방에 입장했습니다.");
-            messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, chatRequest);
         } catch (Exception e) { // WebSocketHandler 대신 Exception을 사용하여 모든 예외를 포착합니다.
             logger.error("구독 처리 중 예외 발생: {}", e.getMessage(), e);
             // 필요한 예외 처리 로직을 추가할 수 있습니다.
         }
     }
 
+    @Transactional
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
@@ -53,11 +55,12 @@ public class WebSocketEventListener {
         String userNickname = safelyGetValue(accessor, "userNickname", String.class);
         Long chatRoomId = safelyGetValue(accessor, "chatRoomId", Long.class);
 
-        logger.info("{}({})님이 ChatRoomId : {}를 떠났습니다.", userNickname, userEmail, chatRoomId);
+        ChatRoomUser chatRoomUser = chatRoomUserRepository.findByChatRoomIdAndUserEmail(chatRoomId, userEmail)
+                .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER));
+        chatRoomUser.setLastDisconnectedTime(LocalDateTime.now());
+        chatRoomUserRepository.save(chatRoomUser);
 
-        ChatRequestDto chatRequest = new ChatRequestDto(MessageType.LEAVE,
-                userNickname + "님이 채팅방을 떠났습니다.");
-        messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, chatRequest);
+        logger.info("{}({})님이 ChatRoomId : {}를 떠났습니다.", userNickname, userEmail, chatRoomId);
     }
 
     private <T> T safelyGetValue(StompHeaderAccessor accessor, String key, Class<T> type) {
