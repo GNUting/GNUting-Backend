@@ -21,7 +21,6 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 public class WebSocketEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
-    private final SimpMessageSendingOperations messagingTemplate;
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
@@ -38,8 +37,6 @@ public class WebSocketEventListener {
 
             logger.info("{}({})님이 ChatRoomId : {}를 구독하였습니다.", userNickname, userEmail, chatRoomId);
 
-            ChatRequestDto chatRequest = new ChatRequestDto(MessageType.ENTER, userNickname + "님이 채팅방에 입장했습니다.");
-            messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, chatRequest);
         } catch (Exception e) { // WebSocketHandler 대신 Exception을 사용하여 모든 예외를 포착합니다.
             logger.error("구독 처리 중 예외 발생: {}", e.getMessage(), e);
             // 필요한 예외 처리 로직을 추가할 수 있습니다.
@@ -54,10 +51,6 @@ public class WebSocketEventListener {
         Long chatRoomId = safelyGetValue(accessor, "chatRoomId", Long.class);
 
         logger.info("{}({})님이 ChatRoomId : {}를 떠났습니다.", userNickname, userEmail, chatRoomId);
-
-        ChatRequestDto chatRequest = new ChatRequestDto(MessageType.LEAVE,
-                userNickname + "님이 채팅방을 떠났습니다.");
-        messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, chatRequest);
     }
 
     private <T> T safelyGetValue(StompHeaderAccessor accessor, String key, Class<T> type) {
