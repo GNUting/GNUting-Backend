@@ -1,11 +1,15 @@
 package gang.GNUtingBackend.board.repository;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import gang.GNUtingBackend.board.dto.BoardSearchResultDto;
 import gang.GNUtingBackend.board.entity.QBoard;
+import gang.GNUtingBackend.board.entity.enums.Status;
 import gang.GNUtingBackend.user.domain.QUser;
 import gang.GNUtingBackend.user.domain.enums.Gender;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +33,15 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository {
 
         Gender userGender = getUserGenderByEmail(email);
 
+        // status 기반 정렬 우선순위 지정
+        OrderSpecifier<Integer> statusOrder = new CaseBuilder()
+                .when(qBoard.status.eq(Status.OPEN)).then(1)
+                .when(qBoard.status.eq(Status.CLOSE)).then(2)
+                .otherwise(3).asc();
+
+        // 최신글 순으로 정렬
+        OrderSpecifier<LocalDateTime> createdDateOrder = qBoard.createdDate.desc();
+
         List<BoardSearchResultDto> results = jpaQueryFactory
                 .select(Projections.constructor(BoardSearchResultDto.class,
                         qBoard.id,
@@ -41,6 +54,7 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository {
                 .where(qBoard.title.contains(keyword)
                         .or(qUser.department.contains(keyword))
                         .and(qBoard.gender.ne(userGender)))
+                .orderBy(statusOrder, createdDateOrder)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
