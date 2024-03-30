@@ -1,11 +1,13 @@
 package gang.GNUtingBackend.chat.service;
 
 import gang.GNUtingBackend.board.dto.ChatMemberDto;
+import gang.GNUtingBackend.chat.domain.Chat;
 import gang.GNUtingBackend.chat.domain.ChatRoom;
 import gang.GNUtingBackend.chat.domain.ChatRoomUser;
 import gang.GNUtingBackend.chat.domain.enums.MessageType;
 import gang.GNUtingBackend.chat.dto.ChatRequestDto;
 import gang.GNUtingBackend.chat.dto.ChatRoomResponseDto;
+import gang.GNUtingBackend.chat.repository.ChatRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class ChatRoomService {
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final SimpMessageSendingOperations messagingTemplate;
     private final ChatService chatService;
+    private final ChatRepository chatRepository;
 
     /**
      * 채팅방 생성
@@ -59,6 +62,15 @@ public class ChatRoomService {
 
         ChatRequestDto enterMessage = new ChatRequestDto(MessageType.ENTER, enterChatRoomUsers);
         messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoom.getId(), enterMessage);
+
+        Chat chat = Chat.builder()
+                .chatRoom(chatRoom)
+                .sender("관리자")
+                .messageType(enterMessage.getMessageType())
+                .message(enterMessage.getMessage())
+                .build();
+
+        chatRepository.save(chat);
 
         return ChatRoomResponseDto.builder()
                 .id(chatRoom.getId())
