@@ -68,14 +68,4 @@ public class ChatController {
                 .body(ApiResponse.onSuccess(chatRoomService.findChatRoomsByUserEmail(email)));
     }
 
-    @GetMapping("/{chatRoomId}/hasNewMessages")
-    @Operation(summary = "안 읽은 메시지 확인 API", description = "채팅방에 안 읽은 메세지가 있는지 확인합니다.")
-    public ResponseEntity<?> hasNewMessages(
-            @PathVariable Long chatRoomId,
-            @RequestHeader("Authorization") String token) {
-        String email = tokenProvider.getUserEmail(token.substring(7));
-
-        return ResponseEntity.ok()
-                .body(ApiResponse.onSuccess(chatService.hasNewMessages(email, chatRoomId)));
-    }
 }
