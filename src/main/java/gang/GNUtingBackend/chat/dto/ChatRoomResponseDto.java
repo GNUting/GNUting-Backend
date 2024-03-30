@@ -13,4 +13,5 @@ public class ChatRoomResponseDto {
     private String leaderUserDepartment;
     private String applyLeaderDepartment;
     private List<String> ChatRoomUserProfileImages;
+    private boolean hasNewMessage;
 }

@@ -24,6 +24,7 @@ public class ChatRoomService {
     private final ChatRoomUserService chatRoomUserService;
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final SimpMessageSendingOperations messagingTemplate;
+    private final ChatService chatService;
 
     /**
      * 채팅방 생성
@@ -85,12 +86,15 @@ public class ChatRoomService {
                             .map(chatRoomUser -> chatRoomUser.getUser().getProfileImage())
                             .collect(Collectors.toList());
 
+                    boolean hasNewMessage = chatService.hasNewMessages(email, chatRoom.getId());
+
                     return ChatRoomResponseDto.builder()
                             .id(chatRoom.getId())
                             .title(chatRoom.getTitle())
                             .leaderUserDepartment(chatRoom.getLeaderUserDepartment())
                             .applyLeaderDepartment(chatRoom.getApplyLeaderDepartment())
                             .ChatRoomUserProfileImages(chatRoomUserProfileImages)
+                            .hasNewMessage(hasNewMessage)
                             .build();
                 })
                 .collect(Collectors.toList());
