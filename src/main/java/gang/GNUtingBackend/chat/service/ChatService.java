@@ -14,6 +14,7 @@ import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -73,16 +74,21 @@ public class ChatService {
         }
 
         return chats.stream().map(chat -> {
-            User user = userRepository.findByNickname(chat.getSender())
-                    .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+            Optional<User> user = userRepository.findByNickname(chat.getSender());
+            String userEmail = user.map(User::getEmail).orElse(null);
+            String userProfileImage = user.map(User::getProfileImage).orElse(null);
+            String userNickname = user.map(User::getNickname).orElse(null);
+
+//            User user = userRepository.findByNickname(chat.getSender())
+//                    .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
             return ChatResponseDto.builder()
                     .id(chat.getId())
                     .chatRoomId(chatRoomId)
                     .messageType(chat.getMessageType())
-                    .email(user.getEmail())
-                    .profileImage(user.getProfileImage())
-                    .nickname(user.getNickname())
+                    .email(userEmail)
+                    .profileImage(userProfileImage)
+                    .nickname(userNickname)
                     .message(chat.getMessage())
                     .createdDate(chat.getCreateDate())
                     .build();
