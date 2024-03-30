@@ -52,7 +52,7 @@ public class UserReportService {
             textObjects.add(markdownText("*신고 사용자 닉네임:*\n" + reportedUser.getNickname()));
             textObjects.add(markdownText(
                     "*신고 날짜:*\n" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
-            textObjects.add(markdownText("*신고 사유:*\n" + userReportRequestDto.getReportReason()));
+            textObjects.add(markdownText("*신고 사유:*\n" + userReportRequestDto.getReportCategory().getReportReason()));
             textObjects.add(markdownText("*신고 내용:*\n" + userReportRequestDto.getReportReason()));
 
             MethodsClient methods = Slack.getInstance().methods(token);
