@@ -11,6 +11,7 @@ import gang.GNUtingBackend.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public class UserNotificationService {
     public List<UserNotificationResponseDto> showNotification(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        List<UserNotification> userNotifications = userNotificationRepository.findByUserId(user);
+        List<UserNotification> userNotifications = userNotificationRepository.findByUserId(user, Sort.by(Sort.Order.desc("createdDate")));
         return userNotifications.stream().map(UserNotificationResponseDto::toDto).collect(Collectors.toList());
     }
 
