@@ -1,9 +1,13 @@
 package gang.GNUtingBackend.board.dto;
 
+import gang.GNUtingBackend.board.entity.BaseTime;
 import gang.GNUtingBackend.board.entity.enums.ApplyStatus;
 import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -11,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Setter
-public class ApplicationStatusResponseDto {
+public class ApplicationStatusResponseDto  {
     private Long id;
     private String applyUserDepartment;
     private String participantUserDepartment;
@@ -20,6 +24,7 @@ public class ApplicationStatusResponseDto {
     private int applyUserCount;
     private int participantUserCount;
     private ApplyStatus applyStatus;
+
 
     public static ApplicationStatusResponseDto toDto(Long id,List<UserSearchResponseDto> participantUser, List<UserSearchResponseDto> applyUsers, String applyDepartment, String participantDepartment,ApplyStatus applyStatus) {
         return ApplicationStatusResponseDto.builder()

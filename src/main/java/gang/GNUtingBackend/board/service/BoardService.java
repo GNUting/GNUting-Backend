@@ -62,7 +62,7 @@ public class BoardService {
 
         Page<Board> links = boardRepository.findByGenderNot(gender,
                 PageRequest.of(page, pageLimit, Sort.by(
-                        Sort.Order.desc("status").ignoreCase(), // 상태가 "open"인 것을 먼저 보여줌
+                        Sort.Order.desc("status"), // 상태가 "open"인 것을 먼저 보여줌
                         Sort.Order.desc("createdDate")   ))); // "createdDate"를 내림차순으로 정렬
         //추후 close된 글들도 아래로 정렬
 

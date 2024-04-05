@@ -19,7 +19,7 @@ public class BaseTime {
     @CreatedDate
     private LocalDateTime createdDate;
 
-    //수정시간
-//    @LastModifiedDate
-//    private LocalDateTime modifiedDate;
+   // 수정시간
+    @LastModifiedDate
+    private LocalDateTime modifiedDate;
 }
