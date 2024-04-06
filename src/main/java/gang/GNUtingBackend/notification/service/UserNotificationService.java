@@ -4,6 +4,7 @@ import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.dto.UserNotificationResponseDto;
 import gang.GNUtingBackend.notification.entity.UserNotification;
+import gang.GNUtingBackend.notification.entity.enums.NotificationStatus;
 import gang.GNUtingBackend.notification.repository.UserNotificationRepository;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
@@ -37,6 +38,12 @@ public class UserNotificationService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         List<UserNotification> userNotifications = userNotificationRepository.findByUserId(user, Sort.by(Sort.Order.desc("createdDate")));
+        for (UserNotification userNotification:userNotifications) {
+            if(userNotification.getStatus()==null) {
+                userNotification.setStatus(NotificationStatus.READ);
+                userNotificationRepository.save(userNotification);
+            }
+        }
         return userNotifications.stream().map(UserNotificationResponseDto::toDto).collect(Collectors.toList());
     }
 
@@ -51,5 +58,21 @@ public class UserNotificationService {
         userNotificationRepository.deleteById(id);
 
         return id+"알림이 삭제되었습니다";
+    }
+
+    public boolean checkNotification(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        List<UserNotification> userNotifications = userNotificationRepository.findByUserId(user, Sort.by(Sort.Order.desc("createdDate")));
+        boolean hasNewNotification = userNotifications.stream()
+                .anyMatch(notification -> notification.getStatus() == null);
+        if (hasNewNotification) {
+            // 새로운 알림이 있을 때의 처리
+            return true;
+        } else {
+            // 새로운 알림이 없을 때의 처리
+            return false;
+        }
+
     }
 }
