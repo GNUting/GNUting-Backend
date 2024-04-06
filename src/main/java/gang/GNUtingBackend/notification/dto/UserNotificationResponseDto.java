@@ -1,6 +1,7 @@
 package gang.GNUtingBackend.notification.dto;
 
 import gang.GNUtingBackend.notification.entity.UserNotification;
+import gang.GNUtingBackend.notification.entity.enums.NotificationStatus;
 import lombok.*;
 
 import java.time.Duration;
@@ -16,6 +17,7 @@ public class UserNotificationResponseDto {
     private String title;
     private String body;
     private String time;
+    private NotificationStatus status;
 
     public static UserNotificationResponseDto toDto(UserNotification notification) {
 
@@ -25,6 +27,7 @@ public class UserNotificationResponseDto {
                .title(notification.getTitle())
                .body(notification.getBody())
                .time(elapsedTime)
+               .status(notification.getStatus())
                .build();
     }
 

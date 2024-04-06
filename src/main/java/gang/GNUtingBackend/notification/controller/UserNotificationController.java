@@ -28,6 +28,14 @@ public class UserNotificationController {
                 .body(ApiResponse.onSuccess(notifications));
     }
 
+    @GetMapping("notification/check")
+    public ResponseEntity<?> checkNotification(@RequestHeader("Authorization") String token){
+        String email=tokenProvider.getUserEmail(token.substring(7));
+        boolean checkNotification=userNotificationService.checkNotification(email);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(checkNotification));
+    }
+
     @DeleteMapping("/notification/{id}")
     public ResponseEntity<?> deleteNotification(@RequestHeader("Authorization") String token,@PathVariable Long id){
         String email=tokenProvider.getUserEmail(token.substring(7));

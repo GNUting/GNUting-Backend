@@ -1,6 +1,7 @@
 package gang.GNUtingBackend.notification.entity;
 
 import gang.GNUtingBackend.board.entity.BaseTime;
+import gang.GNUtingBackend.notification.entity.enums.NotificationStatus;
 import gang.GNUtingBackend.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,4 +27,10 @@ public class UserNotification extends BaseTime {
     private String title;
     @Column
     private String body;
+    @Column
+    private NotificationStatus status;
+
+    public void setStatus(NotificationStatus status) {
+        this.status = status;
+    }
 }
