@@ -4,6 +4,7 @@ import gang.GNUtingBackend.board.entity.ApplyUsers;
 import gang.GNUtingBackend.board.entity.Board;
 import gang.GNUtingBackend.board.entity.BoardApplyLeader;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
+import gang.GNUtingBackend.chat.domain.ChatRoomUser;
 import gang.GNUtingBackend.notification.entity.FCM;
 import gang.GNUtingBackend.notification.entity.UserNotification;
 import gang.GNUtingBackend.user.domain.enums.Gender;
@@ -101,6 +102,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "leaderId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BoardApplyLeader> boardApplyLeaders;
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ChatRoomUser> chatRoomUsers;
 
     public void update(String profileImage, String nickname, String department, String userSelfIntroduction) {
         this.profileImage = profileImage;

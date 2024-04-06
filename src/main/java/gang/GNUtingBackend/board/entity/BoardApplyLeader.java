@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Builder
 
-public class BoardApplyLeader {
+public class BoardApplyLeader extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

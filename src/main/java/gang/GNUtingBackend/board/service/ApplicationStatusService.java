@@ -21,10 +21,10 @@ import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,7 +59,9 @@ public class ApplicationStatusService {
 
         for (Board boards : boardList) {  //내가작성한 글에서 참여자와 신청자 가져오기
             List<BoardParticipant> boardParticipantList = boardParticipantRepository.findByBoardId(boards);
-            List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByBoardId(boards);
+            List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByBoardId(boards,Sort.by(
+                    Sort.Order.desc("modifiedDate"),
+                    Sort.Order.desc("createdDate")));
             for (BoardApplyLeader boardApplyLeader : boardApplyLeaderList) { //게시판에 신청한 리더 가져오기
                 List<ApplyUsers> applyUsersList = boardApplyLeader.getApplyUsers();
                 List<User> userList = new ArrayList<>();
@@ -82,6 +84,8 @@ public class ApplicationStatusService {
                 allUsersByLeader.add(savedResponseDto);
             }
         }
+        //Collections.sort(allUsersByLeader, Comparator.comparing(ApplicationStatusResponseDto::get));
+
         return allUsersByLeader;
     }
 
@@ -96,7 +100,9 @@ public class ApplicationStatusService {
         List<ApplicationStatusResponseDto> allUsersByLeader = new ArrayList<>();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByLeaderId(user);
+        List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByLeaderId(user,Sort.by(
+                Sort.Order.desc("modifiedDate"),
+                Sort.Order.desc("createdDate")));
 
         for (BoardApplyLeader boardApplyLeaders : boardApplyLeaderList) {
 
@@ -122,6 +128,7 @@ public class ApplicationStatusService {
                                     boardApplyLeaders.getStatus());
             allUsersByLeader.add(savedResponseDto);
         }
+
         return allUsersByLeader;
     }
 
