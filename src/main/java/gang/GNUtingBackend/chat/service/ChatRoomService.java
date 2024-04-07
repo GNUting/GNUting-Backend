@@ -10,6 +10,8 @@ import gang.GNUtingBackend.chat.dto.ChatRoomResponseDto;
 import gang.GNUtingBackend.chat.repository.ChatRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
+import gang.GNUtingBackend.exception.handler.ChatRoomUserHandler;
+import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -110,5 +112,24 @@ public class ChatRoomService {
                             .build();
                 })
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 해당 이메일을 가진 유저가 특정 채팅방 나가기
+     * @param chatRoomId
+     * @param email
+     */
+    @Transactional
+    public boolean leaveChatRoom(Long chatRoomId, String email) {
+        ChatRoomUser cru = chatRoomUserRepository.findByChatRoomIdAndUserEmail(chatRoomId, email)
+                .orElseThrow(() -> new ChatRoomUserHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER));
+
+        chatRoomUserRepository.delete(cru);
+
+        if (chatRoomUserRepository.findAllByChatRoomId(chatRoomId).isEmpty()) {
+            chatRoomRepository.deleteById(chatRoomId);
+        }
+
+        return true;
     }
 }

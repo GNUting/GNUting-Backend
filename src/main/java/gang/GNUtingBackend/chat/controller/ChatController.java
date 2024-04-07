@@ -19,6 +19,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,6 +67,18 @@ public class ChatController {
 
         return ResponseEntity.ok()
                 .body(ApiResponse.onSuccess(chatRoomService.findChatRoomsByUserEmail(email)));
+    }
+
+    @PostMapping("/chatRoom/{chatRoomId}/leave")
+    @Operation(summary = "채팅방 나가기 API", description = "해당 채팅방을 나가도록 합니다.")
+    public ResponseEntity<?> leaveChatRoom(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long chatRoomId) {
+        String email = tokenProvider.getUserEmail(token.substring(7));
+
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(chatRoomService.leaveChatRoom(chatRoomId, email)));
+
     }
 
 }
