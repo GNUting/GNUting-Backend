@@ -17,4 +17,6 @@ public interface ChatRoomUserRepository extends JpaRepository <ChatRoomUser, Lon
 
     @Query("SELECT cru.lastDisconnectedTime FROM ChatRoomUser cru WHERE cru.user.email = :email AND cru.chatRoom.id = :chatRoomId")
     LocalDateTime findLastDisconnectedTimeByUserEmailAndChatRoomId(String email, Long chatRoomId);
+
+    List<ChatRoomUser> findAllByChatRoomId(Long chatRoomId);
 }
