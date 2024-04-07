@@ -10,10 +10,12 @@ import gang.GNUtingBackend.chat.dto.ChatRoomResponseDto;
 import gang.GNUtingBackend.chat.repository.ChatRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
+import gang.GNUtingBackend.exception.handler.ChatRoomHandler;
 import gang.GNUtingBackend.exception.handler.ChatRoomUserHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -125,6 +127,22 @@ public class ChatRoomService {
                 .orElseThrow(() -> new ChatRoomUserHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER));
 
         chatRoomUserRepository.delete(cru);
+
+        String leaveChatRoomUser = cru.getUser().getNickname() + "님이 채팅방을 나갔습니다.";
+
+        ChatRequestDto leaveMessage = new ChatRequestDto(MessageType.LEAVE, leaveChatRoomUser);
+        messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, leaveMessage);
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND));
+
+        Chat chat = Chat.builder()
+                .chatRoom(chatRoom)
+                .sender("관리자")
+                .messageType(leaveMessage.getMessageType())
+                .message(leaveMessage.getMessage())
+                .build();
+
+        chatRepository.save(chat);
 
         if (chatRoomUserRepository.findAllByChatRoomId(chatRoomId).isEmpty()) {
             chatRoomRepository.deleteById(chatRoomId);
