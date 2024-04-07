@@ -2,8 +2,11 @@ package gang.GNUtingBackend.image.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ListObjectsV2Request;
+import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import java.io.IOException;
 import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,8 @@ public class S3Uploader {
     private String bucket;
 
     public String uploadProfileImage(MultipartFile multipartFile, String email) {
+        deleteProfileImage(email);
+
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(multipartFile.getContentType());
         objectMetadata.setContentLength(multipartFile.getSize());
@@ -38,5 +43,22 @@ public class S3Uploader {
             throw new IllegalStateException("S3 파일 업로드에 실패했습니다.");
         }
         return amazonS3Client.getUrl(bucket, fileName).toString();
+    }
+
+    private void deleteProfileImage(String email) {
+        String userFile = "profile" + "/" + email + "/";
+
+        ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(bucket).withPrefix(userFile);
+        ListObjectsV2Result result;
+
+        do {
+            result = amazonS3Client.listObjectsV2(req);
+
+            for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
+                amazonS3Client.deleteObject(bucket, objectSummary.getKey());
+            }
+
+            req.setContinuationToken(result.getNextContinuationToken());
+        } while (result.isTruncated());
     }
 }
