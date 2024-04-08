@@ -75,3 +75,6 @@ loggig:
   level:
     gang:
       GNUtingBackend: INFO
+
+server:
+  address: 0.0.0.0
