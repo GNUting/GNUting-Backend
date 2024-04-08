@@ -30,9 +30,11 @@ public class ChatRoom extends BaseEntity {
     private String applyLeaderDepartment;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
     private List<ChatRoomUser> chatRoomUsers = new ArrayList<>();
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
     private List<Chat> chats = new ArrayList<>();
 
     public void setChatRoomUsers(List<ChatRoomUser> chatRoomUsers) {

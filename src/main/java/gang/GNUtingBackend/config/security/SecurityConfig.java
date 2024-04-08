@@ -32,14 +32,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
-    //H2 데이터베이스 때문에 작성 삭제필요
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().
-                requestMatchers(new AntPathRequestMatcher("/h2-console/**"));
-    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
