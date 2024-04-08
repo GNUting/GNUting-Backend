@@ -38,12 +38,14 @@ public class UserNotificationService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         List<UserNotification> userNotifications = userNotificationRepository.findByUserId(user, Sort.by(Sort.Order.desc("createdDate")));
-        for (UserNotification userNotification:userNotifications) {
-            if(userNotification.getStatus()==null) {
-                userNotification.setStatus(NotificationStatus.READ);
-                userNotificationRepository.save(userNotification);
-            }
-        }
+//        for (UserNotification userNotification:userNotifications) {
+//            if(userNotification.getStatus()==null) {
+                userNotificationRepository.markNotificationsAsRead(user);
+//                userNotification.setStatus(NotificationStatus.READ);
+//                userNotificationRepository.save(userNotification);
+//            }
+//        }
+
         return userNotifications.stream().map(UserNotificationResponseDto::toDto).collect(Collectors.toList());
     }
 
@@ -61,16 +63,15 @@ public class UserNotificationService {
     }
 
     public boolean checkNotification(String email) {
+
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         List<UserNotification> userNotifications = userNotificationRepository.findByUserId(user, Sort.by(Sort.Order.desc("createdDate")));
         boolean hasNewNotification = userNotifications.stream()
                 .anyMatch(notification -> notification.getStatus() == null);
         if (hasNewNotification) {
-            // 새로운 알림이 있을 때의 처리
             return true;
         } else {
-            // 새로운 알림이 없을 때의 처리
             return false;
         }
 
