@@ -18,6 +18,13 @@ java {
 	sourceCompatibility = '11'
 }
 
+compileJava {
+	options.compilerArgs << '-parameters'
+	sourceCompatibility = '11'
+	targetCompatibility = '11'
+}
+
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
