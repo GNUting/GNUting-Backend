@@ -1,7 +1,9 @@
 package gang.GNUtingBackend.mail.service;
 
 import gang.GNUtingBackend.exception.handler.MailHandler;
+import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
+import gang.GNUtingBackend.user.repository.UserRepository;
 import java.util.concurrent.TimeUnit;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class MailService {
 
     private final JavaMailSender javaMailSender;
+    private final UserRepository userRepository;
     private static final String senderEmail = "gnuting@gnuting.com";
     private static int number;
     private final RedisTemplate<String, String> redisTemplate;
@@ -68,6 +71,11 @@ public class MailService {
      * @return
      */
     public int sendMail(String email) {
+        userRepository.findByEmail(email)
+                .ifPresent(user -> {
+                    throw new UserHandler(ErrorStatus.USER_ALREADY_EXIST);
+                });
+
         if (!isValidAddress(email)) {
             throw new MailHandler(ErrorStatus.INVALID_MAIL_ADDRESS);
         }
