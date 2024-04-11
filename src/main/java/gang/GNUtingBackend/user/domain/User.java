@@ -1,6 +1,5 @@
 package gang.GNUtingBackend.user.domain;
 
-import gang.GNUtingBackend.board.entity.ApplyUsers;
 import gang.GNUtingBackend.board.entity.Board;
 import gang.GNUtingBackend.board.entity.BoardApplyLeader;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
@@ -9,7 +8,6 @@ import gang.GNUtingBackend.notification.entity.FCM;
 import gang.GNUtingBackend.notification.entity.UserNotification;
 import gang.GNUtingBackend.user.domain.enums.Gender;
 import gang.GNUtingBackend.user.domain.enums.UserRole;
-import gang.GNUtingBackend.user.dto.UserUpdateRequestDto;
 import java.time.LocalDate;
 import java.util.List;
 import javax.persistence.*;
