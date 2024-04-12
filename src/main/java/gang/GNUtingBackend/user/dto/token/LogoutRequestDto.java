@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 public class LogoutRequestDto {
 
     private String refreshToken;
+    private String fcmToken;
 }

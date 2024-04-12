@@ -184,7 +184,7 @@ public class UserController {
     public ResponseEntity<ApiResponse<String>> logout(@RequestHeader("Authorization") String token,
                                                       @RequestBody LogoutRequestDto logoutRequestDto) {
         String email = tokenProvider.getUserEmail(token.substring(7));
-        userService.logout(logoutRequestDto.getRefreshToken(), email);
+        userService.logout(logoutRequestDto.getRefreshToken(), email,logoutRequestDto.getFcmToken());
         return ResponseEntity.ok()
                 .body(ApiResponse.onSuccess("정상적으로 로그아웃 처리 되었습니다."));
     }
