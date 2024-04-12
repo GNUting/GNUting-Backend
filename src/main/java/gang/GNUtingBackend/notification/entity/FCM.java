@@ -1,6 +1,7 @@
 package gang.GNUtingBackend.notification.entity;
 
 
+import gang.GNUtingBackend.board.entity.BaseTime;
 import gang.GNUtingBackend.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,13 +15,13 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FCM {
+public class FCM extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @JoinColumn(name = "user_id")
-    @OneToOne
+    @ManyToOne
     private User userId;
 
     private String fcmToken;

@@ -4,6 +4,10 @@ import gang.GNUtingBackend.notification.entity.FCM;
 import gang.GNUtingBackend.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface FCMRepository extends JpaRepository<FCM,Long> {
-    FCM findByUserId(User findId);
+    List<FCM> findByUserId(User findId);
+
+    void deleteByFcmToken(String fcmToken);
 }

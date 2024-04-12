@@ -219,7 +219,7 @@ public class ApplicationStatusService {
         notificationUser.addAll(chatMemberDto.getApplyUser());
         notificationUser.addAll(chatMemberDto.getParticipantUser());
 
-        fcmService.sendAllMessage(notificationUser,"과팅이 성사되었습니다",chatMemberDto.getApplyUserDepartment()+"와"+chatMemberDto.getParticipantUserDepartment()+" 의 과팅이 성사되어 채팅방이 만들어졌습니다..");
+        fcmService.sendAllMessage(notificationUser,"과팅이 성사되었습니다",chatMemberDto.getApplyUserDepartment()+"와"+chatMemberDto.getParticipantUserDepartment()+" 의 과팅이 성사되어 채팅방이 만들어졌습니다.");
         boardApplyLeader.setStatus(ApplyStatus.승인);
         Board board = boardRepository.findById(boardApplyLeader.getBoardId().getId())
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));

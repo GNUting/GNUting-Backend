@@ -24,6 +24,7 @@ import org.aspectj.lang.annotation.Around;
 import org.hibernate.annotations.common.util.impl.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,45 +43,100 @@ public class FCMService {
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/" + "1036172493674/messages:send";
 
 
+//    public boolean sendMessageTo(User findId, String title, String body) {
+//        try {
+//            //board에 신청했다고 알림보낼때
+//            FCM fcmToken = fcmRepository.findByUserId(findId);
+//            String message = makeMessage(fcmToken.getFcmToken(), title, body);
+//            OkHttpClient client = new OkHttpClient();
+//            RequestBody requestBody = RequestBody.create(message,
+//                    MediaType.get("application/json; charset=utf-8"));
+//            Request request = new Request.Builder()
+//                    .url(API_URL)
+//                    .post(requestBody)
+//                    .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+//                    .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
+//                    .build();
+//
+//            Response response = client.newCall(request).execute();
+//
+//            System.out.println(response.body().string());
+//            System.out.println("전송완료");
+//            System.out.println(fcmToken.getFcmToken());
+//            userNotificationService.saveNotification(findId, title, body);
+//            return true;
+//        } catch (JsonProcessingException e) {
+//            throw new BoardHandler(ErrorStatus.JSON_FILE_ROAD_FAIL);
+//        } catch (IOException e) {
+//            throw new BoardHandler(ErrorStatus.INPUT_ERROR);
+//        } catch (NullPointerException e) {
+//            return false;
+//        }
+//        catch (Exception e) {
+//            throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
+//        }
+//
+//    }
+
+    //    public void sendAllMessage(List<User> findId, String title, String body) {
+//        try {
+//            List<String> fcms = new ArrayList<>();
+//            for (User user : findId) {
+//                FCM fcmToken = fcmRepository.findByUserId(user);
+//                fcms.add(fcmToken.getFcmToken());
+//            }
+//            MulticastMessage message = MulticastMessage.builder()
+//                    .setNotification(Notification.builder()
+//                            .setTitle(title)
+//                            .setBody(body)
+//                            .build())
+//                    .addAllTokens(fcms)
+//                    .build();
+//            BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
+//            System.out.println(response.getSuccessCount() + " messages were sent successfully");
+//            for (User user : findId) {
+//                userNotificationService.saveNotification(user, title, body);
+//            }
+//
+//        } catch (Exception e) {
+//            System.out.println(e + "@@@@@@@@@@@@@에러떳다 씨빨@@@@@@@@@@@@");
+//        }
+//
+//    }
+
     public boolean sendMessageTo(User findId, String title, String body) {
         try {
-            //board에 신청했다고 알림보낼때
-            FCM fcmToken = fcmRepository.findByUserId(findId);
-            String message = makeMessage(fcmToken.getFcmToken(), title, body);
-            OkHttpClient client = new OkHttpClient();
-            RequestBody requestBody = RequestBody.create(message,
-                    MediaType.get("application/json; charset=utf-8"));
-            Request request = new Request.Builder()
-                    .url(API_URL)
-                    .post(requestBody)
-                    .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
-                    .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
+            List<String> fcms = new ArrayList<>();
+            List<FCM> fcmTokens = fcmRepository.findByUserId(findId);
+            for (FCM fcmToken : fcmTokens) {
+                fcms.add(fcmToken.getFcmToken());
+            }
+            MulticastMessage message = MulticastMessage.builder()
+                    .setNotification(Notification.builder()
+                            .setTitle(title)
+                            .setBody(body)
+                            .build())
+                    .addAllTokens(fcms)
                     .build();
-
-            Response response = client.newCall(request).execute();
-
-            System.out.println(response.body().string());
-            System.out.println("전송완료");
+            BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
+            System.out.println(response.getSuccessCount() + " messages were sent successfully");
             userNotificationService.saveNotification(findId, title, body);
             return true;
-        } catch (JsonProcessingException e) {
-            throw new BoardHandler(ErrorStatus.JSON_FILE_ROAD_FAIL);
-        } catch (IOException e) {
-            throw new BoardHandler(ErrorStatus.INPUT_ERROR);
-        } catch (NullPointerException e) {
-            return false;
         } catch (Exception e) {
             throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
         }
 
     }
 
+
     public void sendAllMessage(List<User> findId, String title, String body) {
         try {
             List<String> fcms = new ArrayList<>();
             for (User user : findId) {
-                FCM fcmToken = fcmRepository.findByUserId(user);
-                fcms.add(fcmToken.getFcmToken());
+                List<FCM> fcmTokens = fcmRepository.findByUserId(user);
+                for (FCM fcmToken:fcmTokens) {
+                    fcms.add(fcmToken.getFcmToken());
+                }
             }
             MulticastMessage message = MulticastMessage.builder()
                     .setNotification(Notification.builder()
@@ -96,10 +152,11 @@ public class FCMService {
             }
 
         } catch (Exception e) {
-            System.out.println(e + "@@@@@@@@@@@@@에러떳다 씨빨@@@@@@@@@@@@");
+            throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
         }
 
     }
+
 
     private String makeMessage(String targetToken, String title, String body)
             throws JsonParseException, JsonProcessingException {
@@ -130,19 +187,22 @@ public class FCMService {
     public String saveFCMToken(FCMTokenSaveDto fcmEntity, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        FCM overlapCheck = fcmRepository.findByUserId(user);
-        if (overlapCheck != null) {
-            fcmRepository.delete(overlapCheck);
-            //throw new BoardHandler(ErrorStatus.OVERLAP_USER_TOKEN);
-        }
+//        FCM overlapCheck = fcmRepository.findByUserId(user);
+//        if (overlapCheck != null) {
+//            fcmRepository.delete(overlapCheck);
+//            //throw new BoardHandler(ErrorStatus.OVERLAP_USER_TOKEN);
+//        }
         FCM saveEntity = FCMTokenSaveDto.toEntity(fcmEntity, user);
         fcmRepository.save(saveEntity);
         return user.getNickname() + "님의 토큰이 저장되었습니다";
     }
 
-    public void deleteFCMToken(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        fcmRepository.delete(user.getFcms());
+    @Transactional
+    public void deleteFCMToken(String fcmToken) {
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+            fcmRepository.deleteByFcmToken(fcmToken);
+
+        System.out.println("@@@@@@@@@@@@@@삭제된다잉@@@@@@@@@@@@@@@@@2");
     }
 }

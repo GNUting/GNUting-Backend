@@ -236,8 +236,10 @@ public class UserService {
      *
      * @param refreshToken 로그아웃 요청한 사용자의 리프레시 토큰
      */
-    public void logout(String refreshToken, String email) {
-        fcmService.deleteFCMToken(email);
+
+    @Transactional
+    public void logout(String refreshToken, String email,String fcmToken) {
+        fcmService.deleteFCMToken(fcmToken);
         refreshTokenService.logout(refreshToken, email);
     }
 
