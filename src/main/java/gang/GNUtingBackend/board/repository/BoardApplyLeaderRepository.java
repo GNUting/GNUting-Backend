@@ -11,7 +11,7 @@ import java.util.List;
 public interface BoardApplyLeaderRepository extends JpaRepository<BoardApplyLeader, Long> {
 
     void deleteByBoardId(Board boardDelete);
-    
+
     List<BoardApplyLeader> findByBoardId(Board board);
 
 
