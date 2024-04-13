@@ -22,11 +22,16 @@ import okhttp3.*;
 import org.apache.http.HttpHeaders;
 import org.aspectj.lang.annotation.Around;
 import org.hibernate.annotations.common.util.impl.LoggerFactory;
+import org.joda.time.DateTime;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -199,10 +204,14 @@ public class FCMService {
 
     @Transactional
     public void deleteFCMToken(String fcmToken) {
-//        User user = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
             fcmRepository.deleteByFcmToken(fcmToken);
+    }
 
-        System.out.println("@@@@@@@@@@@@@@삭제된다잉@@@@@@@@@@@@@@@@@2");
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void scheduleDelete(){
+
+        LocalDateTime oneMonthBefore=LocalDateTime.now().minusMonths(1);
+        List<FCM> oldFcmDatas=fcmRepository.findByCreatedDateBefore(oneMonthBefore);
+        fcmRepository.deleteAll(oldFcmDatas);
     }
 }
