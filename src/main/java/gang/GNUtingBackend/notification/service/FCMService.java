@@ -189,14 +189,12 @@ public class FCMService {
         return googleCredentials.getAccessToken().getTokenValue();
     }
 
+
+    @Transactional
     public String saveFCMToken(FCMTokenSaveDto fcmEntity, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-//        FCM overlapCheck = fcmRepository.findByUserId(user);
-//        if (overlapCheck != null) {
-//            fcmRepository.delete(overlapCheck);
-//            //throw new BoardHandler(ErrorStatus.OVERLAP_USER_TOKEN);
-//        }
+        fcmRepository.deleteByFcmToken(fcmEntity.getFcmToken());
         FCM saveEntity = FCMTokenSaveDto.toEntity(fcmEntity, user);
         fcmRepository.save(saveEntity);
         return user.getNickname() + "님의 토큰이 저장되었습니다";
@@ -206,12 +204,12 @@ public class FCMService {
     public void deleteFCMToken(String fcmToken) {
             fcmRepository.deleteByFcmToken(fcmToken);
     }
-
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void scheduleDelete(){
-
-        LocalDateTime oneMonthBefore=LocalDateTime.now().minusMonths(1);
-        List<FCM> oldFcmDatas=fcmRepository.findByCreatedDateBefore(oneMonthBefore);
-        fcmRepository.deleteAll(oldFcmDatas);
-    }
+//
+//    @Scheduled(cron = "0 0 0 * * ?")
+//    public void scheduleDelete(){
+//
+//        LocalDateTime oneMonthBefore=LocalDateTime.now().minusMonths(1);
+//        List<FCM> oldFcmDatas=fcmRepository.findByCreatedDateBefore(oneMonthBefore);
+//        fcmRepository.deleteAll(oldFcmDatas);
+//    }
 }
