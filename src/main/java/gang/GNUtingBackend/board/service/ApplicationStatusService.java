@@ -59,9 +59,7 @@ public class ApplicationStatusService {
 
         for (Board boards : boardList) {  //내가작성한 글에서 참여자와 신청자 가져오기
             List<BoardParticipant> boardParticipantList = boardParticipantRepository.findByBoardId(boards);
-            List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByBoardId(boards,Sort.by(
-                    Sort.Order.desc("modifiedDate"),
-                    Sort.Order.desc("createdDate")));
+            List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByBoardIdOrderByModifiedDateDescCreatedDateDesc(boards);
             for (BoardApplyLeader boardApplyLeader : boardApplyLeaderList) { //게시판에 신청한 리더 가져오기
                 List<ApplyUsers> applyUsersList = boardApplyLeader.getApplyUsers();
                 List<User> userList = new ArrayList<>();
@@ -100,9 +98,7 @@ public class ApplicationStatusService {
         List<ApplicationStatusResponseDto> allUsersByLeader = new ArrayList<>();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByLeaderId(user,Sort.by(
-                Sort.Order.desc("modifiedDate"),
-                Sort.Order.desc("createdDate")));
+        List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByLeaderIdOrderByModifiedDateDescCreatedDateDesc(user);
 
         for (BoardApplyLeader boardApplyLeaders : boardApplyLeaderList) {
 

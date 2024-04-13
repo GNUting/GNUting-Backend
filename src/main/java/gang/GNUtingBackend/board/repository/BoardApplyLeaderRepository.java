@@ -10,10 +10,12 @@ import java.util.List;
 
 public interface BoardApplyLeaderRepository extends JpaRepository<BoardApplyLeader, Long> {
 
-    List<BoardApplyLeader> findByBoardId(Board id,Sort by);
     void deleteByBoardId(Board boardDelete);
-
-    List<BoardApplyLeader> findByLeaderId(User user, Sort by);
-
+    
     List<BoardApplyLeader> findByBoardId(Board board);
+
+
+    List<BoardApplyLeader> findByBoardIdOrderByModifiedDateDescCreatedDateDesc(Board boards);
+
+    List<BoardApplyLeader> findByLeaderIdOrderByModifiedDateDescCreatedDateDesc(User user);
 }
