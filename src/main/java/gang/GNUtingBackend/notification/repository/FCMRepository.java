@@ -14,5 +14,7 @@ public interface FCMRepository extends JpaRepository<FCM,Long> {
     void deleteByFcmToken(String fcmToken);
 
 
-    List<FCM> findByCreatedDateBefore(LocalDateTime date);
+   // List<FCM> findByCreatedDateBefore(LocalDateTime date);
+
+    List<FCM> findByFcmToken(String fcmToken);
 }
