@@ -92,7 +92,7 @@ public class ChatRoomService {
      * @param email
      * @return
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public List<ChatRoomResponseDto> findChatRoomsByUserEmail(String email) {
         List<ChatRoomUser> allByUserEmail = chatRoomUserRepository.findAllByUserEmail(email);
 
