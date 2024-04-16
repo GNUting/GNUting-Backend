@@ -1,9 +1,11 @@
 package gang.GNUtingBackend.notification.controller;
 
 
+import gang.GNUtingBackend.notification.dto.NotificationSettingDto;
 import gang.GNUtingBackend.notification.dto.UserNotificationResponseDto;
 import gang.GNUtingBackend.notification.service.UserNotificationService;
 import gang.GNUtingBackend.response.ApiResponse;
+import gang.GNUtingBackend.user.repository.UserRepository;
 import gang.GNUtingBackend.user.token.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.List;
 public class UserNotificationController {
     private final TokenProvider tokenProvider;
     private final UserNotificationService userNotificationService;
+
     @GetMapping("/notification")
     @Operation(summary = "알림 모두보기 API", description = "자신에게 온 알림을 봅니다.")
     public ResponseEntity<?> showNotification(@RequestHeader("Authorization") String token){
@@ -42,5 +45,19 @@ public class UserNotificationController {
         String notificationdeleted=userNotificationService.deleteNotification(email,id);
         return ResponseEntity.ok()
                 .body(ApiResponse.onSuccess(notificationdeleted));
+    }
+
+    @PutMapping("/{userId}/notificationSetting")
+    public ResponseEntity<?> updateNotificationSetting(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long userId,
+            @RequestBody NotificationSettingDto notificationSettingDto) {
+        String email = tokenProvider.getUserEmail(token.substring(7));
+
+        boolean setting = userNotificationService.updateNotificationSetting(email,
+                notificationSettingDto.getNotificationSetting());
+
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(setting));
     }
 }

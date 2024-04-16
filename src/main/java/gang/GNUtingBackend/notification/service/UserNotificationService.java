@@ -4,6 +4,7 @@ import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.dto.UserNotificationResponseDto;
 import gang.GNUtingBackend.notification.entity.UserNotification;
+import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
 import gang.GNUtingBackend.notification.entity.enums.NotificationStatus;
 import gang.GNUtingBackend.notification.repository.UserNotificationRepository;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
@@ -75,5 +76,15 @@ public class UserNotificationService {
             return false;
         }
 
+    }
+
+    public boolean updateNotificationSetting(String email, NotificationSetting notificationSetting) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        user.updateNotificationSetting(notificationSetting);
+        userRepository.save(user);
+
+        return true;
     }
 }
