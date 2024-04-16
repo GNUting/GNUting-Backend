@@ -5,6 +5,7 @@ import gang.GNUtingBackend.board.entity.BoardApplyLeader;
 import gang.GNUtingBackend.user.domain.User;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -14,8 +15,6 @@ public interface BoardApplyLeaderRepository extends JpaRepository<BoardApplyLead
 
     List<BoardApplyLeader> findByBoardId(Board board);
 
-
-    List<BoardApplyLeader> findByBoardIdOrderByModifiedDateDescCreatedDateDesc(Board boards);
-
     List<BoardApplyLeader> findByLeaderIdOrderByModifiedDateDescCreatedDateDesc(User user);
+
 }

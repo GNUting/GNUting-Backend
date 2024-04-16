@@ -57,9 +57,11 @@ public class ApplicationStatusService {
         List<ApplicationStatusResponseDto> allUsersByLeader = new ArrayList<>();
         String participantDepartment = user.getDepartment();
 
+
+
         for (Board boards : boardList) {  //내가작성한 글에서 참여자와 신청자 가져오기
             List<BoardParticipant> boardParticipantList = boardParticipantRepository.findByBoardId(boards);
-            List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByBoardIdOrderByModifiedDateDescCreatedDateDesc(boards);
+            List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByBoardId(boards);
             for (BoardApplyLeader boardApplyLeader : boardApplyLeaderList) { //게시판에 신청한 리더 가져오기
                 List<ApplyUsers> applyUsersList = boardApplyLeader.getApplyUsers();
                 List<User> userList = new ArrayList<>();
@@ -78,12 +80,13 @@ public class ApplicationStatusService {
                 ApplicationStatusResponseDto savedResponseDto =
                         ApplicationStatusResponseDto.toDto(boardApplyLeader.getId(), participantsUsers, applyUsers,
                                 boardApplyLeader.getLeaderId().getDepartment(), participantDepartment,
-                                boardApplyLeader.getStatus());
+                                boardApplyLeader.getStatus(),boardApplyLeader.getCreatedDate(),boardApplyLeader.getModifiedDate());
                 allUsersByLeader.add(savedResponseDto);
             }
         }
-        //Collections.sort(allUsersByLeader, Comparator.comparing(ApplicationStatusResponseDto::get));
 
+        allUsersByLeader.sort(ApplicationStatusResponseDto::compareTo);
+        Collections.reverse(allUsersByLeader);
         return allUsersByLeader;
     }
 
@@ -101,7 +104,6 @@ public class ApplicationStatusService {
         List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByLeaderIdOrderByModifiedDateDescCreatedDateDesc(user);
 
         for (BoardApplyLeader boardApplyLeaders : boardApplyLeaderList) {
-
             List<BoardParticipant> boardParticipantList = boardParticipantRepository.findByBoardId(
                     boardApplyLeaders.getBoardId());
             List<ApplyUsers> applyUsersList = boardApplyLeaders.getApplyUsers();
@@ -121,7 +123,7 @@ public class ApplicationStatusService {
                             (boardApplyLeaders.getId(), participantsUsers, applyUsers,
                                     boardApplyLeaders.getLeaderId().getDepartment(),
                                     boardApplyLeaders.getBoardId().getUserId().getDepartment(),
-                                    boardApplyLeaders.getStatus());
+                                    boardApplyLeaders.getStatus(),boardApplyLeaders.getCreatedDate(),boardApplyLeaders.getModifiedDate());
             allUsersByLeader.add(savedResponseDto);
         }
 
