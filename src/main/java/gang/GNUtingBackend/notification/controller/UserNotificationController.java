@@ -54,9 +54,10 @@ public class UserNotificationController {
             @RequestBody NotificationSettingDto notificationSettingDto) {
         String email = tokenProvider.getUserEmail(token.substring(7));
 
-        userNotificationService.updateNotificationSetting(email, notificationSettingDto.getNotificationSetting());
+        boolean setting = userNotificationService.updateNotificationSetting(email,
+                notificationSettingDto.getNotificationSetting());
 
         return ResponseEntity.ok()
-                .body(ApiResponse.onSuccess(userNotificationService.updateNotificationSetting(email, notificationSettingDto.getNotificationSetting())));
+                .body(ApiResponse.onSuccess(setting));
     }
 }
