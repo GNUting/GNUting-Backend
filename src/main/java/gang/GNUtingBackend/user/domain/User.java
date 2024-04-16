@@ -6,6 +6,7 @@ import gang.GNUtingBackend.board.entity.BoardParticipant;
 import gang.GNUtingBackend.chat.domain.ChatRoomUser;
 import gang.GNUtingBackend.notification.entity.FCM;
 import gang.GNUtingBackend.notification.entity.UserNotification;
+import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
 import gang.GNUtingBackend.user.domain.enums.Gender;
 import gang.GNUtingBackend.user.domain.enums.UserRole;
 import java.time.LocalDate;
@@ -86,6 +87,10 @@ public class User extends BaseEntity {
     @Size(max = 30, message = "한 줄 소개는 최대 30자까지 가능합니다.")
     private String userSelfIntroduction;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private NotificationSetting notificationSetting = NotificationSetting.ENABLE;
+
     @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserNotification> userNotifications;
 
@@ -113,5 +118,9 @@ public class User extends BaseEntity {
 
     public void updatePassword(String password) {
         this.password = password;
+    }
+
+    public void updateNotificationSetting(NotificationSetting notificationSetting) {
+        this.notificationSetting = notificationSetting;
     }
 }

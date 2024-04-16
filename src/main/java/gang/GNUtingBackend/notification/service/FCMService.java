@@ -11,6 +11,7 @@ import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.dto.FCMTokenSaveDto;
 import gang.GNUtingBackend.notification.dto.FcmMessage;
 import gang.GNUtingBackend.notification.entity.FCM;
+import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
 import gang.GNUtingBackend.notification.repository.FCMRepository;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
@@ -110,6 +111,11 @@ public class FCMService {
 //    }
 
     public boolean sendMessageTo(User findId, String title, String body) {
+        // 알림이 활성화되어 있지 않으면 알림 메세지 보내지 않도록 구현
+        if (findId.getNotificationSetting() != NotificationSetting.ENABLE) {
+            return false;
+        }
+
         try {
             List<String> fcms = new ArrayList<>();
             List<FCM> fcmTokens = fcmRepository.findByUserId(findId);
@@ -138,9 +144,12 @@ public class FCMService {
         try {
             List<String> fcms = new ArrayList<>();
             for (User user : findId) {
-                List<FCM> fcmTokens = fcmRepository.findByUserId(user);
-                for (FCM fcmToken:fcmTokens) {
-                    fcms.add(fcmToken.getFcmToken());
+                if(user.getNotificationSetting() == NotificationSetting.ENABLE) {
+                    List<FCM> fcmTokens = fcmRepository.findByUserId(user);
+                    for (FCM fcmToken:fcmTokens) {
+                        fcms.add(fcmToken.getFcmToken());
+                    }
+                    userNotificationService.saveNotification(user, title, body);
                 }
             }
             MulticastMessage message = MulticastMessage.builder()
@@ -152,10 +161,6 @@ public class FCMService {
                     .build();
             BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
             System.out.println(response.getSuccessCount() + " messages were sent successfully");
-            for (User user : findId) {
-                userNotificationService.saveNotification(user, title, body);
-            }
-
         } catch (Exception e) {
             throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
         }
