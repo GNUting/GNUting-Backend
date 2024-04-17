@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -78,6 +79,13 @@ public class UserNotificationService {
 
     }
 
+    /**
+     * 사용자 전체 알림 끄기 / 켜기
+     * @param email
+     * @param notificationSetting
+     * @return
+     */
+    @Transactional
     public boolean updateNotificationSetting(String email, NotificationSetting notificationSetting) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));

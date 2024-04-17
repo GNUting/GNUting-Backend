@@ -1,9 +1,13 @@
 package gang.GNUtingBackend.chat.domain;
 
+import gang.GNUtingBackend.notification.dto.FcmMessage.Notification;
+import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
 import gang.GNUtingBackend.user.domain.BaseEntity;
 import gang.GNUtingBackend.user.domain.User;
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -36,7 +40,14 @@ public class ChatRoomUser extends BaseEntity {
 
     private LocalDateTime lastDisconnectedTime;
 
+    @Enumerated(EnumType.STRING)
+    private NotificationSetting notificationSetting = NotificationSetting.ENABLE;
+
     public void setLastDisconnectedTime(LocalDateTime lastDisconnectedTime) {
         this.lastDisconnectedTime = lastDisconnectedTime;
+    }
+
+    public void updateNotificationSetting(NotificationSetting notificationSetting) {
+        this.notificationSetting = notificationSetting;
     }
 }

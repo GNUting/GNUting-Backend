@@ -1,6 +1,7 @@
 package gang.GNUtingBackend.notification.controller;
 
 
+import gang.GNUtingBackend.chat.service.ChatRoomUserService;
 import gang.GNUtingBackend.notification.dto.NotificationSettingDto;
 import gang.GNUtingBackend.notification.dto.UserNotificationResponseDto;
 import gang.GNUtingBackend.notification.service.UserNotificationService;
@@ -21,6 +22,7 @@ import java.util.List;
 public class UserNotificationController {
     private final TokenProvider tokenProvider;
     private final UserNotificationService userNotificationService;
+    private final ChatRoomUserService chatRoomUserService;
 
     @GetMapping("/notification")
     @Operation(summary = "알림 모두보기 API", description = "자신에게 온 알림을 봅니다.")
@@ -47,14 +49,29 @@ public class UserNotificationController {
                 .body(ApiResponse.onSuccess(notificationdeleted));
     }
 
-    @PutMapping("/{userId}/notificationSetting")
+    @PutMapping("/notificationSetting")
+    @Operation(summary = "전체 알림 켜기 / 끄기 API", description = "사용자의 전체 알림을 켜고 끕니다.")
     public ResponseEntity<?> updateNotificationSetting(
             @RequestHeader("Authorization") String token,
-            @PathVariable Long userId,
             @RequestBody NotificationSettingDto notificationSettingDto) {
         String email = tokenProvider.getUserEmail(token.substring(7));
 
         boolean setting = userNotificationService.updateNotificationSetting(email,
+                notificationSettingDto.getNotificationSetting());
+
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(setting));
+    }
+
+    @PutMapping("/{chatRoomId}/notificationSetting")
+    @Operation(summary = "채팅 알림 켜기 / 끄기 API", description = "사용자가 참여한 채팅방의 알림을 켜고 끕니다.")
+    public ResponseEntity<?> updateChatRoomNotificationSetting(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long chatRoomId,
+            @RequestBody NotificationSettingDto notificationSettingDto) {
+        String email = tokenProvider.getUserEmail(token.substring(7));
+
+        boolean setting = chatRoomUserService.updateNotificationSetting(chatRoomId, email,
                 notificationSettingDto.getNotificationSetting());
 
         return ResponseEntity.ok()
