@@ -9,6 +9,8 @@ import gang.GNUtingBackend.chat.repository.ChatRoomRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
 import gang.GNUtingBackend.exception.handler.ChatRoomHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
+import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
+import gang.GNUtingBackend.notification.service.FCMService;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.repository.UserRepository;
@@ -30,10 +32,11 @@ public class ChatService {
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final UserRepository userRepository;
     private final SimpMessageSendingOperations messagingTemplate;
+    private final FCMService fcmService;
 
     @Transactional
     public ChatResponseDto sendMessage(ChatRequestDto chatRequestDto, Long chatRoomId, String email) {
-            User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
@@ -61,7 +64,19 @@ public class ChatService {
 
         messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, chatResponse);
 
+        notifyOtherUsers(chatRoom, chat, user);
+
         return chatResponse;
+    }
+
+    private void notifyOtherUsers(ChatRoom chatRoom, Chat chat, User user) {
+        chatRoom.getChatRoomUsers().stream()
+                .filter(chatRoomUser -> !chatRoomUser.getUser().equals(user) && chatRoomUser.getNotificationSetting() == NotificationSetting.ENABLE)
+                .forEach(chatRoomUser -> {
+                    if (hasNewMessages(chatRoomUser.getUser().getEmail(), chatRoom.getId())) {
+                        fcmService.sendMessageTo(chatRoomUser.getUser(), chatRoomUser.getChatRoom().getTitle(), chat.getMessage());
+                    }
+                });
     }
 
     @Transactional(readOnly = true)

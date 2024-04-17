@@ -12,11 +12,9 @@ import gang.GNUtingBackend.chat.repository.ChatRoomRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
 import gang.GNUtingBackend.exception.handler.ChatRoomHandler;
 import gang.GNUtingBackend.exception.handler.ChatRoomUserHandler;
-import gang.GNUtingBackend.notification.service.FCMService;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -33,7 +31,6 @@ public class ChatRoomService {
     private final SimpMessageSendingOperations messagingTemplate;
     private final ChatService chatService;
     private final ChatRepository chatRepository;
-    private final FCMService fcmService;
 
     /**
      * 채팅방 생성
@@ -106,10 +103,6 @@ public class ChatRoomService {
 
                     boolean hasNewMessage = chatService.hasNewMessages(email, chatRoom.getId());
 
-                    if(hasNewMessage) {
-                        fcmService.sendMessageTo(cru.getUser(), cru.getChatRoom().getTitle(), "새로운 메세지가 있습니다.");
-                    }
-
                     return ChatRoomResponseDto.builder()
                             .id(chatRoom.getId())
                             .title(chatRoom.getTitle())
@@ -117,6 +110,7 @@ public class ChatRoomService {
                             .applyLeaderDepartment(chatRoom.getApplyLeaderDepartment())
                             .ChatRoomUserProfileImages(chatRoomUserProfileImages)
                             .hasNewMessage(hasNewMessage)
+                            .chatRoomUsers(chatRoom.getChatRoomUsers())
                             .build();
                 })
                 .collect(Collectors.toList());

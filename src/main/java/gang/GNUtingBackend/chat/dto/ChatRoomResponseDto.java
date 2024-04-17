@@ -1,5 +1,6 @@
 package gang.GNUtingBackend.chat.dto;
 
+import gang.GNUtingBackend.chat.domain.ChatRoomUser;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,5 +14,6 @@ public class ChatRoomResponseDto {
     private String leaderUserDepartment;
     private String applyLeaderDepartment;
     private List<String> ChatRoomUserProfileImages;
+    private List<ChatRoomUser> chatRoomUsers;
     private boolean hasNewMessage;
 }
