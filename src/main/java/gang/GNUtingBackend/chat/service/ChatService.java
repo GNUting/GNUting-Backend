@@ -64,12 +64,12 @@ public class ChatService {
 
         messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, chatResponse);
 
-        notifyOtherMembers(chatRoom, chat, user);
+        notifyOtherUsers(chatRoom, chat, user);
 
         return chatResponse;
     }
 
-    private void notifyOtherMembers(ChatRoom chatRoom, Chat chat, User user) {
+    private void notifyOtherUsers(ChatRoom chatRoom, Chat chat, User user) {
         chatRoom.getChatRoomUsers().stream()
                 .filter(chatRoomUser -> !chatRoomUser.getUser().equals(user) && chatRoomUser.getNotificationSetting() == NotificationSetting.ENABLE)
                 .forEach(chatRoomUser -> {

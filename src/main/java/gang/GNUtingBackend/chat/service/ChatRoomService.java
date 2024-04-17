@@ -12,7 +12,6 @@ import gang.GNUtingBackend.chat.repository.ChatRoomRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
 import gang.GNUtingBackend.exception.handler.ChatRoomHandler;
 import gang.GNUtingBackend.exception.handler.ChatRoomUserHandler;
-import gang.GNUtingBackend.notification.service.FCMService;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import java.util.ArrayList;
 import java.util.List;
