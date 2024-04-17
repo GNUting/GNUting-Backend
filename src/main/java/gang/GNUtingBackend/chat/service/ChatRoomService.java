@@ -117,6 +117,7 @@ public class ChatRoomService {
                             .applyLeaderDepartment(chatRoom.getApplyLeaderDepartment())
                             .ChatRoomUserProfileImages(chatRoomUserProfileImages)
                             .hasNewMessage(hasNewMessage)
+                            .chatRoomUsers(chatRoom.getChatRoomUsers())
                             .build();
                 })
                 .collect(Collectors.toList());
