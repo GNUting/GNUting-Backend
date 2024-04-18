@@ -44,4 +44,19 @@ public class MailController {
                 .body(ApiResponse.onSuccess("인증되었습니다."));
 
     }
+
+    @PostMapping("/mail/findPassword")
+    @Operation(summary = "비밀번호 찾기 시, 이메일 인증 API", description = "비밀번호를 찾기 위해 사용자의 경상국립대 이메일로 인증 번호 메일을 전송합니다.")
+    public ResponseEntity<ApiResponse<MailSendResponseDto>> findPasswordMailSend(@RequestBody MailSendRequestDto mailSendRequestDto) {
+        int number = mailService.findPasswordSendMail(mailSendRequestDto.getEmail());
+        String num = Integer.toString(number);
+
+        MailSendResponseDto mailSendResponseDto = new MailSendResponseDto();
+        mailSendResponseDto.setNumber(num);
+
+        ApiResponse<MailSendResponseDto> apiResponse = ApiResponse.onSuccess(mailSendResponseDto);
+
+        return ResponseEntity.ok()
+                .body(apiResponse);
+    }
 }
