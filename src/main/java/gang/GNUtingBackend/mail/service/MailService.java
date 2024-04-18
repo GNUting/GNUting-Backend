@@ -4,7 +4,10 @@ import gang.GNUtingBackend.exception.handler.MailHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.repository.UserRepository;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +22,11 @@ public class MailService {
     private final JavaMailSender javaMailSender;
     private final UserRepository userRepository;
     private static final String senderEmail = "gnuting@gnuting.com";
-    private static int number;
     private final RedisTemplate<String, String> redisTemplate;
     private static final long EXPIRE_SECONDS = 180;
 
-    public static void createNumber() {
-        number = (int) (Math.random() * (900000)) + 100000;
+    private int createNumber() {
+        return (int) (Math.random() * (900000)) + 100000;
     }
 
     /**
@@ -32,8 +34,8 @@ public class MailService {
      * @param email
      * @return
      */
-    public MimeMessage CreateMail(String email) {
-        createNumber();
+    public MimeMessage createMail(String email) {
+        int number = createNumber();
         MimeMessage message = javaMailSender.createMimeMessage();
 
         try {
@@ -79,10 +81,30 @@ public class MailService {
         if (!isValidAddress(email)) {
             throw new MailHandler(ErrorStatus.INVALID_MAIL_ADDRESS);
         }
-        MimeMessage message = CreateMail(email);
+        MimeMessage message = createMail(email);
+        int number = extractNumber(message);
         javaMailSender.send(message);
         redisTemplate.opsForValue().set(email, String.valueOf(number) , EXPIRE_SECONDS, TimeUnit.SECONDS);
         return number;
+    }
+
+    /**
+     * message에서 인증번호를 추출
+     * @param message
+     * @return
+     */
+    private int extractNumber(MimeMessage message) {
+        try {
+            String content = (String) message.getContent();
+            Pattern pattern = Pattern.compile("(\\d{6})"); // 6자리 숫자를 찾는 정규 표현식
+            Matcher matcher = pattern.matcher(content);
+            if (matcher.find()) {
+                return Integer.parseInt(matcher.group(1));
+            }
+        } catch (IOException | MessagingException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public boolean isValidAddress(String email) {

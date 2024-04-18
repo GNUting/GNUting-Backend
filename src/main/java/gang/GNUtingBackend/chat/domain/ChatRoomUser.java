@@ -1,6 +1,5 @@
 package gang.GNUtingBackend.chat.domain;
 
-import gang.GNUtingBackend.notification.dto.FcmMessage.Notification;
 import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
 import gang.GNUtingBackend.user.domain.BaseEntity;
 import gang.GNUtingBackend.user.domain.User;
