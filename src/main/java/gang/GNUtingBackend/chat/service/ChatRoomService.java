@@ -7,6 +7,7 @@ import gang.GNUtingBackend.chat.domain.ChatRoomUser;
 import gang.GNUtingBackend.chat.domain.enums.MessageType;
 import gang.GNUtingBackend.chat.dto.ChatRequestDto;
 import gang.GNUtingBackend.chat.dto.ChatRoomResponseDto;
+import gang.GNUtingBackend.chat.dto.ChatRoomUserDto;
 import gang.GNUtingBackend.chat.repository.ChatRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
@@ -101,6 +102,9 @@ public class ChatRoomService {
                             .map(chatRoomUser -> chatRoomUser.getUser().getProfileImage())
                             .collect(Collectors.toList());
 
+                    ChatRoomUserDto chatRoomUserDto = new ChatRoomUserDto();
+                    List<ChatRoomUserDto> chatRoomUserDtos = chatRoomUserDto.toDto(chatRoom.getChatRoomUsers());
+
                     boolean hasNewMessage = chatService.hasNewMessages(email, chatRoom.getId());
 
                     return ChatRoomResponseDto.builder()
@@ -110,7 +114,7 @@ public class ChatRoomService {
                             .applyLeaderDepartment(chatRoom.getApplyLeaderDepartment())
                             .ChatRoomUserProfileImages(chatRoomUserProfileImages)
                             .hasNewMessage(hasNewMessage)
-                            .chatRoomUsers(chatRoom.getChatRoomUsers())
+                            .chatRoomUsers(chatRoomUserDtos)
                             .build();
                 })
                 .collect(Collectors.toList());
