@@ -1,5 +1,6 @@
 package gang.GNUtingBackend.user.dto;
 
+import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.domain.enums.Gender;
 import gang.GNUtingBackend.user.domain.enums.UserRole;
@@ -26,6 +27,7 @@ public class UserSignupRequestDto {
     private String profileImage;
     private UserRole userRole;
     private String userSelfIntroduction;
+    private NotificationSetting notificationSetting;
 
     public User toEntity() {
         return User.builder()
@@ -41,6 +43,7 @@ public class UserSignupRequestDto {
                 .profileImage(profileImage)
                 .userRole(UserRole.ROLE_USER)
                 .userSelfIntroduction(userSelfIntroduction)
+                .notificationSetting(NotificationSetting.ENABLE)
                 .build();
     }
 
