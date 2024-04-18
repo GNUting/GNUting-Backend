@@ -89,6 +89,22 @@ public class MailService {
     }
 
     /**
+     * 비밀번호를 찾는 인증메일을 보낼 경우, 해당 이메일로 인증 메일을 전송한다.
+     * @param email
+     * @return
+     */
+    public int findPasswordSendMail(String email) {
+        if (!isValidAddress(email)) {
+            throw new MailHandler(ErrorStatus.INVALID_MAIL_ADDRESS);
+        }
+        MimeMessage message = createMail(email);
+        int number = extractNumber(message);
+        javaMailSender.send(message);
+        redisTemplate.opsForValue().set(email, String.valueOf(number) , EXPIRE_SECONDS, TimeUnit.SECONDS);
+        return number;
+    }
+
+    /**
      * message에서 인증번호를 추출
      * @param message
      * @return
