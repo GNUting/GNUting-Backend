@@ -89,7 +89,7 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private NotificationSetting notificationSetting = NotificationSetting.ENABLE;
+    private NotificationSetting notificationSetting;
 
     @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserNotification> userNotifications;

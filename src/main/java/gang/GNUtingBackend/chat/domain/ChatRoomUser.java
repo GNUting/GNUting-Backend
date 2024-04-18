@@ -4,6 +4,7 @@ import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
 import gang.GNUtingBackend.user.domain.BaseEntity;
 import gang.GNUtingBackend.user.domain.User;
 import java.time.LocalDateTime;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -39,6 +40,7 @@ public class ChatRoomUser extends BaseEntity {
 
     private LocalDateTime lastDisconnectedTime;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private NotificationSetting notificationSetting;
 
