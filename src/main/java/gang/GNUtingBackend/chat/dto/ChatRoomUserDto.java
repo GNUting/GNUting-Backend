@@ -17,15 +17,19 @@ import lombok.NoArgsConstructor;
 public class ChatRoomUserDto {
 
     private Long id;
-    private ChatRoom chatRoom;
-    private User user;
+    private Long userId;
+    private Long chatRoomId;
+    private String nickname;
+    private String profileImage;
 
     public List<ChatRoomUserDto> toDto(List<ChatRoomUser> chatRoomUsers) {
         return chatRoomUsers.stream()
                 .map(cru -> ChatRoomUserDto.builder()
                         .id(cru.getId())
-                        .chatRoom(cru.getChatRoom())
-                        .user(cru.getUser())
+                        .userId(cru.getUser().getId())
+                        .chatRoomId(cru.getChatRoom().getId())
+                        .nickname(cru.getUser().getNickname())
+                        .profileImage(cru.getUser().getProfileImage())
                         .build())
                 .collect(Collectors.toList());
     }
