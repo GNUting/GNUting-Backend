@@ -2,6 +2,7 @@ package gang.GNUtingBackend.user.controller;
 
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.image.service.S3Uploader;
+import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
 import gang.GNUtingBackend.response.ApiResponse;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.enums.Gender;
@@ -91,7 +92,7 @@ public class UserController {
 
         UserSignupRequestDto userSignupRequestDto = new UserSignupRequestDto(
                 email, password, name, phoneNumber, gender, birthDate, nickname, department, studentId, mediaLink,
-                UserRole.ROLE_USER, userSelfIntroduction);
+                UserRole.ROLE_USER, userSelfIntroduction, NotificationSetting.ENABLE);
 
         TokenResponseDto response = userService.signup(userSignupRequestDto);
 
