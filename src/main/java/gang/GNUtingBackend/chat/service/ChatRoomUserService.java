@@ -23,6 +23,7 @@ public class ChatRoomUserService {
         ChatRoomUser chatRoomUser = ChatRoomUser.builder()
                 .chatRoom(chatRoom)
                 .user(user)
+                .notificationSetting(NotificationSetting.ENABLE)
                 .build();
         chatRoomUserRepository.save(chatRoomUser);
 

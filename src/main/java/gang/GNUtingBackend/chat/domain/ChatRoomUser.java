@@ -41,7 +41,7 @@ public class ChatRoomUser extends BaseEntity {
     private LocalDateTime lastDisconnectedTime;
 
     @Enumerated(EnumType.STRING)
-    private NotificationSetting notificationSetting = NotificationSetting.ENABLE;
+    private NotificationSetting notificationSetting;
 
     public void setLastDisconnectedTime(LocalDateTime lastDisconnectedTime) {
         this.lastDisconnectedTime = lastDisconnectedTime;
