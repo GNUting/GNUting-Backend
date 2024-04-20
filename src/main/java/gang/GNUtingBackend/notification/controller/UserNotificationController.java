@@ -2,6 +2,7 @@ package gang.GNUtingBackend.notification.controller;
 
 
 import gang.GNUtingBackend.chat.service.ChatRoomUserService;
+import gang.GNUtingBackend.notification.dto.NotificationChatSettingDto;
 import gang.GNUtingBackend.notification.dto.NotificationSettingDto;
 import gang.GNUtingBackend.notification.dto.UserNotificationResponseDto;
 import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
@@ -90,4 +91,12 @@ public class UserNotificationController {
                 .body(ApiResponse.onSuccess(myAllNotificationSetting));
     }
 
+    @GetMapping("/notification/show/chatsetting")
+    @Operation(summary = "사용자 채팅알림 세팅값 API", description = "사용자의 채팅알림 상태를 확인합니다.")
+    public ResponseEntity<?> showMyChatNotificationSetting( @RequestHeader("Authorization") String token){
+        String email=tokenProvider.getUserEmail(token.substring(7));
+        List<NotificationChatSettingDto> myChatNotificationSetting=userNotificationService.myChatNotificationSetting(email);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(myChatNotificationSetting));
+    }
 }

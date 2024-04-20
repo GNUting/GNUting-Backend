@@ -2,6 +2,7 @@ package gang.GNUtingBackend.chat.dto;
 
 import gang.GNUtingBackend.chat.domain.ChatRoom;
 import gang.GNUtingBackend.chat.domain.ChatRoomUser;
+import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
 import gang.GNUtingBackend.user.domain.User;
 import java.util.List;
 import java.util.stream.Collectors;
