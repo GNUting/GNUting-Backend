@@ -21,6 +21,8 @@ public class ChatRoomUserDto {
     private Long chatRoomId;
     private String nickname;
     private String profileImage;
+    private String department;
+    private String studentId;
 
     public List<ChatRoomUserDto> toDto(List<ChatRoomUser> chatRoomUsers) {
         return chatRoomUsers.stream()
@@ -30,6 +32,8 @@ public class ChatRoomUserDto {
                         .chatRoomId(cru.getChatRoom().getId())
                         .nickname(cru.getUser().getNickname())
                         .profileImage(cru.getUser().getProfileImage())
+                        .department(cru.getUser().getDepartment())
+                        .studentId(cru.getUser().getStudentId()+"학번")
                         .build())
                 .collect(Collectors.toList());
     }
