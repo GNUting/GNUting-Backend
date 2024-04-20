@@ -2,6 +2,7 @@ package gang.GNUtingBackend.notification.service;
 
 import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
+import gang.GNUtingBackend.notification.dto.NotificationSettingDto;
 import gang.GNUtingBackend.notification.dto.UserNotificationResponseDto;
 import gang.GNUtingBackend.notification.entity.UserNotification;
 import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
@@ -95,4 +96,12 @@ public class UserNotificationService {
 
         return true;
     }
+
+    public NotificationSetting myAllNotificationSetting(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        return user.getNotificationSetting();
+    }
+
 }

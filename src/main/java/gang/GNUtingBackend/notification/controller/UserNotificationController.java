@@ -4,6 +4,7 @@ package gang.GNUtingBackend.notification.controller;
 import gang.GNUtingBackend.chat.service.ChatRoomUserService;
 import gang.GNUtingBackend.notification.dto.NotificationSettingDto;
 import gang.GNUtingBackend.notification.dto.UserNotificationResponseDto;
+import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
 import gang.GNUtingBackend.notification.service.UserNotificationService;
 import gang.GNUtingBackend.response.ApiResponse;
 import gang.GNUtingBackend.user.repository.UserRepository;
@@ -34,6 +35,7 @@ public class UserNotificationController {
     }
 
     @GetMapping("notification/check")
+    @Operation(summary = "새알림 확인 API", description = "읽지않은 새로운 알림이 있을시 N(ew)표시")
     public ResponseEntity<?> checkNotification(@RequestHeader("Authorization") String token){
         String email=tokenProvider.getUserEmail(token.substring(7));
         boolean checkNotification=userNotificationService.checkNotification(email);
@@ -42,6 +44,7 @@ public class UserNotificationController {
     }
 
     @DeleteMapping("/notification/{id}")
+    @Operation(summary = "알림삭제 API", description = "사용자가 알림을 삭제합니다.")
     public ResponseEntity<?> deleteNotification(@RequestHeader("Authorization") String token,@PathVariable Long id){
         String email=tokenProvider.getUserEmail(token.substring(7));
         String notificationdeleted=userNotificationService.deleteNotification(email,id);
@@ -77,4 +80,14 @@ public class UserNotificationController {
         return ResponseEntity.ok()
                 .body(ApiResponse.onSuccess(setting));
     }
+
+    @GetMapping("/notification/show/allsetting")
+    @Operation(summary = "사용자 전체알림보기 세팅값 API", description = "사용자의 전체알림보기 상태를 확인합니다.")
+    public ResponseEntity<?> showMyAllNotificationSetting( @RequestHeader("Authorization") String token){
+        String email=tokenProvider.getUserEmail(token.substring(7));
+        NotificationSetting myAllNotificationSetting=userNotificationService.myAllNotificationSetting(email);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(myAllNotificationSetting));
+    }
+
 }
