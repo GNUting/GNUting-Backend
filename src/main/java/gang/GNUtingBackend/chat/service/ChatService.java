@@ -60,6 +60,8 @@ public class ChatService {
                 .nickname(user.getNickname())
                 .message(chatRequestDto.getMessage())
                 .createdDate(chat.getCreateDate())
+                .department(user.getDepartment())
+                .studentId(user.getStudentId() + "학번")
                 .build();
 
         messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, chatResponse);
@@ -93,6 +95,8 @@ public class ChatService {
             String userEmail = user.map(User::getEmail).orElse(null);
             String userProfileImage = user.map(User::getProfileImage).orElse(null);
             String userNickname = user.map(User::getNickname).orElse(null);
+            String userDepartment = user.map(User::getDepartment).orElse(null);
+            String userStudentId = user.map(User::getStudentId).orElse(null);
 
 //            User user = userRepository.findByNickname(chat.getSender())
 //                    .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -106,6 +110,8 @@ public class ChatService {
                     .nickname(userNickname)
                     .message(chat.getMessage())
                     .createdDate(chat.getCreateDate())
+                    .department(userDepartment)
+                    .studentId(userStudentId)
                     .build();
         }).collect(Collectors.toList());
     }
