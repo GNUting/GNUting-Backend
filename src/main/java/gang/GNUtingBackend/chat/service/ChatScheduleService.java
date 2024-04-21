@@ -57,7 +57,7 @@ public class ChatScheduleService {
                     .message(chat.getMessage())
                     .createdDate(chat.getCreateDate())
                     .department(userDepartment)
-                    .studentId(userStudentId)
+                    .studentId(userStudentId + "학번")
                     .build();
 
             messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoom.getId(), chatResponse);

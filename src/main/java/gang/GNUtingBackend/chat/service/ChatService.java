@@ -111,7 +111,7 @@ public class ChatService {
                     .message(chat.getMessage())
                     .createdDate(chat.getCreateDate())
                     .department(userDepartment)
-                    .studentId(userStudentId)
+                    .studentId(userStudentId + "학번")
                     .build();
         }).collect(Collectors.toList());
     }
