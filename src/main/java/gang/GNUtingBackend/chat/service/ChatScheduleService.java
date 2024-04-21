@@ -44,6 +44,8 @@ public class ChatScheduleService {
             String userEmail = user.map(User::getEmail).orElse(null);
             String userProfileImage = user.map(User::getProfileImage).orElse(null);
             String userNickname = user.map(User::getNickname).orElse(null);
+            String userDepartment = user.map(User::getDepartment).orElse(null);
+            String userStudentId = user.map(User::getStudentId).orElse(null);
 
             ChatResponseDto chatResponse = ChatResponseDto.builder()
                     .id(chat.getId())
@@ -54,6 +56,8 @@ public class ChatScheduleService {
                     .nickname(userNickname)
                     .message(chat.getMessage())
                     .createdDate(chat.getCreateDate())
+                    .department(userDepartment)
+                    .studentId(userStudentId + "학번")
                     .build();
 
             messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoom.getId(), chatResponse);

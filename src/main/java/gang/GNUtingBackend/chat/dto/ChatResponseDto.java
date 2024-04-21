@@ -16,4 +16,6 @@ public class ChatResponseDto {
     private String nickname;
     private String message;
     private LocalDateTime createdDate;
+    private String department;
+    private String studentId;
 }

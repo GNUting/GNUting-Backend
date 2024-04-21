@@ -247,7 +247,7 @@ public class BoardService {
                     .anyMatch(applyUsers -> applyUsers.getUserId().equals(member));
 
             if (isUserAlreadyApplied) {
-                throw new UserAlreadyException(member.getNickname() + "님이 이미 참여해 있습니다.");
+                throw new BoardHandler(ErrorStatus.ALREADY_IN_USER);
             }
             //사용자가 성별이 다를때
             if (userApply.getGender() == board.getGender()) {
