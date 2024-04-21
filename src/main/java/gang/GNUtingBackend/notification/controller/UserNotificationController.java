@@ -84,19 +84,21 @@ public class UserNotificationController {
 
     @GetMapping("/notification/show/allsetting")
     @Operation(summary = "사용자 전체알림보기 세팅값 API", description = "사용자의 전체알림보기 상태를 확인합니다.")
-    public ResponseEntity<?> showMyAllNotificationSetting( @RequestHeader("Authorization") String token){
+    public ResponseEntity<?> showMyAllNotificationSetting(@RequestHeader("Authorization") String token){
         String email=tokenProvider.getUserEmail(token.substring(7));
-        NotificationSetting myAllNotificationSetting=userNotificationService.myAllNotificationSetting(email);
+        NotificationSettingDto myAllNotificationSetting = userNotificationService.myAllNotificationSetting(email);
         return ResponseEntity.ok()
                 .body(ApiResponse.onSuccess(myAllNotificationSetting));
     }
 
-    @GetMapping("/notification/show/chatsetting")
+    @GetMapping("/{chatRoomId}/show/notificationSetting")
     @Operation(summary = "사용자 채팅알림 세팅값 API", description = "사용자의 채팅알림 상태를 확인합니다.")
-    public ResponseEntity<?> showMyChatNotificationSetting( @RequestHeader("Authorization") String token){
-        String email=tokenProvider.getUserEmail(token.substring(7));
-        List<NotificationChatSettingDto> myChatNotificationSetting=userNotificationService.myChatNotificationSetting(email);
+    public ResponseEntity<?> showMyChatNotificationSetting(@RequestHeader("Authorization") String token,
+                                                           @PathVariable Long chatRoomId){
+        String email = tokenProvider.getUserEmail(token.substring(7));
+        NotificationSettingDto notificationSettingDto = userNotificationService.checkChatRoomNotificationSetting(
+                chatRoomId, email);
         return ResponseEntity.ok()
-                .body(ApiResponse.onSuccess(myChatNotificationSetting));
+                .body(ApiResponse.onSuccess(notificationSettingDto));
     }
 }
