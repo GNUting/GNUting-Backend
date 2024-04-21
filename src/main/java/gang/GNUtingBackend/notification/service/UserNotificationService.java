@@ -1,7 +1,11 @@
 package gang.GNUtingBackend.notification.service;
 
+import gang.GNUtingBackend.chat.domain.ChatRoomUser;
+import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
+import gang.GNUtingBackend.notification.dto.NotificationChatSettingDto;
+import gang.GNUtingBackend.notification.dto.NotificationSettingDto;
 import gang.GNUtingBackend.notification.dto.UserNotificationResponseDto;
 import gang.GNUtingBackend.notification.entity.UserNotification;
 import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
@@ -26,6 +30,7 @@ public class UserNotificationService {
 
     private final UserNotificationRepository userNotificationRepository;
     private final UserRepository userRepository;
+    private final ChatRoomUserRepository chatRoomUserRepository;
 
     public void saveNotification(User user, String title,String body) {
         UserNotification userNotification = UserNotification.builder()
@@ -94,5 +99,19 @@ public class UserNotificationService {
         userRepository.save(user);
 
         return true;
+    }
+
+    public NotificationSetting myAllNotificationSetting(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        return user.getNotificationSetting();
+    }
+
+    public List<NotificationChatSettingDto> myChatNotificationSetting(String email) {
+        List<ChatRoomUser> chatRoomUserList=chatRoomUserRepository.findAllByUserEmail(email);
+
+
+     return chatRoomUserList.stream().map(NotificationChatSettingDto::toDto).collect(Collectors.toList());
     }
 }

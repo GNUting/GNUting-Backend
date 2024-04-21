@@ -2,6 +2,8 @@ package gang.GNUtingBackend.chat.dto;
 
 import gang.GNUtingBackend.chat.domain.ChatRoomUser;
 import java.util.List;
+
+import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
 import lombok.Builder;
 import lombok.Getter;
 
