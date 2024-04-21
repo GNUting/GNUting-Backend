@@ -3,6 +3,7 @@ package gang.GNUtingBackend.notification.service;
 import gang.GNUtingBackend.chat.domain.ChatRoomUser;
 import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
+import gang.GNUtingBackend.exception.handler.ChatRoomUserHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.dto.NotificationChatSettingDto;
 import gang.GNUtingBackend.notification.dto.NotificationSettingDto;
@@ -14,6 +15,7 @@ import gang.GNUtingBackend.notification.repository.UserNotificationRepository;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.repository.UserRepository;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -101,17 +103,22 @@ public class UserNotificationService {
         return true;
     }
 
-    public NotificationSetting myAllNotificationSetting(String email) {
+    public NotificationSettingDto myAllNotificationSetting(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        return user.getNotificationSetting();
+        NotificationSettingDto notificationSettingDto = new NotificationSettingDto(user.getNotificationSetting());
+
+        return notificationSettingDto;
     }
 
-    public List<NotificationChatSettingDto> myChatNotificationSetting(String email) {
-        List<ChatRoomUser> chatRoomUserList=chatRoomUserRepository.findAllByUserEmail(email);
+    public NotificationSettingDto checkChatRoomNotificationSetting(Long chatRoomId, String email) {
+        ChatRoomUser chatRoomUser = chatRoomUserRepository.findByChatRoomIdAndUserEmail(chatRoomId, email)
+                .orElseThrow(() -> new ChatRoomUserHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER));
 
+        NotificationSettingDto notificationSettingDto = new NotificationSettingDto(
+                chatRoomUser.getNotificationSetting());
 
-     return chatRoomUserList.stream().map(NotificationChatSettingDto::toDto).collect(Collectors.toList());
+        return notificationSettingDto;
     }
 }
