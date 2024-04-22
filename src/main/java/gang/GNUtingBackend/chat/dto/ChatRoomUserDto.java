@@ -23,7 +23,7 @@ public class ChatRoomUserDto {
     private String department;
     private String studentId;
 
-    public List<ChatRoomUserDto> toDto(List<ChatRoomUser> chatRoomUsers) {
+    public static List<ChatRoomUserDto> toDto(List<ChatRoomUser> chatRoomUsers) {
         return chatRoomUsers.stream()
                 .map(cru -> ChatRoomUserDto.builder()
                         .id(cru.getId())

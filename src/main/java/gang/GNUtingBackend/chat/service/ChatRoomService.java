@@ -15,6 +15,7 @@ import gang.GNUtingBackend.exception.handler.ChatRoomHandler;
 import gang.GNUtingBackend.exception.handler.ChatRoomUserHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -86,15 +87,15 @@ public class ChatRoomService {
 
     /**
      * 해당 이메일을 가진 유저가 참여중인 모든 채팅방을 조회
-     *
+     * hasNewMessage를 기준으로 정렬
      * @param email
      * @return
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ChatRoomResponseDto> findChatRoomsByUserEmail(String email) {
         List<ChatRoomUser> allByUserEmail = chatRoomUserRepository.findAllByUserEmail(email);
 
-        return allByUserEmail.stream()
+        List<ChatRoomResponseDto> chatRooms = allByUserEmail.stream()
                 .map(cru -> {
                     ChatRoom chatRoom = cru.getChatRoom();
                     List<String> chatRoomUserProfileImages = chatRoom.getChatRoomUsers().stream()
@@ -117,7 +118,10 @@ public class ChatRoomService {
                             .chatRoomUsers(chatRoomUserDtos)
                             .build();
                 })
+                .sorted(Comparator.comparing(ChatRoomResponseDto::isHasNewMessage).reversed())
                 .collect(Collectors.toList());
+
+        return chatRooms;
     }
 
     /**

@@ -139,7 +139,13 @@ public class FCMService {
 
     }
 
-    // 알림 메세지를 보내지만 db에 저장되지 않게 함
+    /**
+     * 알림 메세지를 보내지만 db에 저장되지 않게 함
+     * @param findId
+     * @param title
+     * @param body
+     * @return
+     */
     public boolean sendMessageToNotSave(User findId, String title, String body) {
         // 알림이 활성화되어 있지 않으면 알림 메세지 보내지 않도록 구현
         if (findId.getNotificationSetting() != NotificationSetting.ENABLE) {
