@@ -139,6 +139,41 @@ public class FCMService {
 
     }
 
+    /**
+     * 알림 메세지를 보내지만 db에 저장되지 않게 함
+     * @param findId
+     * @param title
+     * @param body
+     * @return
+     */
+    public boolean sendMessageToNotSave(User findId, String title, String body) {
+        // 알림이 활성화되어 있지 않으면 알림 메세지 보내지 않도록 구현
+        if (findId.getNotificationSetting() != NotificationSetting.ENABLE) {
+            return false;
+        }
+
+        try {
+            List<String> fcms = new ArrayList<>();
+            List<FCM> fcmTokens = fcmRepository.findByUserId(findId);
+            for (FCM fcmToken : fcmTokens) {
+                fcms.add(fcmToken.getFcmToken());
+            }
+            MulticastMessage message = MulticastMessage.builder()
+                    .setNotification(Notification.builder()
+                            .setTitle(title)
+                            .setBody(body)
+                            .build())
+                    .addAllTokens(fcms)
+                    .build();
+            BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
+            System.out.println(response.getSuccessCount() + " messages were sent successfully");
+            return true;
+        } catch (Exception e) {
+            throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
+        }
+
+    }
+
 
     public void sendAllMessage(List<User> findId, String title, String body) {
         try {
