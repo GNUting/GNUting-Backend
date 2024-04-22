@@ -193,6 +193,7 @@ public class FCMService {
                             .setBody(body)
                             .build())
                     .addAllTokens(fcms)
+
                     .build();
             BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
             System.out.println(response.getSuccessCount() + " messages were sent successfully");
@@ -244,12 +245,5 @@ public class FCMService {
     public void deleteFCMToken(String fcmToken) {
             fcmRepository.deleteByFcmToken(fcmToken);
     }
-//
-//    @Scheduled(cron = "0 0 0 * * ?")
-//    public void scheduleDelete(){
-//
-//        LocalDateTime oneMonthBefore=LocalDateTime.now().minusMonths(1);
-//        List<FCM> oldFcmDatas=fcmRepository.findByCreatedDateBefore(oneMonthBefore);
-//        fcmRepository.deleteAll(oldFcmDatas);
-//    }
+
 }
