@@ -231,6 +231,16 @@ public class ApplicationStatusService {
         boardRepository.save(board);
         boardApplyLeaderRepository.save(boardApplyLeader);
 
+        List<BoardApplyLeader> cancelApplyList = boardApplyLeaderRepository.findByBoardIdAndWaiting(boardApplyLeader.getBoardId());
+        for (BoardApplyLeader cancelApply:cancelApplyList) {
+            if(cancelApply.getId()==boardApplyLeader.getId()){
+                continue;
+            }
+            cancelApply.setStatus(ApplyStatus.거절);
+            boardApplyLeaderRepository.save(cancelApply);
+            fcmService.sendMessageTo(cancelApply.getLeaderId(), "과팅신청이 거절되었습니다", user.getDepartment() + " " + user.getNickname() + "님이 과팅을 거절했습니다.");
+        }
+
         return "과팅이 성사되었습니다.";
     }
 

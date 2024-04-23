@@ -34,4 +34,8 @@ public interface BoardApplyLeaderRepository extends JpaRepository<BoardApplyLead
     @Modifying
     @Query("UPDATE BoardApplyLeader bal SET bal.applyShowStatus = 'HIDE' WHERE bal = :boardApplyLeader")
     void updateApplyStateHide(BoardApplyLeader boardApplyLeader);
+
+
+    @Query(" SELECT bal FROM BoardApplyLeader bal WHERE bal.boardId= :boardId " + "AND bal.status ='대기중'")
+    List<BoardApplyLeader> findByBoardIdAndWaiting(Board boardId);
 }
