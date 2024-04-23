@@ -1,8 +1,10 @@
 package gang.GNUtingBackend.board.entity;
 
+import gang.GNUtingBackend.board.entity.enums.ApplyShowStatus;
 import gang.GNUtingBackend.board.entity.enums.ApplyStatus;
 import gang.GNUtingBackend.user.domain.User;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.List;
@@ -31,6 +33,16 @@ public class BoardApplyLeader extends BaseTime {
     @Enumerated(EnumType.STRING)
     private ApplyStatus status;
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'SHOW'")
+    private ApplyShowStatus applyShowStatus;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'SHOW'")
+    private ApplyShowStatus receiveShowStatus;
+
     @OneToMany(mappedBy = "boardApplyLeaderId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ApplyUsers> applyUsers;
 
@@ -38,4 +50,11 @@ public class BoardApplyLeader extends BaseTime {
         this.status=applyStatus;
     }
 
+    public void setApplyShowStatus(ApplyShowStatus applyShowStatus){
+        this.applyShowStatus=applyShowStatus;
+    }
+
+    public void setReceiveStatus(ApplyShowStatus receiveShowStatus) {
+        this.receiveShowStatus = receiveShowStatus;
+    }
 }

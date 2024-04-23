@@ -58,6 +58,7 @@ public class UserNotificationService {
         return userNotifications.stream().map(UserNotificationResponseDto::toDto).collect(Collectors.toList());
     }
 
+    @Transactional
     public String deleteNotification(String email, Long id) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));

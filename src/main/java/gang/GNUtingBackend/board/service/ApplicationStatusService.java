@@ -7,6 +7,7 @@ import gang.GNUtingBackend.board.entity.ApplyUsers;
 import gang.GNUtingBackend.board.entity.Board;
 import gang.GNUtingBackend.board.entity.BoardApplyLeader;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
+import gang.GNUtingBackend.board.entity.enums.ApplyShowStatus;
 import gang.GNUtingBackend.board.entity.enums.ApplyStatus;
 import gang.GNUtingBackend.board.entity.enums.Status;
 import gang.GNUtingBackend.board.repository.BoardApplyLeaderRepository;
@@ -23,6 +24,7 @@ import gang.GNUtingBackend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,6 +49,7 @@ public class ApplicationStatusService {
      * 3. 글에 신청한 유저들을 가져온다
      * 4. 게시글에 대표로 신청한 리더를 찾아서 그 리더들을 기준으로 게시글에 신청한 유저들의 리스트를 만든다
      * 5. 참여자와 게시글에 신청한 유저들을 리스트에 합쳐서 반환한다
+     *
      * @param email
      * @return
      */
@@ -58,10 +61,9 @@ public class ApplicationStatusService {
         String participantDepartment = user.getDepartment();
 
 
-
         for (Board boards : boardList) {  //내가작성한 글에서 참여자와 신청자 가져오기
             List<BoardParticipant> boardParticipantList = boardParticipantRepository.findByBoardId(boards);
-            List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByBoardId(boards);
+            List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByBoardIdAndNotHide(boards);
             for (BoardApplyLeader boardApplyLeader : boardApplyLeaderList) { //게시판에 신청한 리더 가져오기
                 List<ApplyUsers> applyUsersList = boardApplyLeader.getApplyUsers();
                 List<User> userList = new ArrayList<>();
@@ -80,7 +82,7 @@ public class ApplicationStatusService {
                 ApplicationStatusResponseDto savedResponseDto =
                         ApplicationStatusResponseDto.toDto(boardApplyLeader.getId(), participantsUsers, applyUsers,
                                 boardApplyLeader.getLeaderId().getDepartment(), participantDepartment,
-                                boardApplyLeader.getStatus(),boardApplyLeader.getCreatedDate(),boardApplyLeader.getModifiedDate());
+                                boardApplyLeader.getStatus(), boardApplyLeader.getCreatedDate(), boardApplyLeader.getModifiedDate());
                 allUsersByLeader.add(savedResponseDto);
             }
         }
@@ -96,6 +98,7 @@ public class ApplicationStatusService {
      * @param email
      * @return
      */
+
     public List<ApplicationStatusResponseDto> applyState(String email) {
 
         List<ApplicationStatusResponseDto> allUsersByLeader = new ArrayList<>();
@@ -123,7 +126,7 @@ public class ApplicationStatusService {
                             (boardApplyLeaders.getId(), participantsUsers, applyUsers,
                                     boardApplyLeaders.getLeaderId().getDepartment(),
                                     boardApplyLeaders.getBoardId().getUserId().getDepartment(),
-                                    boardApplyLeaders.getStatus(),boardApplyLeaders.getCreatedDate(),boardApplyLeaders.getModifiedDate());
+                                    boardApplyLeaders.getStatus(), boardApplyLeaders.getCreatedDate(), boardApplyLeaders.getModifiedDate());
             allUsersByLeader.add(savedResponseDto);
         }
 
@@ -156,6 +159,7 @@ public class ApplicationStatusService {
      * @param email
      * @return String
      */
+    @Transactional
     public String refuse(Long id, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -166,11 +170,12 @@ public class ApplicationStatusService {
         }
         boardApplyLeader.setStatus(ApplyStatus.거절);
         boardApplyLeaderRepository.save(boardApplyLeader);
-        fcmService.sendMessageTo(boardApplyLeader.getLeaderId(),"과팅신청이 거절되었습니다",user.getDepartment()+" "+user.getNickname()+"님이 과팅을 거절했습니다.");
+        fcmService.sendMessageTo(boardApplyLeader.getLeaderId(), "과팅신청이 거절되었습니다", user.getDepartment() + " " + user.getNickname() + "님이 과팅을 거절했습니다.");
 
         return boardApplyLeader.getId() + "번 신청이 거절되었습니다.";
     }
 
+    @Transactional
     public String cancel(Long id, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -179,14 +184,15 @@ public class ApplicationStatusService {
         if (boardApplyLeader == null) {
             throw new BoardHandler(ErrorStatus.USER_NOT_APPLY);
         }
-        if(boardApplyLeader.getLeaderId()!=user){
+        if (boardApplyLeader.getLeaderId() != user) {
             throw new BoardHandler(ErrorStatus.USER_NOT_APPLY);
         }
         boardApplyLeaderRepository.delete(boardApplyLeader);
-        fcmService.sendMessageTo(boardApplyLeader.getBoardId().getUserId(), "과팅신청자가 과팅을 취소했습니다.", user.getDepartment() + user.getNickname()+"님이 과팅을 취소했습니다.");
+        fcmService.sendMessageTo(boardApplyLeader.getBoardId().getUserId(), "과팅신청자가 과팅을 취소했습니다.", user.getDepartment() + user.getNickname() + "님이 과팅을 취소했습니다.");
         return boardApplyLeader.getBoardId().getUserId().getDepartment() + "학과 신청이 취소되었습니다.";
     }
 
+    @Transactional
     public String accept(String email, Long id) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -195,7 +201,7 @@ public class ApplicationStatusService {
         if (boardApplyLeader.getBoardId().getUserId() != user) {
             throw new BoardHandler(ErrorStatus.USER_NOT_AUTHORITY);
         }
-        if(boardApplyLeader.getStatus()==ApplyStatus.승인){
+        if (boardApplyLeader.getStatus() == ApplyStatus.승인) {
             throw new BoardHandler(ErrorStatus.ALREADY_SUCCESS_APPLY);
         }
         List<User> applyUserList = boardApplyLeader.getApplyUsers().stream()
@@ -213,11 +219,11 @@ public class ApplicationStatusService {
         chatRoomService.createChatRoom(chatMemberDto);
 
         //알림보내기 전체보내기 확인필요
-        List<User> notificationUser=new ArrayList<>();
+        List<User> notificationUser = new ArrayList<>();
         notificationUser.addAll(chatMemberDto.getApplyUser());
         notificationUser.addAll(chatMemberDto.getParticipantUser());
 
-        fcmService.sendAllMessage(notificationUser,"과팅이 성사되었습니다",chatMemberDto.getApplyUserDepartment()+"와 "+chatMemberDto.getParticipantUserDepartment()+"의 과팅이 성사되어 채팅방이 만들어졌습니다.");
+        fcmService.sendAllMessage(notificationUser, "과팅이 성사되었습니다", chatMemberDto.getApplyUserDepartment() + "와 " + chatMemberDto.getParticipantUserDepartment() + "의 과팅이 성사되어 채팅방이 만들어졌습니다.");
         boardApplyLeader.setStatus(ApplyStatus.승인);
         Board board = boardRepository.findById(boardApplyLeader.getBoardId().getId())
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
@@ -228,4 +234,45 @@ public class ApplicationStatusService {
         return "과팅이 성사되었습니다.";
     }
 
+    @Transactional
+    public String applyStateHide(String email, Long id) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        BoardApplyLeader boardApplyLeader = boardApplyLeaderRepository.findById(id)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_APPLY));
+        if (boardApplyLeader.getLeaderId() != user) {
+            throw new BoardHandler(ErrorStatus.NOT_HAVE_PERMISSION);
+        }
+        if (boardApplyLeader.getStatus() == ApplyStatus.대기중) {
+            throw new BoardHandler(ErrorStatus.STATUS_VALUE_IS_STRANGE);
+        }
+        if(boardApplyLeader.getReceiveShowStatus()==ApplyShowStatus.HIDE){
+            boardApplyLeaderRepository.delete(boardApplyLeader);
+            return "신청한내역이 삭제되었습니다.";
+        }
+        boardApplyLeaderRepository.updateApplyStateHide(boardApplyLeader);
+
+        return "신청한내역이 삭제되었습니다.";
+    }
+
+    @Transactional
+    public String receivedStateHide(String email, Long id) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        BoardApplyLeader boardApplyLeader = boardApplyLeaderRepository.findById(id)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_APPLY));
+        if (boardApplyLeader.getBoardId().getUserId() != user) {
+            throw new BoardHandler(ErrorStatus.NOT_HAVE_PERMISSION);
+        }
+        if (boardApplyLeader.getStatus() == ApplyStatus.대기중) {
+            throw new BoardHandler(ErrorStatus.STATUS_VALUE_IS_STRANGE);
+        }
+        if(boardApplyLeader.getApplyShowStatus()==ApplyShowStatus.HIDE){
+            boardApplyLeaderRepository.delete(boardApplyLeader);
+            return "신청받은내역이 삭제되었습니다.";
+        }
+        boardApplyLeaderRepository.updateReceivedStateHide(boardApplyLeader);
+        return "신청받은내역이 삭제되었습니다.";
+    }
 }
+
