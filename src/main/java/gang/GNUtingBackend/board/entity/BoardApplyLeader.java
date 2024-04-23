@@ -50,11 +50,4 @@ public class BoardApplyLeader extends BaseTime {
         this.status=applyStatus;
     }
 
-    public void setApplyShowStatus(ApplyShowStatus applyShowStatus){
-        this.applyShowStatus=applyShowStatus;
-    }
-
-    public void setReceiveStatus(ApplyShowStatus receiveShowStatus) {
-        this.receiveShowStatus = receiveShowStatus;
-    }
 }
