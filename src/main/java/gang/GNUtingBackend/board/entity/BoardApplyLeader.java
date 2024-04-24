@@ -35,12 +35,10 @@ public class BoardApplyLeader extends BaseTime {
 
     @Column
     @Enumerated(EnumType.STRING)
-    @ColumnDefault("'SHOW'")
     private ApplyShowStatus applyShowStatus;
 
     @Column
     @Enumerated(EnumType.STRING)
-    @ColumnDefault("'SHOW'")
     private ApplyShowStatus receiveShowStatus;
 
     @OneToMany(mappedBy = "boardApplyLeaderId",cascade = CascadeType.REMOVE, orphanRemoval = true)

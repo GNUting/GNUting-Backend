@@ -3,6 +3,7 @@ package gang.GNUtingBackend.board.service;
 import gang.GNUtingBackend.board.dto.*;
 import gang.GNUtingBackend.board.entity.BoardApplyLeader;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
+import gang.GNUtingBackend.board.entity.enums.ApplyShowStatus;
 import gang.GNUtingBackend.board.entity.enums.ApplyStatus;
 import gang.GNUtingBackend.board.entity.enums.Status;
 import gang.GNUtingBackend.board.repository.ApplyUsersRepository;
@@ -266,6 +267,8 @@ public class BoardService {
         boardApplyLeaderDto.setBoardId(board);
         boardApplyLeaderDto.setLeaderId(user);
         boardApplyLeaderDto.setStatus(ApplyStatus.대기중);
+        boardApplyLeaderDto.setApplyShowStatus(ApplyShowStatus.SHOW);
+        boardApplyLeaderDto.setReceiveShowStatus(ApplyShowStatus.SHOW);
         BoardApplyLeader savedBoardApplyLeader = boardApplyLeaderRepository.save(boardApplyLeaderDto.toEntity());
 
         // 게시글에 신청하는 유저 저장

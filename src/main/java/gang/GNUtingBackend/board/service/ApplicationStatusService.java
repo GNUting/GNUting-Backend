@@ -62,6 +62,8 @@ public class ApplicationStatusService {
 
 
         for (Board boards : boardList) {  //내가작성한 글에서 참여자와 신청자 가져오기
+
+
             List<BoardParticipant> boardParticipantList = boardParticipantRepository.findByBoardId(boards);
             List<BoardApplyLeader> boardApplyLeaderList = boardApplyLeaderRepository.findByBoardIdAndNotHide(boards);
             for (BoardApplyLeader boardApplyLeader : boardApplyLeaderList) { //게시판에 신청한 리더 가져오기
