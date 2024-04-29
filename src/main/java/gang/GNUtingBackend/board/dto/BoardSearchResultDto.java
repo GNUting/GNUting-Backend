@@ -1,5 +1,6 @@
 package gang.GNUtingBackend.board.dto;
 
+import gang.GNUtingBackend.board.entity.enums.Status;
 import java.awt.image.TileObserver;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,9 @@ public class BoardSearchResultDto {
 
     // 참여 인원 수
     private int inUserCount;
+
+    // 현재 글의 상태
+    private Status status;
 
     public BoardSearchResultDto(Long boardId, String title, String department, String studentId, int inUserCount) {
         this.boardId = boardId;
