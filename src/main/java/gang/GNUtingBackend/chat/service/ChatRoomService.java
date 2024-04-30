@@ -118,8 +118,8 @@ public class ChatRoomService {
                             .chatRoomUsers(chatRoomUserDtos)
                             .build();
                 })
-                .sorted(Comparator.comparing(ChatRoomResponseDto::isHasNewMessage).reversed()
-                        .thenComparing(ChatRoomResponseDto::getId).reversed())
+                .sorted(Comparator.comparing(ChatRoomResponseDto::isHasNewMessage)
+                        .thenComparing(ChatRoomResponseDto::getId))
                 .collect(Collectors.toList());
 
         return chatRooms;
