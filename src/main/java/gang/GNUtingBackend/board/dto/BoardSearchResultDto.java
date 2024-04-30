@@ -27,11 +27,12 @@ public class BoardSearchResultDto {
     // 현재 글의 상태
     private Status status;
 
-    public BoardSearchResultDto(Long boardId, String title, String department, String studentId, int inUserCount) {
+    public BoardSearchResultDto(Long boardId, String title, String department, String studentId, int inUserCount, Status status) {
         this.boardId = boardId;
         this.title = title;
         this.department = department;
         this.studentId = studentId + "학번";
         this.inUserCount = inUserCount;
+        this.status = status;
     }
 }
