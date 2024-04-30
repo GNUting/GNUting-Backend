@@ -1,6 +1,7 @@
 package gang.GNUtingBackend.chat.dto;
 
 import gang.GNUtingBackend.chat.domain.ChatRoomUser;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
@@ -18,4 +19,5 @@ public class ChatRoomResponseDto {
     private List<String> ChatRoomUserProfileImages;
     private List<ChatRoomUserDto> chatRoomUsers;
     private boolean hasNewMessage;
+    private LocalDateTime lastMessageTime;
 }

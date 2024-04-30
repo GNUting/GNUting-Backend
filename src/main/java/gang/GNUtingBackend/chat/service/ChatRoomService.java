@@ -14,6 +14,7 @@ import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
 import gang.GNUtingBackend.exception.handler.ChatRoomHandler;
 import gang.GNUtingBackend.exception.handler.ChatRoomUserHandler;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -107,6 +108,7 @@ public class ChatRoomService {
                     List<ChatRoomUserDto> chatRoomUserDtos = chatRoomUserDto.toDto(chatRoom.getChatRoomUsers());
 
                     boolean hasNewMessage = chatService.hasNewMessages(email, chatRoom.getId());
+                    LocalDateTime lastMessageTime = chatRepository.findLastMessageTimeByChatRoomId(chatRoom.getId());
 
                     return ChatRoomResponseDto.builder()
                             .id(chatRoom.getId())
@@ -116,9 +118,11 @@ public class ChatRoomService {
                             .ChatRoomUserProfileImages(chatRoomUserProfileImages)
                             .hasNewMessage(hasNewMessage)
                             .chatRoomUsers(chatRoomUserDtos)
+                            .lastMessageTime(lastMessageTime)
                             .build();
                 })
-                .sorted(Comparator.comparing(ChatRoomResponseDto::isHasNewMessage).reversed())
+                .sorted(Comparator.comparing(ChatRoomResponseDto::isHasNewMessage).reversed()
+                        .thenComparing(ChatRoomResponseDto::getLastMessageTime, Comparator.nullsLast(Comparator.reverseOrder())))
                 .collect(Collectors.toList());
 
         return chatRooms;
