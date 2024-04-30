@@ -121,8 +121,7 @@ public class ChatRoomService {
                             .lastMessageTime(lastMessageTime)
                             .build();
                 })
-                .sorted(Comparator.comparing(ChatRoomResponseDto::isHasNewMessage).reversed()
-                        .thenComparing(ChatRoomResponseDto::getLastMessageTime, Comparator.nullsLast(Comparator.reverseOrder())))
+                .sorted(Comparator.comparing(ChatRoomResponseDto::getLastMessageTime, Comparator.nullsLast(Comparator.reverseOrder())))
                 .collect(Collectors.toList());
 
         return chatRooms;
