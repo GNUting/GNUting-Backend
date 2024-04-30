@@ -49,7 +49,8 @@ public class SearchBoardRepositoryImpl implements SearchBoardRepository {
                         qUser.department,
                         qUser.studentId,
                         qBoard.inUserCount,
-                        qBoard.status))
+                        qBoard.status,
+                        qBoard.createdDate))
                 .from(qBoard)
                 .join(qBoard.userId, qUser)
                 .where(qBoard.title.contains(keyword)
