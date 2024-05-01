@@ -78,7 +78,7 @@ public class ChatService {
                 .filter(chatRoomUser -> !chatRoomUser.getUser().equals(user) && chatRoomUser.getNotificationSetting() == NotificationSetting.ENABLE)
                 .forEach(chatRoomUser -> {
                     if (hasNewMessages(chatRoomUser.getUser().getEmail(), chatRoom.getId())) {
-                        fcmService.sendMessageToNotSave(chatRoomUser.getUser(), chatRoomUser.getChatRoom().getTitle(), chat.getMessage());
+                        fcmService.sendMessageToNotSave(chatRoomUser.getUser(), chatRoomUser.getChatRoom().getTitle(), chat.getMessage(),"chat",chatRoom.getId());
                     }
                 });
     }

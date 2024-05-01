@@ -281,7 +281,7 @@ public class BoardService {
             applyUsersRepository.save(applyUsers.toEntity());
             nickname = nickname + " " + member.getNickname();
         }
-        boolean fcmReturn=fcmService.sendMessageTo(board.getUserId(), "과팅 신청이 도착했습니다.", user.getDepartment()+" "+user.getNickname() + "님이 과팅을 신청했습니다.");
+        boolean fcmReturn=fcmService.sendMessageTo(board.getUserId(), "과팅 신청이 도착했습니다.", user.getDepartment()+" "+user.getNickname() + "님이 과팅을 신청했습니다.","apply",savedBoardApplyLeader.getId());
         if(fcmReturn==true){
             return board.getId() + "게시물에 " + nickname + "유저들 신청완료";
         }else{

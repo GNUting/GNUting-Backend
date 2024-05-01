@@ -49,68 +49,7 @@ public class FCMService {
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/" + "1036172493674/messages:send";
 
 
-//    public boolean sendMessageTo(User findId, String title, String body) {
-//        try {
-//            //board에 신청했다고 알림보낼때
-//            FCM fcmToken = fcmRepository.findByUserId(findId);
-//            String message = makeMessage(fcmToken.getFcmToken(), title, body);
-//            OkHttpClient client = new OkHttpClient();
-//            RequestBody requestBody = RequestBody.create(message,
-//                    MediaType.get("application/json; charset=utf-8"));
-//            Request request = new Request.Builder()
-//                    .url(API_URL)
-//                    .post(requestBody)
-//                    .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
-//                    .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
-//                    .build();
-//
-//            Response response = client.newCall(request).execute();
-//
-//            System.out.println(response.body().string());
-//            System.out.println("전송완료");
-//            System.out.println(fcmToken.getFcmToken());
-//            userNotificationService.saveNotification(findId, title, body);
-//            return true;
-//        } catch (JsonProcessingException e) {
-//            throw new BoardHandler(ErrorStatus.JSON_FILE_ROAD_FAIL);
-//        } catch (IOException e) {
-//            throw new BoardHandler(ErrorStatus.INPUT_ERROR);
-//        } catch (NullPointerException e) {
-//            return false;
-//        }
-//        catch (Exception e) {
-//            throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
-//        }
-//
-//    }
-
-    //    public void sendAllMessage(List<User> findId, String title, String body) {
-//        try {
-//            List<String> fcms = new ArrayList<>();
-//            for (User user : findId) {
-//                FCM fcmToken = fcmRepository.findByUserId(user);
-//                fcms.add(fcmToken.getFcmToken());
-//            }
-//            MulticastMessage message = MulticastMessage.builder()
-//                    .setNotification(Notification.builder()
-//                            .setTitle(title)
-//                            .setBody(body)
-//                            .build())
-//                    .addAllTokens(fcms)
-//                    .build();
-//            BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
-//            System.out.println(response.getSuccessCount() + " messages were sent successfully");
-//            for (User user : findId) {
-//                userNotificationService.saveNotification(user, title, body);
-//            }
-//
-//        } catch (Exception e) {
-//            System.out.println(e + "@@@@@@@@@@@@@에러떳다 씨빨@@@@@@@@@@@@");
-//        }
-//
-//    }
-
-    public boolean sendMessageTo(User findId, String title, String body) {
+    public boolean sendMessageTo(User findId, String title, String body,String location,Long locationId) {
         // 알림이 활성화되어 있지 않으면 알림 메세지 보내지 않도록 구현
         if (findId.getNotificationSetting() != NotificationSetting.ENABLE) {
             return false;
@@ -136,8 +75,21 @@ public class FCMService {
                                                     .setClickAction("push_click")
                                                     .build()
                                     )
-                                    .putData("location","chat")
+                                    .putData("location",location)
+                                    .putData("locationId",locationId.toString())
                                     .build()
+                    )
+                    .setApnsConfig(
+                            ApnsConfig.builder()
+                                    .setAps(Aps.builder()
+                                            .setCategory("push_click")
+                                            .build()
+                                    )
+
+                                    .putCustomData("location",location)
+                                    .putCustomData("locationId",locationId.toString())
+                                    .build()
+
                     )
                     .addAllTokens(fcms)
                     .build();
@@ -148,7 +100,6 @@ public class FCMService {
         } catch (Exception e) {
             throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
         }
-
     }
 
     /**
@@ -158,7 +109,7 @@ public class FCMService {
      * @param body
      * @return
      */
-    public boolean sendMessageToNotSave(User findId, String title, String body) {
+    public boolean sendMessageToNotSave(User findId, String title, String body,String location,Long locationId) {
         // 알림이 활성화되어 있지 않으면 알림 메세지 보내지 않도록 구현
         if (findId.getNotificationSetting() != NotificationSetting.ENABLE) {
             return false;
@@ -185,10 +136,23 @@ public class FCMService {
                                                     .setClickAction("push_click")
                                                     .build()
                                     )
-                                    .putData("location","chatse")
+                                    .putData("location",location)
+                                    .putData("locationId",locationId.toString())
                                     .build()
                     )
-                //    .putData("location","chat")
+                    .setApnsConfig(
+                            ApnsConfig.builder()
+                                    .setAps(Aps.builder()
+                                            .setCategory("push_click")
+                                            .build()
+                                    )
+
+                                    .putCustomData("location",location)
+                                    .putCustomData("locationId",locationId.toString())
+                                    .build()
+
+                    )
+                    //.putData("location","chat")
                     .addAllTokens(fcms)
                     .build();
             BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
@@ -204,8 +168,7 @@ public class FCMService {
 
     }
 
-
-    public void sendAllMessage(List<User> findId, String title, String body) {
+    public void sendAllMessage(List<User> findId, String title, String body,String location,Long locationId) {
         try {
             List<String> fcms = new ArrayList<>();
             for (User user : findId) {
@@ -222,8 +185,32 @@ public class FCMService {
                             .setTitle(title)
                             .setBody(body)
                             .build())
-                    .addAllTokens(fcms)
+                    .setAndroidConfig(
+                            AndroidConfig.builder()
+                                    .setNotification(
+                                            AndroidNotification.builder()
+                                                    .setTitle(title)
+                                                    .setBody(body)
+                                                    .setClickAction("push_click")
+                                                    .build()
+                                    )
+                                    .putData("location",location)
+                                    .putData("locationId",locationId.toString())
+                                    .build()
+                    )
+                    .setApnsConfig(
+                            ApnsConfig.builder()
+                                    .setAps(Aps.builder()
+                                            .setCategory("push_click")
+                                            .build()
+                                    )
 
+                                    .putCustomData("location",location)
+                                    .putCustomData("locationId",locationId.toString())
+                                    .build()
+
+                    )
+                    .addAllTokens(fcms)
                     .build();
             BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
             System.out.println(response.getSuccessCount() + " messages were sent successfully");
@@ -232,34 +219,6 @@ public class FCMService {
         }
 
     }
-
-
-    private String makeMessage(String targetToken, String title, String body)
-            throws JsonParseException, JsonProcessingException {
-        FcmMessage fcmMessage = FcmMessage.builder()
-                .message(FcmMessage.Message.builder()
-                        .token(targetToken)
-                        .notification(FcmMessage.Notification.builder()
-                                .title(title)
-                                .body(body)
-                                .image(null)
-                                .build()
-                        ).build()).validateOnly(false).build();
-
-        return objectMapper.writeValueAsString(fcmMessage);
-    }
-
-    private String getAccessToken() throws IOException {
-        String firebaseConfigPath = "gnuting-firebase-adminsdk-tpoa0-7b6979293e.json";
-
-        GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
-                .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
-
-        googleCredentials.refreshIfExpired();
-        return googleCredentials.getAccessToken().getTokenValue();
-    }
-
 
     @Transactional
     public String saveFCMToken(FCMTokenSaveDto fcmEntity, String email) {
