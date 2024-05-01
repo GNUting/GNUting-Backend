@@ -127,6 +127,18 @@ public class FCMService {
                             .setTitle(title)
                             .setBody(body)
                             .build())
+                    .setAndroidConfig(
+                            AndroidConfig.builder()
+                                    .setNotification(
+                                            AndroidNotification.builder()
+                                                    .setTitle(title)
+                                                    .setBody(body)
+                                                    .setClickAction("push_click")
+                                                    .build()
+                                    )
+                                    .putData("location","chat")
+                                    .build()
+                    )
                     .addAllTokens(fcms)
                     .build();
             BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
@@ -159,14 +171,32 @@ public class FCMService {
                 fcms.add(fcmToken.getFcmToken());
             }
             MulticastMessage message = MulticastMessage.builder()
+
                     .setNotification(Notification.builder()
                             .setTitle(title)
                             .setBody(body)
                             .build())
+                    .setAndroidConfig(
+                            AndroidConfig.builder()
+                                    .setNotification(
+                                            AndroidNotification.builder()
+                                                    .setTitle(title)
+                                                    .setBody(body)
+                                                    .setClickAction("push_click")
+                                                    .build()
+                                    )
+                                    .putData("location","chatse")
+                                    .build()
+                    )
+                //    .putData("location","chat")
                     .addAllTokens(fcms)
                     .build();
             BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
             System.out.println(response.getSuccessCount() + " messages were sent successfully");
+
+
+
+
             return true;
         } catch (Exception e) {
             throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
