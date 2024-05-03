@@ -34,11 +34,13 @@ public class UserNotificationService {
     private final UserRepository userRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
 
-    public void saveNotification(User user, String title,String body) {
+    public void saveNotification(User user, String title,String body,String location,Long locationId) {
         UserNotification userNotification = UserNotification.builder()
                 .userId(user)
                 .title(title)
                 .body(body)
+                .location(location)
+                .locationId(locationId)
                 .build();
         userNotificationRepository.save(userNotification);
     }

@@ -95,7 +95,7 @@ public class FCMService {
                     .build();
             BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
             System.out.println(response.getSuccessCount() + " messages were sent successfully");
-            userNotificationService.saveNotification(findId, title, body);
+            userNotificationService.saveNotification(findId, title, body,location,locationId);
             return true;
         } catch (Exception e) {
             throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
@@ -177,7 +177,7 @@ public class FCMService {
                     for (FCM fcmToken:fcmTokens) {
                         fcms.add(fcmToken.getFcmToken());
                     }
-                    userNotificationService.saveNotification(user, title, body);
+                    userNotificationService.saveNotification(user, title, body,location,locationId);
                 }
             }
             MulticastMessage message = MulticastMessage.builder()
