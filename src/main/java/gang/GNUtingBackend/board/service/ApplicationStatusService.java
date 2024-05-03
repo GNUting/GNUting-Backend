@@ -13,6 +13,8 @@ import gang.GNUtingBackend.board.entity.enums.Status;
 import gang.GNUtingBackend.board.repository.BoardApplyLeaderRepository;
 import gang.GNUtingBackend.board.repository.BoardParticipantRepository;
 import gang.GNUtingBackend.board.repository.BoardRepository;
+import gang.GNUtingBackend.chat.domain.ChatRoom;
+import gang.GNUtingBackend.chat.dto.ChatRoomResponseDto;
 import gang.GNUtingBackend.chat.service.ChatRoomService;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
@@ -172,7 +174,7 @@ public class ApplicationStatusService {
         }
         boardApplyLeader.setStatus(ApplyStatus.거절);
         boardApplyLeaderRepository.save(boardApplyLeader);
-        fcmService.sendMessageTo(boardApplyLeader.getLeaderId(), "과팅신청이 거절되었습니다", user.getDepartment() + " " + user.getNickname() + "님이 과팅을 거절했습니다.");
+        fcmService.sendMessageTo(boardApplyLeader.getLeaderId(), "과팅신청이 거절되었습니다", user.getDepartment() + " " + user.getNickname() + "님이 과팅을 거절했습니다.","refuse",null);
 
         return boardApplyLeader.getId() + "번 신청이 거절되었습니다.";
     }
@@ -190,7 +192,7 @@ public class ApplicationStatusService {
             throw new BoardHandler(ErrorStatus.USER_NOT_APPLY);
         }
         boardApplyLeaderRepository.delete(boardApplyLeader);
-        fcmService.sendMessageTo(boardApplyLeader.getBoardId().getUserId(), "과팅신청자가 과팅을 취소했습니다.", user.getDepartment() + user.getNickname() + "님이 과팅을 취소했습니다.");
+        fcmService.sendMessageTo(boardApplyLeader.getBoardId().getUserId(), "과팅신청자가 과팅을 취소했습니다.", user.getDepartment() + user.getNickname() + "님이 과팅을 취소했습니다.","cancel",id);
         return boardApplyLeader.getBoardId().getUserId().getDepartment() + "학과 신청이 취소되었습니다.";
     }
 
@@ -218,14 +220,14 @@ public class ApplicationStatusService {
         ChatMemberDto chatMemberDto = ChatMemberDto.toDto(boardApplyLeader.getBoardId(), applyUserDepartment, participantUserDepartment, applyUserList,
                 participantUserList);
 
-        chatRoomService.createChatRoom(chatMemberDto);
+        ChatRoomResponseDto chatRoomResponseDto=chatRoomService.createChatRoom(chatMemberDto);
 
         //알림보내기 전체보내기 확인필요
         List<User> notificationUser = new ArrayList<>();
         notificationUser.addAll(chatMemberDto.getApplyUser());
         notificationUser.addAll(chatMemberDto.getParticipantUser());
 
-        fcmService.sendAllMessage(notificationUser, "과팅이 성사되었습니다", chatMemberDto.getApplyUserDepartment() + "와 " + chatMemberDto.getParticipantUserDepartment() + "의 과팅이 성사되어 채팅방이 만들어졌습니다.");
+        fcmService.sendAllMessage(notificationUser, "과팅이 성사되었습니다", chatMemberDto.getApplyUserDepartment() + "와 " + chatMemberDto.getParticipantUserDepartment() + "의 과팅이 성사되어 채팅방이 만들어졌습니다.","chat",chatRoomResponseDto.getId());
         boardApplyLeader.setStatus(ApplyStatus.승인);
         Board board = boardRepository.findById(boardApplyLeader.getBoardId().getId())
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
@@ -233,6 +235,7 @@ public class ApplicationStatusService {
         boardRepository.save(board);
         boardApplyLeaderRepository.save(boardApplyLeader);
 
+        //다른 과팅 신청자는 거절로 처
         List<BoardApplyLeader> cancelApplyList = boardApplyLeaderRepository.findByBoardIdAndWaiting(boardApplyLeader.getBoardId());
         for (BoardApplyLeader cancelApply:cancelApplyList) {
             if(cancelApply.getId()==boardApplyLeader.getId()){
@@ -240,7 +243,7 @@ public class ApplicationStatusService {
             }
             cancelApply.setStatus(ApplyStatus.거절);
             boardApplyLeaderRepository.save(cancelApply);
-            fcmService.sendMessageTo(cancelApply.getLeaderId(), "과팅신청이 거절되었습니다", user.getDepartment() + " " + user.getNickname() + "님이 과팅을 거절했습니다.");
+            fcmService.sendMessageTo(cancelApply.getLeaderId(), "과팅신청이 거절되었습니다", user.getDepartment() + " " + user.getNickname() + "님이 과팅을 거절했습니다.","cancel",id);
         }
 
         return "과팅이 성사되었습니다.";
