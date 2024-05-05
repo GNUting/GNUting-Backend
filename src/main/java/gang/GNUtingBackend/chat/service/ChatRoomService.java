@@ -8,6 +8,7 @@ import gang.GNUtingBackend.chat.domain.enums.MessageType;
 import gang.GNUtingBackend.chat.dto.ChatRequestDto;
 import gang.GNUtingBackend.chat.dto.ChatRoomResponseDto;
 import gang.GNUtingBackend.chat.dto.ChatRoomUserDto;
+import gang.GNUtingBackend.chat.dto.ChatRoomUserInfoDto;
 import gang.GNUtingBackend.chat.repository.ChatRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
@@ -125,6 +126,38 @@ public class ChatRoomService {
                 .collect(Collectors.toList());
 
         return chatRooms;
+    }
+
+    /**
+     * 해당 이메일을 가진 유저가 참여중인 모든 채팅방의 사용자들을 조회
+     * @param email
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<ChatRoomUserInfoDto> findChatRoomUsersByUserEmail(String email) {
+        List<ChatRoomUser> allByUserEmail = chatRoomUserRepository.findAllByUserEmail(email);
+
+        return allByUserEmail.stream()
+                .map(cru -> {
+                    ChatRoom chatRoom = cru.getChatRoom();
+                    List<ChatRoomUserDto> chatRoomUsers = chatRoom.getChatRoomUsers().stream()
+                            .map(member -> ChatRoomUserDto.builder()
+                                    .id(member.getId())
+                                    .userId(member.getUser().getId())
+                                    .chatRoomId(chatRoom.getId())
+                                    .nickname(member.getUser().getNickname())
+                                    .profileImage(member.getUser().getProfileImage())
+                                    .department(member.getUser().getDepartment())
+                                    .studentId(member.getUser().getStudentId())
+                                    .build())
+                            .collect(Collectors.toList());
+
+                    return ChatRoomUserInfoDto.builder()
+                            .chatRoomId(chatRoom.getId())
+                            .chatRoomUsers(chatRoomUsers)
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 
     /**
