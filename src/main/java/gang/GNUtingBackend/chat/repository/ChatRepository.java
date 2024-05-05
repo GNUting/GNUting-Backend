@@ -1,6 +1,7 @@
 package gang.GNUtingBackend.chat.repository;
 
 import gang.GNUtingBackend.chat.domain.Chat;
+import gang.GNUtingBackend.chat.domain.ChatRoom;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,4 +20,6 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
      */
     @Query("SELECT MAX(c.createDate) FROM Chat c WHERE c.chatRoom.id = :chatRoomId")
     LocalDateTime findLastMessageTimeByChatRoomId(Long chatRoomId);
+
+    Chat findTopByChatRoomOrderByCreateDateDesc(ChatRoom chatRoom);
 }

@@ -2,6 +2,7 @@ package gang.GNUtingBackend.chat.service;
 
 import gang.GNUtingBackend.chat.domain.Chat;
 import gang.GNUtingBackend.chat.domain.ChatRoom;
+import gang.GNUtingBackend.chat.domain.enums.MessageType;
 import gang.GNUtingBackend.chat.dto.ChatRequestDto;
 import gang.GNUtingBackend.chat.dto.ChatResponseDto;
 import gang.GNUtingBackend.chat.repository.ChatRepository;
@@ -15,8 +16,11 @@ import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,6 +47,37 @@ public class ChatService {
 
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND));
+
+        LocalDate today = LocalDate.now();
+
+        Chat lastChat = chatRepository.findTopByChatRoomOrderByCreateDateDesc(chatRoom);
+        LocalDate lastMessageDate = lastChat != null ? lastChat.getCreateDate().toLocalDate() : null;
+
+
+        if (lastMessageDate == null || !lastMessageDate.isEqual(today)) {
+            Chat dateChat = Chat.builder()
+                    .chatRoom(chatRoom)
+                    .sender("관리자")
+                    .messageType(MessageType.DAILY)
+                    .message(today.format(DateTimeFormatter.ofPattern("uuuu년 M월 d일 EEEE", Locale.KOREA)))
+                    .build();
+            chatRepository.save(dateChat);
+
+            ChatResponseDto dateChatResponse = ChatResponseDto.builder()
+                    .id(dateChat.getId())
+                    .chatRoomId(chatRoom.getId())
+                    .messageType(dateChat.getMessageType())
+                    .email(null)
+                    .profileImage(null)
+                    .nickname(null)
+                    .message(dateChat.getMessage())
+                    .createdDate(dateChat.getCreateDate())
+                    .department(null)
+                    .studentId(null)
+                    .build();
+
+            messagingTemplate.convertAndSend("/sub/chatRoom/" + chatRoomId, dateChatResponse);
+        }
 
         Chat chat = Chat.builder()
                 .chatRoom(chatRoom)
