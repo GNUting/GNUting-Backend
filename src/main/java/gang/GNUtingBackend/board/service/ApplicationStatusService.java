@@ -24,6 +24,8 @@ import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,7 +151,9 @@ public class ApplicationStatusService {
     public List<BoardShowAllResponseDto> myBoard(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        List<Board> board = boardRepository.findByUserId(user);
+       // List<Board> board = boardRepository.findByUserId(user);
+
+        List<Board> board = boardRepository.findByUserIdMyboard(user);
 
         return board.stream()
                 .map(BoardShowAllResponseDto::toDto)

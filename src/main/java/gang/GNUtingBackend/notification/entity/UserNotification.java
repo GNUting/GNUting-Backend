@@ -29,6 +29,10 @@ public class UserNotification extends BaseTime {
     private String body;
     @Column
     private NotificationStatus status;
+    @Column
+    private String location;
+    @Column
+    private Long locationId;
 
     public void setStatus(NotificationStatus status) {
         this.status = status;

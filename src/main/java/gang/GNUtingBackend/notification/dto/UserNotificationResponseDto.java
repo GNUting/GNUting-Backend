@@ -18,6 +18,8 @@ public class UserNotificationResponseDto {
     private String body;
     private String time;
     private NotificationStatus status;
+    private String location;
+    private Long locationId;
 
     public static UserNotificationResponseDto toDto(UserNotification notification) {
 
@@ -28,6 +30,8 @@ public class UserNotificationResponseDto {
                .body(notification.getBody())
                .time(elapsedTime)
                .status(notification.getStatus())
+               .location(notification.getLocation())
+               .locationId(notification.getLocationId())
                .build();
     }
 
