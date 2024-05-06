@@ -3,6 +3,7 @@ package gang.GNUtingBackend.chat.controller;
 import gang.GNUtingBackend.chat.dto.ChatRequestDto;
 import gang.GNUtingBackend.chat.dto.ChatResponseDto;
 import gang.GNUtingBackend.chat.dto.ChatRoomResponseDto;
+import gang.GNUtingBackend.chat.dto.ChatRoomUserDto;
 import gang.GNUtingBackend.chat.dto.ChatRoomUserInfoDto;
 import gang.GNUtingBackend.chat.service.ChatRoomService;
 import gang.GNUtingBackend.chat.service.ChatService;
@@ -70,14 +71,15 @@ public class ChatController {
                 .body(ApiResponse.onSuccess(chatRoomService.findChatRoomsByUserEmail(email)));
     }
 
-    @GetMapping("/chatRoom/chatRoomUsers")
+    @GetMapping("/chatRoom/{chatRoomId}/chatRoomUsers")
     @Operation(summary = "채팅방 사용자 조회 API", description = "사용자가 참여중인 모든 채팅방의 사용자들을 조회한다.")
-    public ResponseEntity<ApiResponse<List<ChatRoomUserInfoDto>>> getChatRoomsUsers (
-            @RequestHeader("Authroization") String token) {
+    public ResponseEntity<ApiResponse<List<ChatRoomUserDto>>> getChatRoomsUsers (
+            @RequestHeader("Authroization") String token,
+            @PathVariable Long chatRoomId) {
         String email = tokenProvider.getUserEmail(token.substring(7));
 
         return ResponseEntity.ok()
-                .body(ApiResponse.onSuccess(chatRoomService.findChatRoomUsersByUserEmail(email)));
+                .body(ApiResponse.onSuccess(chatRoomService.findChatRoomUsersByUserEmail(chatRoomId, email)));
     }
 
 
