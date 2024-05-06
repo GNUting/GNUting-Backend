@@ -74,7 +74,7 @@ public class ChatController {
     @GetMapping("/chatRoom/{chatRoomId}/chatRoomUsers")
     @Operation(summary = "채팅방 사용자 조회 API", description = "사용자가 참여중인 모든 채팅방의 사용자들을 조회한다.")
     public ResponseEntity<ApiResponse<List<ChatRoomUserDto>>> getChatRoomsUsers (
-            @RequestHeader("Authroization") String token,
+            @RequestHeader("Authorization") String token,
             @PathVariable Long chatRoomId) {
         String email = tokenProvider.getUserEmail(token.substring(7));
 
