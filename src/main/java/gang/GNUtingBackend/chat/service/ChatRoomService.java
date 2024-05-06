@@ -129,35 +129,29 @@ public class ChatRoomService {
     }
 
     /**
-     * 해당 이메일을 가진 유저가 참여중인 모든 채팅방의 사용자들을 조회
+     * 해당 이메일을 가진 유저가 참여중인 특정 채팅방의 사용자들을 조회
+     * @param chatRoomId
      * @param email
      * @return
      */
     @Transactional(readOnly = true)
-    public List<ChatRoomUserInfoDto> findChatRoomUsersByUserEmail(String email) {
-        List<ChatRoomUser> allByUserEmail = chatRoomUserRepository.findAllByUserEmail(email);
-
-        return allByUserEmail.stream()
-                .map(cru -> {
-                    ChatRoom chatRoom = cru.getChatRoom();
-                    List<ChatRoomUserDto> chatRoomUsers = chatRoom.getChatRoomUsers().stream()
-                            .map(member -> ChatRoomUserDto.builder()
-                                    .id(member.getId())
-                                    .userId(member.getUser().getId())
+    public List<ChatRoomUserDto> findChatRoomUsersByUserEmail(Long chatRoomId, String email) {
+        return chatRoomUserRepository.findByChatRoomIdAndUserEmail(chatRoomId, email)
+                .map(chatRoomUser -> {
+                    ChatRoom chatRoom = chatRoomUser.getChatRoom();
+                    return chatRoom.getChatRoomUsers().stream()
+                            .map(cru -> ChatRoomUserDto.builder()
+                                    .id(cru.getId())
+                                    .userId(cru.getUser().getId())
                                     .chatRoomId(chatRoom.getId())
-                                    .nickname(member.getUser().getNickname())
-                                    .profileImage(member.getUser().getProfileImage())
-                                    .department(member.getUser().getDepartment())
-                                    .studentId(member.getUser().getStudentId())
+                                    .nickname(cru.getUser().getNickname())
+                                    .profileImage(cru.getUser().getProfileImage())
+                                    .department(cru.getUser().getDepartment())
+                                    .studentId(cru.getUser().getStudentId())
                                     .build())
                             .collect(Collectors.toList());
-
-                    return ChatRoomUserInfoDto.builder()
-                            .chatRoomId(chatRoom.getId())
-                            .chatRoomUsers(chatRoomUsers)
-                            .build();
                 })
-                .collect(Collectors.toList());
+                .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND));
     }
 
     /**
