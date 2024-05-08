@@ -40,6 +40,7 @@ public enum ErrorStatus implements BaseErrorCode {
     BOARD_CLOSE(HttpStatus.BAD_REQUEST,"BOARD5003","게시물의 신청이 닫혔습니다."),
 
     //Apply 관련 에러
+    NOT_FOUND_BOARDAPPLYUSER(HttpStatus.BAD_REQUEST,"APPLY4000","신청현황이 없습니다"),
     ALREADY_IN_USER(HttpStatus.BAD_REQUEST,"APPLY4001", "유저가 이미 참여해 있습니다."),
     USER_NOT_APPLY(HttpStatus.BAD_REQUEST,"APPLY4002","유저가 신청하지 않았습니다"),
     ALREADY_SUCCESS_APPLY(HttpStatus.BAD_REQUEST,"APPLY5003","이미 승인된 신청입니다."),

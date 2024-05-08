@@ -1,5 +1,11 @@
 package gang.GNUtingBackend.notification.service;
 
+import gang.GNUtingBackend.board.dto.ApplicationStatusResponseDto;
+import gang.GNUtingBackend.board.dto.BoardApplyLeaderDto;
+import gang.GNUtingBackend.board.entity.ApplyUsers;
+import gang.GNUtingBackend.board.entity.BoardApplyLeader;
+import gang.GNUtingBackend.board.entity.BoardParticipant;
+import gang.GNUtingBackend.board.repository.BoardApplyLeaderRepository;
 import gang.GNUtingBackend.chat.domain.ChatRoomUser;
 import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
@@ -14,7 +20,10 @@ import gang.GNUtingBackend.notification.entity.enums.NotificationStatus;
 import gang.GNUtingBackend.notification.repository.UserNotificationRepository;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
+import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
+
+import java.util.ArrayList;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -33,6 +42,7 @@ public class UserNotificationService {
     private final UserNotificationRepository userNotificationRepository;
     private final UserRepository userRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
+    private final BoardApplyLeaderRepository boardApplyLeaderRepository;
 
     public void saveNotification(User user, String title,String body,String location,Long locationId) {
         UserNotification userNotification = UserNotification.builder()
@@ -123,5 +133,32 @@ public class UserNotificationService {
                 chatRoomUser.getNotificationSetting());
 
         return notificationSettingDto;
+    }
+
+    public ApplicationStatusResponseDto notificationApplicationClickAction(String email, Long applicationId) {
+        User user=userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        BoardApplyLeader boardApplyLeader=boardApplyLeaderRepository.findById(applicationId)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.NOT_FOUND_BOARDAPPLYUSER));
+
+      //확인하는 코드 넣기
+        if(boardApplyLeader.getLeaderId()==user||boardApplyLeader.getBoardId().getUserId()==user) {
+
+            return ApplicationStatusResponseDto.toDto(boardApplyLeader.getId(),
+                    boardApplyLeader.getBoardId().getBoardParticipant().stream()
+                            .map(BoardParticipant::getUserId)
+                            .map(UserSearchResponseDto::toDto) // User를 UserSearchResponseDto로 변환
+                            .collect(Collectors.toList()),
+                    boardApplyLeader.getApplyUsers().stream()
+                            .map(ApplyUsers::getUserId)
+                            .map(UserSearchResponseDto::toDto)
+                            .collect(Collectors.toList()),
+                    boardApplyLeader.getBoardId().getUserId().getDepartment(),
+                    boardApplyLeader.getLeaderId().getDepartment(),
+                    boardApplyLeader.getStatus(), boardApplyLeader.getCreatedDate(), boardApplyLeader.getModifiedDate());
+        }else{
+            throw new UserHandler(ErrorStatus.USER_NOT_AUTHORITY);
+        }
+
     }
 }
