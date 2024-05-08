@@ -97,7 +97,10 @@ public class FCMService {
             System.out.println(response.getSuccessCount() + " messages were sent successfully");
             userNotificationService.saveNotification(findId, title, body,location,locationId);
             return true;
+        } catch (IllegalArgumentException e) { //토큰이 없을시 예외처리 필요
+            return true;
         } catch (Exception e) {
+            System.out.println(e);
             throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
         }
     }
@@ -162,7 +165,11 @@ public class FCMService {
 
 
             return true;
-        } catch (Exception e) {
+        }
+        catch (IllegalArgumentException e) { //토큰이 없을시 예외처리 필요
+            return true;
+        }
+        catch (Exception e) {
             throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
         }
 
@@ -214,7 +221,10 @@ public class FCMService {
                     .build();
             BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
             System.out.println(response.getSuccessCount() + " messages were sent successfully");
-        } catch (Exception e) {
+        }catch (IllegalArgumentException e) { //토큰이 없을시 예외처리 필요
+            System.out.println(e);
+        }
+        catch (Exception e) {
             throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
         }
 
