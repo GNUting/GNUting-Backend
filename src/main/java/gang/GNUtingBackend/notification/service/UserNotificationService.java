@@ -6,9 +6,13 @@ import gang.GNUtingBackend.board.entity.ApplyUsers;
 import gang.GNUtingBackend.board.entity.BoardApplyLeader;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
 import gang.GNUtingBackend.board.repository.BoardApplyLeaderRepository;
+import gang.GNUtingBackend.chat.domain.ChatRoom;
 import gang.GNUtingBackend.chat.domain.ChatRoomUser;
+import gang.GNUtingBackend.chat.dto.ChatNotificationResponseDto;
+import gang.GNUtingBackend.chat.repository.ChatRoomRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
+import gang.GNUtingBackend.exception.handler.ChatRoomHandler;
 import gang.GNUtingBackend.exception.handler.ChatRoomUserHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.dto.NotificationChatSettingDto;
@@ -43,6 +47,7 @@ public class UserNotificationService {
     private final UserRepository userRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final BoardApplyLeaderRepository boardApplyLeaderRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     public void saveNotification(User user, String title,String body,String location,Long locationId) {
         UserNotification userNotification = UserNotification.builder()
@@ -160,5 +165,29 @@ public class UserNotificationService {
             throw new UserHandler(ErrorStatus.USER_NOT_AUTHORITY);
         }
 
+    }
+
+    public ChatNotificationResponseDto notificationChatClickAction(String email, Long id) {
+        User user=userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        ChatRoom chatRoom=chatRoomRepository.findById(id)
+                .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND));
+
+        List<ChatRoomUser> chatRoomUserList=chatRoom.getChatRoomUsers();
+        //채팅방에 유저가 포함되어있는지 확인
+        for (ChatRoomUser chatRoomUser:chatRoomUserList) {
+            if(chatRoomUser.getUser()==user) {
+                break;
+            }
+            else{
+                throw new ChatRoomUserHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER);
+            }
+        }
+        return ChatNotificationResponseDto.builder()
+                .title(chatRoom.getTitle())
+                .applyLeaderDepartment(chatRoom.getApplyLeaderDepartment())
+                .leaderUserDepartment(chatRoom.getLeaderUserDepartment())
+                .build();
     }
 }
