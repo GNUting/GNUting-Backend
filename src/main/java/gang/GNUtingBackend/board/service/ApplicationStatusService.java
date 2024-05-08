@@ -178,7 +178,7 @@ public class ApplicationStatusService {
         }
         boardApplyLeader.setStatus(ApplyStatus.거절);
         boardApplyLeaderRepository.save(boardApplyLeader);
-        fcmService.sendMessageTo(boardApplyLeader.getLeaderId(), "과팅신청이 거절되었습니다", user.getDepartment() + " " + user.getNickname() + "님이 과팅을 거절했습니다.","refuse",null);
+        fcmService.sendMessageTo(boardApplyLeader.getLeaderId(), "과팅신청이 거절되었습니다", user.getDepartment() + " " + user.getNickname() + "님이 과팅을 거절했습니다.","refuse",boardApplyLeader.getId());
 
         return boardApplyLeader.getId() + "번 신청이 거절되었습니다.";
     }
