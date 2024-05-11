@@ -175,15 +175,19 @@ public class UserNotificationService {
                 .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.CHAT_ROOM_NOT_FOUND));
 
         List<ChatRoomUser> chatRoomUserList=chatRoom.getChatRoomUsers();
+        boolean result=false;
         //채팅방에 유저가 포함되어있는지 확인
         for (ChatRoomUser chatRoomUser:chatRoomUserList) {
             if(chatRoomUser.getUser()==user) {
+                result=true;
                 break;
             }
-            else{
-                throw new ChatRoomUserHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER);
-            }
         }
+
+        if(result==false){
+            throw new ChatRoomUserHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER);
+        }
+
         return ChatNotificationResponseDto.builder()
                 .title(chatRoom.getTitle())
                 .applyLeaderDepartment(chatRoom.getApplyLeaderDepartment())
