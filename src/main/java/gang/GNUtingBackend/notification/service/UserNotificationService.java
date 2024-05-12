@@ -5,6 +5,7 @@ import gang.GNUtingBackend.board.dto.BoardApplyLeaderDto;
 import gang.GNUtingBackend.board.entity.ApplyUsers;
 import gang.GNUtingBackend.board.entity.BoardApplyLeader;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
+import gang.GNUtingBackend.board.entity.enums.ApplyShowStatus;
 import gang.GNUtingBackend.board.repository.BoardApplyLeaderRepository;
 import gang.GNUtingBackend.chat.domain.ChatRoom;
 import gang.GNUtingBackend.chat.domain.ChatRoomUser;
@@ -146,13 +147,20 @@ public class UserNotificationService {
         BoardApplyLeader boardApplyLeader=boardApplyLeaderRepository.findById(applicationId)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.NOT_FOUND_BOARDAPPLYUSER));
 
-      //확인하는 코드 넣기
+
+        if(boardApplyLeader.getLeaderId()==user&&boardApplyLeader.getApplyShowStatus()==ApplyShowStatus.HIDE){
+           throw new BoardHandler(ErrorStatus.HIDE_APPLY);
+        }
+        if(boardApplyLeader.getBoardId().getUserId()==user&&boardApplyLeader.getReceiveShowStatus()==ApplyShowStatus.HIDE){
+            throw new BoardHandler(ErrorStatus.HIDE_APPLY);
+        }
+
         if(boardApplyLeader.getLeaderId()==user||boardApplyLeader.getBoardId().getUserId()==user) {
 
             return ApplicationStatusResponseDto.toDto(boardApplyLeader.getId(),
                     boardApplyLeader.getBoardId().getBoardParticipant().stream()
                             .map(BoardParticipant::getUserId)
-                            .map(UserSearchResponseDto::toDto) // User를 UserSearchResponseDto로 변환
+                            .map(UserSearchResponseDto::toDto)
                             .collect(Collectors.toList()),
                     boardApplyLeader.getApplyUsers().stream()
                             .map(ApplyUsers::getUserId)
@@ -185,7 +193,7 @@ public class UserNotificationService {
         }
 
         if(result==false){
-            throw new ChatRoomUserHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER);
+            throw new ChatRoomUserHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_IN_USER);
         }
 
         return ChatNotificationResponseDto.builder()

@@ -46,6 +46,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ALREADY_SUCCESS_APPLY(HttpStatus.BAD_REQUEST,"APPLY5003","이미 승인된 신청입니다."),
     STATUS_VALUE_IS_STRANGE(HttpStatus.BAD_REQUEST,"APPLY4003","Status상태가 대기중인 상태에서는 삭제할 수 없습니다."),
     NOT_HAVE_PERMISSION(HttpStatus.BAD_REQUEST,"APPLY4004","신청현황을 삭제할 권한이 없습니다."),
+    HIDE_APPLY(HttpStatus.BAD_REQUEST,"APPLY4004","신청현황이 삭제되었습니다."),
 
     // 메일 관련 에러
     INVALID_MAIL_ADDRESS(HttpStatus.BAD_REQUEST, "MAIL4000", "경상국립대학교 이메일을 입력해주세요."),
@@ -83,7 +84,8 @@ public enum ErrorStatus implements BaseErrorCode {
     CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHATROOM4001", "채팅방을 찾을 수 없습니다."),
 
     // chatRoomUser 관련 에러
-    NOT_FOUND_CHAT_ROOM_USER(HttpStatus.BAD_REQUEST, "CHATROOMUSER4001", "채팅방에 해당 이메일을 가진 유저가 없습니다.");
+    NOT_FOUND_CHAT_ROOM_USER(HttpStatus.BAD_REQUEST, "CHATROOMUSER4002", "채팅방에 해당 이메일을 가진 유저가 없습니다."),
+    NOT_FOUND_CHAT_ROOM_IN_USER(HttpStatus.BAD_REQUEST, "HATROOMUSER4003", "채팅방을 나갔거나, 채팅방에 해당 유저가 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
