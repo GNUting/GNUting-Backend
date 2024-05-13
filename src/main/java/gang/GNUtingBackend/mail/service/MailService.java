@@ -21,7 +21,7 @@ public class MailService {
 
     private final JavaMailSender javaMailSender;
     private final UserRepository userRepository;
-    private static final String senderEmail = "gnuting@gnuting.com";
+    private static final String senderEmail = "gnuting@gmail.com";
     private final RedisTemplate<String, String> redisTemplate;
     private static final long EXPIRE_SECONDS = 180;
 
