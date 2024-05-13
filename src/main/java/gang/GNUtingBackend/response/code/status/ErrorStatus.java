@@ -85,7 +85,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // chatRoomUser 관련 에러
     NOT_FOUND_CHAT_ROOM_USER(HttpStatus.BAD_REQUEST, "CHATROOMUSER4002", "채팅방에 해당 이메일을 가진 유저가 없습니다."),
-    NOT_FOUND_CHAT_ROOM_IN_USER(HttpStatus.BAD_REQUEST, "HATROOMUSER4003", "채팅방을 나갔거나, 채팅방에 해당 유저가 없습니다.");
+    NOT_FOUND_CHAT_ROOM_IN_USER(HttpStatus.BAD_REQUEST, "CHATROOMUSER4001", "채팅방을 나갔거나, 채팅방에 해당 유저가 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
