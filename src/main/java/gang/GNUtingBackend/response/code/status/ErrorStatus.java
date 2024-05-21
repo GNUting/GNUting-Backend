@@ -38,6 +38,8 @@ public enum ErrorStatus implements BaseErrorCode {
     NOT_MATCH_GENDER(HttpStatus.BAD_REQUEST,"BOARD4005","신청자의 성별이 게시물의 성별과 동일합니다"),
     LEADER_NOT_IN_APPLYUSER(HttpStatus.BAD_REQUEST,"BOARD4006","신청자(리더)가 포함되어있지 않습니다."),
     BOARD_CLOSE(HttpStatus.BAD_REQUEST,"BOARD5003","게시물의 신청이 닫혔습니다."),
+    BOARD_NOT_JUST_ONE(HttpStatus.BAD_REQUEST,"BOARD5004","과팅 게시판 이용은 2명 이상부터 가능합니다."),
+    BOARD_WRITE_30MIN(HttpStatus.BAD_REQUEST,"BOARD5005","30분 이내로 게시물을 작성했습니다."),
 
     //Apply 관련 에러
     NOT_FOUND_BOARDAPPLYUSER(HttpStatus.BAD_REQUEST,"APPLY4000","신청현황이 없습니다"),
