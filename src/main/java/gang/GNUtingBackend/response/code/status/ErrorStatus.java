@@ -39,7 +39,7 @@ public enum ErrorStatus implements BaseErrorCode {
     LEADER_NOT_IN_APPLYUSER(HttpStatus.BAD_REQUEST,"BOARD4006","신청자(리더)가 포함되어있지 않습니다."),
     BOARD_CLOSE(HttpStatus.BAD_REQUEST,"BOARD5003","게시물의 신청이 닫혔습니다."),
     BOARD_NOT_JUST_ONE(HttpStatus.BAD_REQUEST,"BOARD5004","과팅 게시판 이용은 2명 이상부터 가능합니다."),
-    BOARD_WRITE_30MIN(HttpStatus.BAD_REQUEST,"BOARD5005","30분 이내로 게시물을 작성했습니다."),
+    BOARD_WRITE_30MIN(HttpStatus.BAD_REQUEST,"BOARD5005","게시물 작성 30분 이후에 새로운 게시물을 작성할 수 있습니다."),
 
     //Apply 관련 에러
     NOT_FOUND_BOARDAPPLYUSER(HttpStatus.BAD_REQUEST,"APPLY4000","신청현황이 없습니다"),
