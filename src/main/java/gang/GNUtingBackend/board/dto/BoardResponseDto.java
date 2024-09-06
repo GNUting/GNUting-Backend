@@ -46,7 +46,8 @@ public class BoardResponseDto {
 
 
     //반환할때 시간설정 메소드
-    private static String getElapsedTime(LocalDateTime createdTime) {
+    //나중에 util 패키지만들어서 빼자
+    public static String getElapsedTime(LocalDateTime createdTime) {
         LocalDateTime currentTime = LocalDateTime.now();
         Duration duration = Duration.between(createdTime, currentTime);
         long minutes = duration.toMinutes();

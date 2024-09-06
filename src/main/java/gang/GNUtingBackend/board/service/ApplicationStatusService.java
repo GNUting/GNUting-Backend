@@ -155,6 +155,7 @@ public class ApplicationStatusService {
 
         List<Board> board = boardRepository.findByUserIdMyboard(user);
 
+
         return board.stream()
                 .map(BoardShowAllResponseDto::toDto)
                 .collect(Collectors.toList());
