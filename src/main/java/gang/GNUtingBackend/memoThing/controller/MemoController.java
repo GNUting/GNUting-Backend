@@ -49,7 +49,9 @@ public class MemoController {
     public ResponseEntity<?> memoApply(@PathVariable Long id,@RequestHeader("Authorization") String token){
         String email=tokenProvider.getUserEmail(token.substring(7));
         String posted=memoService.applyMemo(id,email);
-        return null;
+
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(posted));
     }
 
 

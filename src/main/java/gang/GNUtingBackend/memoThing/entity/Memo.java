@@ -41,4 +41,9 @@ public class Memo extends BaseTime {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    public void closeState(){
+        this.status=Status.CLOSE;
+    }
+
+
 }
