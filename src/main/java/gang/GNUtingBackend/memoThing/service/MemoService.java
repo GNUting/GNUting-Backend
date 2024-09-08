@@ -78,7 +78,7 @@ public class MemoService {
 
 
 
-    @Scheduled(cron="0 05 19 * * *")
+    @Scheduled(cron="0 0 0 * * *")
     public void autoClose (){
         memoRepository.updateMemoStatusToClose();
         memoApplyRemainingRepository.deleteAll();
