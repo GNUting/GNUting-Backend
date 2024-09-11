@@ -9,9 +9,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "devMode" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "devMode" ]
+    branches: [ "main" ]
 
 jobs:
   build:
