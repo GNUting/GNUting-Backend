@@ -26,4 +26,8 @@ public class MemoApplyRemaining extends BaseTime {
 
     @Column(nullable = false)
     private int remaining;
+
+    public void minusRemaining(){
+        remaining--;
+    }
 }

@@ -54,6 +54,13 @@ public class MemoController {
                 .body(ApiResponse.onSuccess(posted));
     }
 
+    @GetMapping("/memo/remaining")
+    @Operation(summary = "남은 메모신청 확인 API", description = "오늘 신청가능한 메모팅 횟수.")
+    public ResponseEntity<?> memoRemaining(@RequestHeader("Authorization") String token){
+        String email=tokenProvider.getUserEmail(token.substring(7));
+        int remaining=memoService.getMemoRemaning(email);
 
-
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(remaining));
+    }
 }

@@ -90,6 +90,13 @@ public class MemoService {
                 .orElseThrow(()->new UserHandler(ErrorStatus.USER_NOT_FOUND));
         Memo memo=memoRepository.findById(id)
                 .orElseThrow(()->new MemoHandler(ErrorStatus.MEMO_NOT_FOUND));
+        MemoApplyRemaining memoApplyRemaining=memoApplyRemainingRepository.findByUserId(user);
+        if(memoApplyRemaining==null){
+            throw new MemoHandler(ErrorStatus.MUST_MEMO_POST);
+        }
+        if(memoApplyRemaining.getRemaining()==0){
+            throw new MemoHandler(ErrorStatus.ALREADY_MEMO_APPLY);
+        }
         User memoUser=memo.getUserId();
         if(memo.getStatus()== Status.CLOSE){
             throw new MemoHandler(ErrorStatus.MEMO_ALREADY_APPLY);
@@ -109,7 +116,20 @@ public class MemoService {
         fcmService.sendAllMessage(notificationUser, "메모팅이 성사되었습니다", chatMemberDto.getApplyUserDepartment() + "와 " + chatMemberDto.getParticipantUserDepartment() + "의 메모팅이 성사되어 채팅방이 만들어졌습니다.","chat",chatRoomResponseDto.getId());
         memo.closeState();
         memoRepository.save(memo);
+        memoApplyRemaining.minusRemaining();
+        memoApplyRemainingRepository.save(memoApplyRemaining);
         return "채팅신청이 완료되었습니다.";
+
+    }
+
+    public int getMemoRemaning(String email) {
+        User user=userRepository.findByEmail(email)
+                .orElseThrow(()->new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        MemoApplyRemaining memoApplyRemaining=memoApplyRemainingRepository.findByUserId(user);
+        if(memoApplyRemaining==null){
+            return 1;
+        }
+        return memoApplyRemaining.getRemaining();
 
     }
 }

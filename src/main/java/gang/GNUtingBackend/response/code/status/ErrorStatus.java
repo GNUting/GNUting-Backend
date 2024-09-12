@@ -94,6 +94,8 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMO_ALREADY_SAVE(HttpStatus.BAD_REQUEST, "MEMO4000", "오늘 메모를 이미 작성했습니다."),
     MEMO_NOT_FOUND(HttpStatus.BAD_REQUEST,"MEMO4001","해당 메모가 없습니다. "),
     MEMO_ALREADY_APPLY(HttpStatus.BAD_REQUEST,"MEMO4002","이미 신청이된 메모입니다 "),
+    MUST_MEMO_POST(HttpStatus.BAD_REQUEST,"MEMO4003","메모를 작성해야 신청할 수 있습니다."),
+    ALREADY_MEMO_APPLY(HttpStatus.BAD_REQUEST,"MEMO4004","메모는 하루 1회만 신청가능합니다.")
 
 
     ;
