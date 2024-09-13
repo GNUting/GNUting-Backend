@@ -7,6 +7,7 @@ import gang.GNUtingBackend.chat.service.ChatRoomService;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.MemoHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
+import gang.GNUtingBackend.memoThing.dto.MemoApplyResponseDto;
 import gang.GNUtingBackend.memoThing.dto.MemoRequestDto;
 import gang.GNUtingBackend.memoThing.dto.MemoResponseDto;
 import gang.GNUtingBackend.memoThing.entity.Memo;
@@ -85,7 +86,7 @@ public class MemoService {
     }
 
 
-    public String applyMemo(Long id, String email) {
+    public MemoApplyResponseDto applyMemo(Long id, String email) {
         User user=userRepository.findByEmail(email)
                 .orElseThrow(()->new UserHandler(ErrorStatus.USER_NOT_FOUND));
         Memo memo=memoRepository.findById(id)
@@ -118,7 +119,12 @@ public class MemoService {
 //        memoRepository.save(memo);
         memoApplyRemaining.minusRemaining();
         memoApplyRemainingRepository.save(memoApplyRemaining);
-        return "채팅신청이 완료되었습니다.";
+        MemoApplyResponseDto.builder()
+                .chatId(chatRoomResponseDto.getId())
+                .build();
+        return MemoApplyResponseDto.builder()
+                .chatId(chatRoomResponseDto.getId())
+                .build();
 
     }
 

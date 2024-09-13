@@ -1,6 +1,7 @@
 package gang.GNUtingBackend.memoThing.controller;
 
 import gang.GNUtingBackend.board.dto.BoardRequestDto;
+import gang.GNUtingBackend.memoThing.dto.MemoApplyResponseDto;
 import gang.GNUtingBackend.memoThing.dto.MemoRequestDto;
 import gang.GNUtingBackend.memoThing.dto.MemoResponseDto;
 import gang.GNUtingBackend.memoThing.service.MemoService;
@@ -48,7 +49,7 @@ public class MemoController {
     @Operation(summary = "메모신청 API", description = "해당 메모에 채팅을 신청합니다.")
     public ResponseEntity<?> memoApply(@PathVariable Long id,@RequestHeader("Authorization") String token){
         String email=tokenProvider.getUserEmail(token.substring(7));
-        String posted=memoService.applyMemo(id,email);
+        MemoApplyResponseDto posted=memoService.applyMemo(id,email);
 
         return ResponseEntity.ok()
                 .body(ApiResponse.onSuccess(posted));
