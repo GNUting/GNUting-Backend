@@ -46,14 +46,14 @@ public class MemoService {
     public String saveMemo(String email, MemoRequestDto memoRequestDto) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-//        if(memoRepository.findByUserIdAndStatus(user)!=null){ //open 인게 없을떄
-//            throw new MemoHandler(ErrorStatus.MEMO_ALREADY_SAVE);
-//        }
+        if(memoRepository.findByUserIdAndStatus(user)!=null){ //open 인게 없을떄
+            throw new MemoHandler(ErrorStatus.MEMO_ALREADY_SAVE);
+        }
         Memo memo=MemoRequestDto.toEntity(user,memoRequestDto);
         memoRepository.save(memo);
         MemoApplyRemaining memoApplyRemaining=MemoApplyRemaining.builder()
                 .userId(user)
-                .remaining(100)
+                .remaining(1)
                 .build();
         memoApplyRemainingRepository.save(memoApplyRemaining);
 
@@ -92,15 +92,15 @@ public class MemoService {
         Memo memo=memoRepository.findById(id)
                 .orElseThrow(()->new MemoHandler(ErrorStatus.MEMO_NOT_FOUND));
         MemoApplyRemaining memoApplyRemaining=memoApplyRemainingRepository.findByUserId(user);
-//        if(memoApplyRemaining==null){
-//            throw new MemoHandler(ErrorStatus.MUST_MEMO_POST);
-//        }
-//        if(memoApplyRemaining.getRemaining()<=0){
-//            throw new MemoHandler(ErrorStatus.ALREADY_MEMO_APPLY);
-//        }
-//        if(memo.getStatus()== Status.CLOSE){
-//            throw new MemoHandler(ErrorStatus.MEMO_ALREADY_APPLY);
-//        }
+        if(memoApplyRemaining==null){
+            throw new MemoHandler(ErrorStatus.MUST_MEMO_POST);
+        }
+        if(memoApplyRemaining.getRemaining()<=0){
+            throw new MemoHandler(ErrorStatus.ALREADY_MEMO_APPLY);
+        }
+        if(memo.getStatus()== Status.CLOSE){
+            throw new MemoHandler(ErrorStatus.MEMO_ALREADY_APPLY);
+        }
         User memoUser=memo.getUserId();
 
         List<User> userDum=new ArrayList<>();
@@ -115,8 +115,8 @@ public class MemoService {
 
         ChatRoomResponseDto chatRoomResponseDto=chatRoomService.createChatRoom(chatMemberDto);
         fcmService.sendAllMessage(notificationUser, "메모팅이 성사되었습니다", chatMemberDto.getApplyUserDepartment() + "와 " + chatMemberDto.getParticipantUserDepartment() + "의 메모팅이 성사되어 채팅방이 만들어졌습니다.","chat",chatRoomResponseDto.getId());
-//        memo.closeState();
-//        memoRepository.save(memo);
+        memo.closeState();
+        memoRepository.save(memo);
         memoApplyRemaining.minusRemaining();
         memoApplyRemainingRepository.save(memoApplyRemaining);
         MemoApplyResponseDto.builder()
