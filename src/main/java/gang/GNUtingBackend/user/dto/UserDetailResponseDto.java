@@ -22,4 +22,8 @@ public class UserDetailResponseDto {
     private final String profileImage;
     private UserRole userRole;
     private String userSelfIntroduction;
+    private String drink;
+    private String hobby;
+    private String mbti;
+    private String smoke;
 }

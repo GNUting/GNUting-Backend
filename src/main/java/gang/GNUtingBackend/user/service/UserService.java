@@ -168,7 +168,7 @@ public class UserService {
      */
     @Transactional
     public UserDetailResponseDto userInfoUpdate(String profileImage, String nickname, String department,
-                                                String userSelfIntroduction, String token) {
+                                                String userSelfIntroduction, String drink, String hobby,String mbti,String smoke,String token) {
         String email = tokenProvider.getUserEmail(token);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -183,7 +183,7 @@ public class UserService {
             throw new UserHandler(ErrorStatus.USER_SELF_INTRODUCTION_LENGTH_EXCEEDED);
         }
 
-        user.update(profileImage, nickname, department, userSelfIntroduction);
+        user.update(profileImage, nickname, department, userSelfIntroduction,drink,hobby,mbti,smoke);
 
         return UserDetailResponseDto.builder()
                 .id(user.getId())
@@ -198,6 +198,10 @@ public class UserService {
                 .profileImage(user.getProfileImage())
                 .userRole(user.getUserRole())
                 .userSelfIntroduction(user.getUserSelfIntroduction())
+                .smoke(user.getSmoke())
+                .drink(user.getDrink())
+                .hobby(user.getHobby())
+                .mbti(user.getMbti())
                 .build();
     }
 

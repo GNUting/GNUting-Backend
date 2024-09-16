@@ -83,6 +83,20 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    @Column(nullable = true)
+    private String mbti;
+
+    @Column(nullable = true)
+    private String hobby;
+
+    @Column(nullable = true)
+    private String drink;
+
+    @Column(nullable = true)
+    private String smoke;
+
+
+
     // 사용자 한줄 소개
     @Column(length = 30)
     @Size(max = 30, message = "한 줄 소개는 최대 30자까지 가능합니다.")
@@ -114,11 +128,16 @@ public class User extends BaseEntity {
     private List<Memo> memos;
 
 
-    public void update(String profileImage, String nickname, String department, String userSelfIntroduction) {
+
+    public void update(String profileImage, String nickname, String department, String userSelfIntroduction,String drink,String hobby,String mbti,String smoke) {
         this.profileImage = profileImage;
         this.nickname = nickname;
         this.department = department;
         this.userSelfIntroduction = userSelfIntroduction;
+        this.smoke=smoke;
+        this.drink=drink;
+        this.hobby=hobby;
+        this.mbti=mbti;
     }
 
     public void updatePassword(String password) {
