@@ -28,6 +28,16 @@ public class MeetingController {
                 .body(ApiResponse.onSuccess(userMeetingInfo));
     }
 
+    @PostMapping("/meeting/save")
+    @Operation(summary = "1대1 등록 API", description = "1대1 미팅을 등록합니다.")
+    public ResponseEntity<?> meetingSave(@RequestHeader("Authorization") String token) {
+        String email = tokenProvider.getUserEmail(token.substring(7));
+        String saveMeeting=meetingService.saveMeeting(email);
+
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(saveMeeting));
+    }
+
 
 
 }
