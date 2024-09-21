@@ -79,11 +79,12 @@ public class MemoService {
 
 
 
-    @Scheduled(cron="0 0 0 * * *")
-    public void autoClose (){
-        memoRepository.updateMemoStatusToClose();
-        memoApplyRemainingRepository.deleteAll();
-    }
+//    @Scheduled(cron="0 0 0 * * *") 클래스 이동
+//    public void autoClose (){
+//        memoRepository.updateMemoStatusToClose(); //메모 모두 close
+//        memoApplyRemainingRepository.deleteAll();  //메모 신청횟수 초기화
+//
+//    }
 
 
     public MemoApplyResponseDto applyMemo(Long id, String email) {

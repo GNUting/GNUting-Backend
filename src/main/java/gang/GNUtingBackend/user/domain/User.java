@@ -5,6 +5,7 @@ import gang.GNUtingBackend.board.entity.BoardApplyLeader;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
 import gang.GNUtingBackend.chat.domain.ChatRoomUser;
 import gang.GNUtingBackend.meeting.entity.Meeting;
+import gang.GNUtingBackend.meeting.entity.MeetingApplyRemaining;
 import gang.GNUtingBackend.memoThing.entity.Memo;
 import gang.GNUtingBackend.memoThing.entity.MemoApplyRemaining;
 import gang.GNUtingBackend.notification.entity.FCM;
@@ -134,6 +135,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Meeting> meetings;
+
+    @OneToOne(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private MeetingApplyRemaining meetingApplyRemaining;
 
 
 

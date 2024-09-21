@@ -24,6 +24,10 @@ public class MeetingApplyRemaining extends BaseTime {
     @OneToOne
     private User userId;
 
+    @JoinColumn(name = "meeting_id")
+    @OneToOne
+    private Meeting meetingId;
+
     @Column(nullable = false)
     private int remaining;
 

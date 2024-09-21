@@ -1,5 +1,6 @@
 package gang.GNUtingBackend.meeting.controller;
 
+import gang.GNUtingBackend.meeting.dto.MeetingResponseDto;
 import gang.GNUtingBackend.meeting.service.MeetingService;
 import gang.GNUtingBackend.memoThing.dto.MemoRequestDto;
 import gang.GNUtingBackend.response.ApiResponse;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -18,7 +21,7 @@ public class MeetingController {
     private final TokenProvider tokenProvider;
     private final MeetingService meetingService;
 
-    @GetMapping("/meeting")
+    @GetMapping("/meeting/check")
     @Operation(summary = "1대1 정보작성 확인 API", description = "1대1 정보를 입력했는지 확인합니다.")
     public ResponseEntity<?> userMeetingInfo(@RequestHeader("Authorization") String token) {
         String email = tokenProvider.getUserEmail(token.substring(7));
@@ -37,6 +40,25 @@ public class MeetingController {
         return ResponseEntity.ok()
                 .body(ApiResponse.onSuccess(saveMeeting));
     }
+
+    @GetMapping("/meeting")
+    @Operation(summary = "1:1 매칭 랜덤으로 20개 항목 리스트주기", description = "1:1 매칭에서 랜덤으로 20명을 선별하여 넘겨줌")
+    public ResponseEntity<?> oneToOneRandomList(@RequestHeader("Authorization") String token){
+        String email = tokenProvider.getUserEmail(token.substring(7));
+        List<MeetingResponseDto> meetingResponseDtoList =meetingService.RandomList(email);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(meetingResponseDtoList));
+    }
+
+    @DeleteMapping("/meeting")
+    @Operation(summary = "1:1 등록매칭 취소", description = "1:1 매칭등록을 취소합니다")
+    public ResponseEntity<?> deleteOneToOne(@RequestHeader("Authorization") String token){
+        String email = tokenProvider.getUserEmail(token.substring(7));
+        String deleteOneToOne =meetingService.deleteOneToOne(email);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(deleteOneToOne));
+    }
+
 
 
 

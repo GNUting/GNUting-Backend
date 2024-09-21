@@ -27,18 +27,10 @@ public class Meeting extends BaseTime {
     @Column
     @Enumerated(EnumType.STRING)
     private Gender gender;
-    @Column
-    private String mbti;
-    @Column
-    private String birthday;
-    @Column
-    private String smoke;
-    @Column
-    private String drink;
-    @Column
-    private String hobby;
-    @Column
-    private String user_self_introduction;
+
+    @OneToOne(mappedBy = "meetingId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private MeetingApplyRemaining meetingApplyRemaining;
+
     @Column
     @Enumerated(EnumType.STRING)
 
