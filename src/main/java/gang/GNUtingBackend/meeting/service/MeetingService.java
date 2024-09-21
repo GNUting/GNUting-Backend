@@ -1,13 +1,17 @@
 package gang.GNUtingBackend.meeting.service;
 
 import gang.GNUtingBackend.board.entity.Board;
+import gang.GNUtingBackend.board.entity.enums.ApplyShowStatus;
+import gang.GNUtingBackend.board.entity.enums.ApplyStatus;
 import gang.GNUtingBackend.board.entity.enums.Status;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.MeetingHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.meeting.dto.MeetingResponseDto;
 import gang.GNUtingBackend.meeting.entity.Meeting;
+import gang.GNUtingBackend.meeting.entity.MeetingApplyLeader;
 import gang.GNUtingBackend.meeting.entity.MeetingApplyRemaining;
+import gang.GNUtingBackend.meeting.repository.MeetingApplyLeaderRepository;
 import gang.GNUtingBackend.meeting.repository.MeetingApplyRemainingRepository;
 import gang.GNUtingBackend.meeting.repository.MeetingRepository;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
@@ -27,6 +31,7 @@ public class MeetingService {
     private final UserRepository userRepository;
     private final MeetingRepository meetingRepository;
     private final MeetingApplyRemainingRepository meetingApplyRemainingRepository;
+    private final MeetingApplyLeaderRepository meetingApplyLeaderRepository;
     public boolean userMeetingInfo(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -80,5 +85,49 @@ public class MeetingService {
         }
         meetingRepository.delete(meeting);
         return "1:1매칭 등록을 취소했습니다.";
+    }
+
+
+    public String applyMeeting(String email, Long id) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+        Meeting meeting=meetingRepository.findById(id)
+                .orElseThrow(()->new MeetingHandler(ErrorStatus.NOT_FOUNT_MEETING));
+
+        MeetingApplyRemaining meetingApplyRemaining=meetingApplyRemainingRepository.findByUserId(user);
+
+        if(meetingApplyRemaining==null){
+            throw new MeetingHandler(ErrorStatus.NOT_POST_MEETING);
+        }
+        if(meetingApplyRemaining.getRemaining()<=0){
+            throw new MeetingHandler(ErrorStatus.NOT_HAVE_REMAINING);
+        }
+
+        if (meeting.getStatus()==Status.CLOSE){
+            throw new MeetingHandler(ErrorStatus.ALREADY_APPLY_MEETING_DONE);
+        }
+        if (meeting.getGender()==user.getGender()){
+            throw new MeetingHandler(ErrorStatus.GENDER_SAME);
+        }
+
+        List<MeetingApplyLeader> meetingApplyLeaderList=meetingApplyLeaderRepository.findByLeaderId(user);
+        for (MeetingApplyLeader checkDuplication:meetingApplyLeaderList) {
+            if(checkDuplication.getMeeting()==meeting){
+                throw new MeetingHandler(ErrorStatus.YOU_ARE_ALREADY_APPLY_MEETING);
+            }
+        }
+
+        MeetingApplyLeader meetingApplyLeader=MeetingApplyLeader.builder()
+                .applyShowStatus(ApplyShowStatus.SHOW)
+                .receiveShowStatus(ApplyShowStatus.SHOW)
+                .leaderId(user)
+                .meeting(meeting)
+                .status(ApplyStatus.대기중)
+                .build();
+        meetingApplyRemaining.minusRemaining();
+        meetingApplyRemainingRepository.save(meetingApplyRemaining);
+        meetingApplyLeaderRepository.save(meetingApplyLeader);
+
+        return "1:1 매칭을 신청했습니다.";
     }
 }

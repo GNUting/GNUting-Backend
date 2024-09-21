@@ -99,7 +99,13 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //meeting 관련 에러
     ALREADY_MEETING_SAVE(HttpStatus.BAD_REQUEST,"MEET4000","이미 1:1 매칭에 등록했습니다."),
-    NOT_FOUNT_MEETING(HttpStatus.BAD_REQUEST,"MEET4001","등록된 1:1 매칭을 맞을수 없습니다.")
+    NOT_FOUNT_MEETING(HttpStatus.BAD_REQUEST,"MEET4001","등록된 1:1 매칭을 찾을수 없습니다."),
+    ALREADY_APPLY_MEETING_DONE(HttpStatus.BAD_REQUEST,"MEET4002","이미 매칭이 성사된 글입니다."),
+    NOT_POST_MEETING(HttpStatus.BAD_REQUEST,"MEET4003","1:1 매칭에 등록을 해야 신청할 수 있습니다."),
+    NOT_HAVE_REMAINING(HttpStatus.BAD_REQUEST,"MEET4004","신청가능한 횟수가 없습니다."),
+    GENDER_SAME(HttpStatus.BAD_REQUEST,"MEET4005","같은 성별에 신청할 수 없습니다."),
+    YOU_ARE_ALREADY_APPLY_MEETING(HttpStatus.BAD_REQUEST,"MEET4006","해당글에 이미 매칭을 신청했습니다"),
+
     ;
 
 

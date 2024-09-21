@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -58,6 +59,16 @@ public class MeetingController {
         return ResponseEntity.ok()
                 .body(ApiResponse.onSuccess(deleteOneToOne));
     }
+
+    @PostMapping("/meeting/apply/{id}")
+    @Operation(summary = "1:1 매칭 신청하기", description = "1:1 매칭을 신청합니다")
+    public ResponseEntity<?> applyMeeting(@RequestHeader("Authorization") String token, @PathVariable Long id){
+        String email = tokenProvider.getUserEmail(token.substring(7));
+        String applyMeeting =meetingService.applyMeeting(email,id);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(applyMeeting));
+    }
+
 
 
 
