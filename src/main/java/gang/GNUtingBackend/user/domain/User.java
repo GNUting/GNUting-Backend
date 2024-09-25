@@ -1,11 +1,13 @@
 package gang.GNUtingBackend.user.domain;
 
+import gang.GNUtingBackend.board.entity.ApplyUsers;
 import gang.GNUtingBackend.board.entity.Board;
 import gang.GNUtingBackend.board.entity.BoardApplyLeader;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
 import gang.GNUtingBackend.chat.domain.ChatRoomUser;
-import gang.GNUtingBackend.meeting.entity.Meeting;
-import gang.GNUtingBackend.meeting.entity.MeetingApplyRemaining;
+import gang.GNUtingBackend.eventFunction.entity.EventApply;
+//import gang.GNUtingBackend.meeting.entity.Meeting;
+//import gang.GNUtingBackend.meeting.entity.MeetingApplyRemaining;
 import gang.GNUtingBackend.memoThing.entity.Memo;
 import gang.GNUtingBackend.memoThing.entity.MemoApplyRemaining;
 import gang.GNUtingBackend.notification.entity.FCM;
@@ -121,6 +123,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BoardParticipant> boardParticipants;
 
+    @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ApplyUsers> applyUsersList;
+
     @OneToMany(mappedBy = "leaderId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BoardApplyLeader> boardApplyLeaders;
 
@@ -133,11 +138,14 @@ public class User extends BaseEntity {
     @OneToOne(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private MemoApplyRemaining memoApplyRemaining;
 
-    @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Meeting> meetings;
+//    @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private List<Meeting> meetings;
+
+//    @OneToOne(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private MeetingApplyRemaining meetingApplyRemaining;
 
     @OneToOne(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private MeetingApplyRemaining meetingApplyRemaining;
+    private EventApply eventApply;
 
 
 

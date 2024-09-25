@@ -1,5 +1,6 @@
 package gang.GNUtingBackend.user.service;
 
+import gang.GNUtingBackend.board.repository.ApplyUsersRepository;
 import gang.GNUtingBackend.exception.handler.TokenHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.service.FCMService;
@@ -259,6 +260,7 @@ public class UserService {
         // 사용자 정보 삭제
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
         userRepository.delete(user);
     }
 

@@ -106,8 +106,12 @@ public enum ErrorStatus implements BaseErrorCode {
     GENDER_SAME(HttpStatus.BAD_REQUEST,"MEET4005","같은 성별에 신청할 수 없습니다."),
     YOU_ARE_ALREADY_APPLY_MEETING(HttpStatus.BAD_REQUEST,"MEET4006","해당글에 이미 매칭을 신청했습니다"),
 
-    ;
 
+    //총학 Event 관련 에러
+    ALREADY_EVENT_APPLY(HttpStatus.BAD_REQUEST,"EVENT4000","오늘 이미 참여를 했습니다."),
+    NOT_FOUND_NICKNAME(HttpStatus.BAD_REQUEST,"EVENT4001","해당 닉네임을 찾을 수 없습니다.")
+
+    ;
 
     private final HttpStatus httpStatus;
     private final String code;
