@@ -2,9 +2,12 @@ package gang.GNUtingBackend.chat.service;
 
 import gang.GNUtingBackend.chat.domain.Chat;
 import gang.GNUtingBackend.chat.domain.ChatRoom;
+import gang.GNUtingBackend.chat.domain.ChatRoomUser;
 import gang.GNUtingBackend.chat.domain.enums.MessageType;
 import gang.GNUtingBackend.chat.dto.ChatRequestDto;
 import gang.GNUtingBackend.chat.dto.ChatResponseDto;
+import gang.GNUtingBackend.chat.dto.ChatRoomResponseDto;
+import gang.GNUtingBackend.chat.dto.ChatRoomUserDto;
 import gang.GNUtingBackend.chat.repository.ChatRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomRepository;
 import gang.GNUtingBackend.chat.repository.ChatRoomUserRepository;
@@ -19,6 +22,7 @@ import gang.GNUtingBackend.user.repository.UserRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -105,8 +109,51 @@ public class ChatService {
 
         notifyOtherUsers(chatRoom, chat, user);
 
+        List<ChatRoomResponseDto> chatRoomsByUserEmail = findChatRoomsByUserEmail(user.getEmail());
+
+        // 채팅방 마지막 메세지를 실시간으로 업데이트 하기 위한 로직
+        messagingTemplate.convertAndSend("/sub/chatRoom/update", chatRoomsByUserEmail);
+
         return chatResponse;
     }
+
+    @Transactional(readOnly = true)
+    public List<ChatRoomResponseDto> findChatRoomsByUserEmail(String email) {
+        List<ChatRoomUser> allByUserEmail = chatRoomUserRepository.findAllByUserEmail(email);
+
+        List<ChatRoomResponseDto> chatRooms = allByUserEmail.stream()
+                .map(cru -> {
+                    ChatRoom chatRoom = cru.getChatRoom();
+                    List<String> chatRoomUserProfileImages = chatRoom.getChatRoomUsers().stream()
+                            .filter(chatRoomUser -> !chatRoomUser.getUser().getEmail().equals(email))
+                            .map(chatRoomUser -> chatRoomUser.getUser().getProfileImage())
+                            .collect(Collectors.toList());
+
+                    ChatRoomUserDto chatRoomUserDto = new ChatRoomUserDto();
+                    List<ChatRoomUserDto> chatRoomUserDtos = chatRoomUserDto.toDto(chatRoom.getChatRoomUsers());
+
+                    boolean hasNewMessage = hasNewMessages(email, chatRoom.getId());
+                    LocalDateTime lastMessageTime = chatRepository.findLastMessageTimeByChatRoomId(chatRoom.getId());
+                    String lastMessage = chatRepository.findTopByChatRoomOrderByCreateDateDesc(chatRoom).getMessage();
+
+                    return ChatRoomResponseDto.builder()
+                            .id(chatRoom.getId())
+                            .title(chatRoom.getTitle())
+                            .leaderUserDepartment(chatRoom.getLeaderUserDepartment())
+                            .applyLeaderDepartment(chatRoom.getApplyLeaderDepartment())
+                            .ChatRoomUserProfileImages(chatRoomUserProfileImages)
+                            .hasNewMessage(hasNewMessage)
+                            .chatRoomUsers(chatRoomUserDtos)
+                            .lastMessageTime(lastMessageTime)
+                            .lastMessage(lastMessage)
+                            .build();
+                })
+                .sorted(Comparator.comparing(ChatRoomResponseDto::getLastMessageTime, Comparator.nullsLast(Comparator.reverseOrder())))
+                .collect(Collectors.toList());
+
+        return chatRooms;
+    }
+
 
     private void notifyOtherUsers(ChatRoom chatRoom, Chat chat, User user) {
         chatRoom.getChatRoomUsers().stream()

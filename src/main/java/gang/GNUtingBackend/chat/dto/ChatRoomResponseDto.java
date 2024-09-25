@@ -22,4 +22,5 @@ public class ChatRoomResponseDto {
     private List<ChatRoomUserDto> chatRoomUsers;
     private boolean hasNewMessage;
     private LocalDateTime lastMessageTime;
+    private String lastMessage;
 }
