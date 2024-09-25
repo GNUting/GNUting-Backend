@@ -2,6 +2,7 @@ package gang.GNUtingBackend.chat.repository;
 
 import gang.GNUtingBackend.chat.domain.Chat;
 import gang.GNUtingBackend.chat.domain.ChatRoom;
+import gang.GNUtingBackend.chat.domain.enums.MessageType;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,5 +22,12 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
     @Query("SELECT MAX(c.createDate) FROM Chat c WHERE c.chatRoom.id = :chatRoomId")
     LocalDateTime findLastMessageTimeByChatRoomId(Long chatRoomId);
 
-    Chat findTopByChatRoomOrderByCreateDateDesc(ChatRoom chatRoom);
+    /**
+     * MessageType이 CHAT인 메세지 중에서 가장 최근 메시지를 조회
+     * @param chatRoom
+     * @param messageType
+     * @return
+     */
+    @Query("select c from Chat c where c.chatRoom = :chatRoom and c.messageType = :messageType order by c.createDate desc")
+    Chat findTopByChatRoomOrderByCreateDateDesc(ChatRoom chatRoom, MessageType messageType);
 }

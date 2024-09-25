@@ -106,12 +106,22 @@ public class ChatRoomService {
                             .map(chatRoomUser -> chatRoomUser.getUser().getProfileImage())
                             .collect(Collectors.toList());
 
-                    ChatRoomUserDto chatRoomUserDto = new ChatRoomUserDto();
-                    List<ChatRoomUserDto> chatRoomUserDtos = chatRoomUserDto.toDto(chatRoom.getChatRoomUsers());
+                    List<ChatRoomUserDto> chatRoomUserDtos = chatRoom.getChatRoomUsers().stream()
+                            .filter(chatRoomUser -> !chatRoomUser.getUser().getEmail().equals(email))
+                            .map(cruUser -> ChatRoomUserDto.builder()
+                                    .id(cruUser.getId())
+                                    .userId(cruUser.getUser().getId())
+                                    .chatRoomId(chatRoom.getId())
+                                    .nickname(cruUser.getUser().getNickname())
+                                    .profileImage(cruUser.getUser().getProfileImage())
+                                    .department(cruUser.getUser().getDepartment())
+                                    .studentId(cruUser.getUser().getStudentId())
+                                    .build())
+                            .collect(Collectors.toList());
 
                     boolean hasNewMessage = chatService.hasNewMessages(email, chatRoom.getId());
                     LocalDateTime lastMessageTime = chatRepository.findLastMessageTimeByChatRoomId(chatRoom.getId());
-                    String lastMessage = chatRepository.findTopByChatRoomOrderByCreateDateDesc(chatRoom).getMessage();
+                    String lastMessage = chatRepository.findTopByChatRoomOrderByCreateDateDesc(chatRoom, MessageType.CHAT).getMessage();
 
                     return ChatRoomResponseDto.builder()
                             .id(chatRoom.getId())
