@@ -18,6 +18,9 @@ import gang.GNUtingBackend.chat.dto.ChatRoomResponseDto;
 import gang.GNUtingBackend.chat.service.ChatRoomService;
 import gang.GNUtingBackend.exception.handler.BoardHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
+//import gang.GNUtingBackend.meeting.entity.Meeting;
+//import gang.GNUtingBackend.meeting.entity.MeetingApplyLeader;
+//import gang.GNUtingBackend.meeting.repository.MeetingApplyLeaderRepository;
 import gang.GNUtingBackend.notification.service.FCMService;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
 import gang.GNUtingBackend.user.domain.User;
@@ -44,6 +47,7 @@ public class ApplicationStatusService {
     private final BoardApplyLeaderRepository boardApplyLeaderRepository;
     private final FCMService fcmService;
     private final ChatRoomService chatRoomService;
+//    private final MeetingApplyLeaderRepository meetingApplyLeaderRepository;
 
 
     /**
@@ -93,6 +97,24 @@ public class ApplicationStatusService {
             }
         }
 
+//        //1:1 미팅 내역 조회
+//        List<MeetingApplyLeader> meetingApplyLeaderList=meetingApplyLeaderRepository.findByMeetingUserId(user);
+//        for (MeetingApplyLeader meetingApplyLeader:meetingApplyLeaderList) {
+//            List<UserSearchResponseDto> meetingParticipantsUserList=new ArrayList<>();
+//            List<UserSearchResponseDto> meetingApplyUserList=new ArrayList<>();
+//            UserSearchResponseDto meetingParticipantsUser=UserSearchResponseDto.toDto(meetingApplyLeader.getMeetingUserId());
+//            UserSearchResponseDto meetingApplyUser=UserSearchResponseDto.toDto(meetingApplyLeader.getLeaderId());
+//            meetingParticipantsUserList.add(meetingParticipantsUser);
+//            meetingApplyUserList.add(meetingApplyUser);
+//
+//            ApplicationStatusResponseDto savedResponseDto =
+//                    ApplicationStatusResponseDto.toDto(meetingApplyLeader.getId(), meetingParticipantsUserList, meetingApplyUserList,
+//                            meetingApplyLeader.getLeaderId().getDepartment(), participantDepartment,
+//                            meetingApplyLeader.getStatus(), meetingApplyLeader.getCreatedDate(), meetingApplyLeader.getModifiedDate());
+//            allUsersByLeader.add(savedResponseDto);
+//
+//        }
+
         allUsersByLeader.sort(ApplicationStatusResponseDto::compareTo);
         Collections.reverse(allUsersByLeader);
         return allUsersByLeader;
@@ -104,7 +126,6 @@ public class ApplicationStatusService {
      * @param email
      * @return
      */
-
     public List<ApplicationStatusResponseDto> applyState(String email) {
 
         List<ApplicationStatusResponseDto> allUsersByLeader = new ArrayList<>();
@@ -136,7 +157,27 @@ public class ApplicationStatusService {
             allUsersByLeader.add(savedResponseDto);
         }
 
-        return allUsersByLeader;
+//        //1:1 매칭 조회
+//        List<MeetingApplyLeader> meetingApplyLeaderList=meetingApplyLeaderRepository.findByLeaderId(user);
+//        for (MeetingApplyLeader meetingApplyLeader:meetingApplyLeaderList) {
+//            List<UserSearchResponseDto> meetingParticipantsUserList=new ArrayList<>();
+//            List<UserSearchResponseDto> meetingApplyUserList=new ArrayList<>();
+//            UserSearchResponseDto meetingParticipantsUser=UserSearchResponseDto.toDto(meetingApplyLeader.getMeetingUserId());
+//            UserSearchResponseDto meetingApplyUser=UserSearchResponseDto.toDto(meetingApplyLeader.getLeaderId());
+//            meetingParticipantsUserList.add(meetingParticipantsUser);
+//            meetingApplyUserList.add(meetingApplyUser);
+//
+//            ApplicationStatusResponseDto savedResponseDto =
+//                    ApplicationStatusResponseDto.toDto(meetingApplyLeader.getId(), meetingParticipantsUserList, meetingApplyUserList,
+//                            meetingApplyLeader.getLeaderId().getDepartment(), meetingApplyLeader.getLeaderId().getDepartment(),
+//                            meetingApplyLeader.getStatus(), meetingApplyLeader.getCreatedDate(), meetingApplyLeader.getModifiedDate());
+//            allUsersByLeader.add(savedResponseDto);
+//
+//        }
+            allUsersByLeader.sort(ApplicationStatusResponseDto::compareTo);
+            Collections.reverse(allUsersByLeader);
+
+            return allUsersByLeader;
     }
 
 
@@ -154,6 +195,7 @@ public class ApplicationStatusService {
        // List<Board> board = boardRepository.findByUserId(user);
 
         List<Board> board = boardRepository.findByUserIdMyboard(user);
+
 
         return board.stream()
                 .map(BoardShowAllResponseDto::toDto)
@@ -221,7 +263,7 @@ public class ApplicationStatusService {
                 .collect(Collectors.toList());
         String applyUserDepartment = boardApplyLeader.getLeaderId().getDepartment();
         String participantUserDepartment = boardApplyLeader.getBoardId().getUserId().getDepartment();
-        ChatMemberDto chatMemberDto = ChatMemberDto.toDto(boardApplyLeader.getBoardId(), applyUserDepartment, participantUserDepartment, applyUserList,
+        ChatMemberDto chatMemberDto = ChatMemberDto.toDto(boardApplyLeader.getBoardId().getTitle(), applyUserDepartment, participantUserDepartment, applyUserList,
                 participantUserList);
 
         ChatRoomResponseDto chatRoomResponseDto=chatRoomService.createChatRoom(chatMemberDto);

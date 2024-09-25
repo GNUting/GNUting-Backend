@@ -1,9 +1,15 @@
 package gang.GNUtingBackend.user.domain;
 
+import gang.GNUtingBackend.board.entity.ApplyUsers;
 import gang.GNUtingBackend.board.entity.Board;
 import gang.GNUtingBackend.board.entity.BoardApplyLeader;
 import gang.GNUtingBackend.board.entity.BoardParticipant;
 import gang.GNUtingBackend.chat.domain.ChatRoomUser;
+import gang.GNUtingBackend.eventFunction.entity.EventApply;
+//import gang.GNUtingBackend.meeting.entity.Meeting;
+//import gang.GNUtingBackend.meeting.entity.MeetingApplyRemaining;
+import gang.GNUtingBackend.memoThing.entity.Memo;
+import gang.GNUtingBackend.memoThing.entity.MemoApplyRemaining;
 import gang.GNUtingBackend.notification.entity.FCM;
 import gang.GNUtingBackend.notification.entity.UserNotification;
 import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
@@ -82,6 +88,20 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    @Column(nullable = true)
+    private String mbti;
+
+    @Column(nullable = true)
+    private String hobby;
+
+    @Column(nullable = true)
+    private String drink;
+
+    @Column(nullable = true)
+    private String smoke;
+
+
+
     // 사용자 한줄 소개
     @Column(length = 30)
     @Size(max = 30, message = "한 줄 소개는 최대 30자까지 가능합니다.")
@@ -103,17 +123,41 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BoardParticipant> boardParticipants;
 
+    @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ApplyUsers> applyUsersList;
+
     @OneToMany(mappedBy = "leaderId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BoardApplyLeader> boardApplyLeaders;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ChatRoomUser> chatRoomUsers;
 
-    public void update(String profileImage, String nickname, String department, String userSelfIntroduction) {
+    @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Memo> memos;
+
+    @OneToOne(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private MemoApplyRemaining memoApplyRemaining;
+
+//    @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private List<Meeting> meetings;
+
+//    @OneToOne(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private MeetingApplyRemaining meetingApplyRemaining;
+
+    @OneToOne(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private EventApply eventApply;
+
+
+
+    public void update(String profileImage, String nickname, String department, String userSelfIntroduction,String drink,String hobby,String mbti,String smoke) {
         this.profileImage = profileImage;
         this.nickname = nickname;
         this.department = department;
         this.userSelfIntroduction = userSelfIntroduction;
+        this.smoke=smoke;
+        this.drink=drink;
+        this.hobby=hobby;
+        this.mbti=mbti;
     }
 
     public void updatePassword(String password) {

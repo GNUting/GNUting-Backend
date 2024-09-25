@@ -1,13 +1,13 @@
-package gang.GNUtingBackend.board.entity;
+package gang.GNUtingBackend.memoThing.entity;
 
 
+import gang.GNUtingBackend.board.entity.BaseTime;
 import gang.GNUtingBackend.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.annotation.Nullable;
 import javax.persistence.*;
 
 @Entity
@@ -15,17 +15,19 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Builder
-public class ApplyUsers {
+public class MemoApplyRemaining extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name="board_apply_leader_id")
-    private BoardApplyLeader boardApplyLeaderId;
-
-    @ManyToOne
     @JoinColumn(name = "user_id")
+    @OneToOne
     private User userId;
 
+    @Column(nullable = false)
+    private int remaining;
+
+    public void minusRemaining(){
+        remaining--;
+    }
 }

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class ChatRoomService {
     @Transactional
     public ChatRoomResponseDto createChatRoom(ChatMemberDto chatMemberDto) {
         ChatRoom chatRoom = ChatRoom.builder()
-                .title(chatMemberDto.getBoard().getTitle())
+                .title(chatMemberDto.getTitle())
                 .leaderUserDepartment(chatMemberDto.getParticipantUserDepartment())
                 .applyLeaderDepartment(chatMemberDto.getApplyUserDepartment())
                 .build();
@@ -110,6 +111,7 @@ public class ChatRoomService {
 
                     boolean hasNewMessage = chatService.hasNewMessages(email, chatRoom.getId());
                     LocalDateTime lastMessageTime = chatRepository.findLastMessageTimeByChatRoomId(chatRoom.getId());
+                    String lastMessage = chatRepository.findTopByChatRoomOrderByCreateDateDesc(chatRoom).getMessage();
 
                     return ChatRoomResponseDto.builder()
                             .id(chatRoom.getId())
@@ -120,6 +122,7 @@ public class ChatRoomService {
                             .hasNewMessage(hasNewMessage)
                             .chatRoomUsers(chatRoomUserDtos)
                             .lastMessageTime(lastMessageTime)
+                            .lastMessage(lastMessage)
                             .build();
                 })
                 .sorted(Comparator.comparing(ChatRoomResponseDto::getLastMessageTime, Comparator.nullsLast(Comparator.reverseOrder())))

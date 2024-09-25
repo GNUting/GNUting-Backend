@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DB_URL}
+    url: ${DB_URL_DEV}
     username: ${DB_USER_NAME}
     password: ${DB_USER_PASSWORD}
 
@@ -22,6 +22,7 @@ spring:
     host: ${MAIL_HOST}
     port: ${MAIL_PORT}
     username: ${MAIL_USER_NAME}
+
     password: ${MAIL_USER_PASSWORD}
     properties:
       mail:
@@ -78,4 +79,4 @@ logging:
 
 server:
   address: 0.0.0.0
-  port: 10001
+  port: 20001

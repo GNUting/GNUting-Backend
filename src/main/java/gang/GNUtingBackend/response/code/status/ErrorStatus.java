@@ -87,7 +87,31 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // chatRoomUser 관련 에러
     NOT_FOUND_CHAT_ROOM_USER(HttpStatus.BAD_REQUEST, "CHATROOMUSER4002", "채팅방에 해당 이메일을 가진 유저가 없습니다."),
-    NOT_FOUND_CHAT_ROOM_IN_USER(HttpStatus.BAD_REQUEST, "CHATROOMUSER4001", "채팅방을 나갔거나, 채팅방에 해당 유저가 없습니다.");
+    NOT_FOUND_CHAT_ROOM_IN_USER(HttpStatus.BAD_REQUEST, "CHATROOMUSER4001", "채팅방을 나갔거나, 채팅방에 해당 유저가 없습니다."),
+
+
+    //memo 관련 에러
+    MEMO_ALREADY_SAVE(HttpStatus.BAD_REQUEST, "MEMO4000", "오늘 메모를 이미 작성했습니다."),
+    MEMO_NOT_FOUND(HttpStatus.BAD_REQUEST,"MEMO4001","해당 메모가 없습니다. "),
+    MEMO_ALREADY_APPLY(HttpStatus.BAD_REQUEST,"MEMO4002","이미 신청이된 메모입니다 "),
+    MUST_MEMO_POST(HttpStatus.BAD_REQUEST,"MEMO4003","메모를 작성해야 신청할 수 있습니다."),
+    ALREADY_MEMO_APPLY(HttpStatus.BAD_REQUEST,"MEMO4004","메모는 하루 1회만 신청가능합니다."),
+
+    //meeting 관련 에러
+    ALREADY_MEETING_SAVE(HttpStatus.BAD_REQUEST,"MEET4000","이미 1:1 매칭에 등록했습니다."),
+    NOT_FOUNT_MEETING(HttpStatus.BAD_REQUEST,"MEET4001","등록된 1:1 매칭을 찾을수 없습니다."),
+    ALREADY_APPLY_MEETING_DONE(HttpStatus.BAD_REQUEST,"MEET4002","이미 매칭이 성사된 글입니다."),
+    NOT_POST_MEETING(HttpStatus.BAD_REQUEST,"MEET4003","1:1 매칭에 등록을 해야 신청할 수 있습니다."),
+    NOT_HAVE_REMAINING(HttpStatus.BAD_REQUEST,"MEET4004","신청가능한 횟수가 없습니다."),
+    GENDER_SAME(HttpStatus.BAD_REQUEST,"MEET4005","같은 성별에 신청할 수 없습니다."),
+    YOU_ARE_ALREADY_APPLY_MEETING(HttpStatus.BAD_REQUEST,"MEET4006","해당글에 이미 매칭을 신청했습니다"),
+
+
+    //총학 Event 관련 에러
+    ALREADY_EVENT_APPLY(HttpStatus.BAD_REQUEST,"EVENT4000","오늘 이미 참여를 했습니다."),
+    NOT_FOUND_NICKNAME(HttpStatus.BAD_REQUEST,"EVENT4001","해당 닉네임을 찾을 수 없습니다.")
+
+    ;
 
     private final HttpStatus httpStatus;
     private final String code;

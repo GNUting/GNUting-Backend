@@ -139,7 +139,11 @@ public class UserController {
             @RequestParam(value = "profileImage", required = false) @Parameter(description = "프로필 이미지") MultipartFile profileImage,
             @RequestParam("nickname") @Parameter(description = "닉네임") String nickname,
             @RequestParam("department") @Parameter(description = "학과") String department,
-            @RequestParam("userSelfIntroduction") @Parameter(description = "한 줄 소개") String userSelfIntroduction)
+            @RequestParam("userSelfIntroduction") @Parameter(description = "한 줄 소개") String userSelfIntroduction,
+            @RequestParam("drink") @Parameter(description = "주량") String drink,
+            @RequestParam("hobby") @Parameter(description = "취미") String hobby,
+            @RequestParam("mbti") @Parameter(description = "MBTI") String mbti,
+            @RequestParam("smoke") @Parameter(description = "흡연") String smoke)
             throws IOException {
         token = token.substring(7);
         String email = tokenProvider.getUserEmail(token);
@@ -150,7 +154,7 @@ public class UserController {
         }
 
         ApiResponse<UserDetailResponseDto> apiResponse = ApiResponse.onSuccess(
-                userService.userInfoUpdate(mediaLink, nickname, department, userSelfIntroduction, token));
+                userService.userInfoUpdate(mediaLink, nickname, department, userSelfIntroduction,drink,hobby,mbti,smoke, token));
         return ResponseEntity.ok()
                 .body(apiResponse);
     }

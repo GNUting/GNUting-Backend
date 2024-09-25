@@ -12,6 +12,8 @@ import lombok.Getter;
 @Builder
 public class ChatRoomResponseDto {
 
+
+    //사람들 이름 , 타이틀 대신 과팅인지 메모팅인지
     private Long id;
     private String title;
     private String leaderUserDepartment;
@@ -20,4 +22,5 @@ public class ChatRoomResponseDto {
     private List<ChatRoomUserDto> chatRoomUsers;
     private boolean hasNewMessage;
     private LocalDateTime lastMessageTime;
+    private String lastMessage;
 }
