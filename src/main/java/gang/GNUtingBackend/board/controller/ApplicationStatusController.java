@@ -102,6 +102,7 @@ public class ApplicationStatusController {
     }
 
 
+
 //    //신청받은 현황 삭제
 //    @DeleteMapping("/board/applications/receivedstate/{id}")
 //    @Operation(summary = "신청받은현황 삭제 API", description = "내가 신청받은 현황이 수락되었을때 내역 삭제")

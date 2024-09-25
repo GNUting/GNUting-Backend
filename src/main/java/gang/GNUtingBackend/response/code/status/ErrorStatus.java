@@ -38,13 +38,17 @@ public enum ErrorStatus implements BaseErrorCode {
     NOT_MATCH_GENDER(HttpStatus.BAD_REQUEST,"BOARD4005","신청자의 성별이 게시물의 성별과 동일합니다"),
     LEADER_NOT_IN_APPLYUSER(HttpStatus.BAD_REQUEST,"BOARD4006","신청자(리더)가 포함되어있지 않습니다."),
     BOARD_CLOSE(HttpStatus.BAD_REQUEST,"BOARD5003","게시물의 신청이 닫혔습니다."),
+    BOARD_NOT_JUST_ONE(HttpStatus.BAD_REQUEST,"BOARD5004","과팅 게시판 이용은 2명 이상부터 가능합니다."),
+    BOARD_WRITE_30MIN(HttpStatus.BAD_REQUEST,"BOARD5005","게시물 작성 30분 이후에 새로운 게시물을 작성할 수 있습니다."),
 
     //Apply 관련 에러
+    NOT_FOUND_BOARDAPPLYUSER(HttpStatus.BAD_REQUEST,"APPLY4000","신청현황이 없습니다"),
     ALREADY_IN_USER(HttpStatus.BAD_REQUEST,"APPLY4001", "유저가 이미 참여해 있습니다."),
     USER_NOT_APPLY(HttpStatus.BAD_REQUEST,"APPLY4002","유저가 신청하지 않았습니다"),
     ALREADY_SUCCESS_APPLY(HttpStatus.BAD_REQUEST,"APPLY5003","이미 승인된 신청입니다."),
     STATUS_VALUE_IS_STRANGE(HttpStatus.BAD_REQUEST,"APPLY4003","Status상태가 대기중인 상태에서는 삭제할 수 없습니다."),
     NOT_HAVE_PERMISSION(HttpStatus.BAD_REQUEST,"APPLY4004","신청현황을 삭제할 권한이 없습니다."),
+    HIDE_APPLY(HttpStatus.BAD_REQUEST,"APPLY4004","신청현황이 삭제되었습니다."),
 
     // 메일 관련 에러
     INVALID_MAIL_ADDRESS(HttpStatus.BAD_REQUEST, "MAIL4000", "경상국립대학교 이메일을 입력해주세요."),
@@ -82,7 +86,32 @@ public enum ErrorStatus implements BaseErrorCode {
     CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHATROOM4001", "채팅방을 찾을 수 없습니다."),
 
     // chatRoomUser 관련 에러
-    NOT_FOUND_CHAT_ROOM_USER(HttpStatus.BAD_REQUEST, "CHATROOMUSER4001", "채팅방에 해당 이메일을 가진 유저가 없습니다.");
+    NOT_FOUND_CHAT_ROOM_USER(HttpStatus.BAD_REQUEST, "CHATROOMUSER4002", "채팅방에 해당 이메일을 가진 유저가 없습니다."),
+    NOT_FOUND_CHAT_ROOM_IN_USER(HttpStatus.BAD_REQUEST, "CHATROOMUSER4001", "채팅방을 나갔거나, 채팅방에 해당 유저가 없습니다."),
+
+
+    //memo 관련 에러
+    MEMO_ALREADY_SAVE(HttpStatus.BAD_REQUEST, "MEMO4000", "오늘 메모를 이미 작성했습니다."),
+    MEMO_NOT_FOUND(HttpStatus.BAD_REQUEST,"MEMO4001","해당 메모가 없습니다. "),
+    MEMO_ALREADY_APPLY(HttpStatus.BAD_REQUEST,"MEMO4002","이미 신청이된 메모입니다 "),
+    MUST_MEMO_POST(HttpStatus.BAD_REQUEST,"MEMO4003","메모를 작성해야 신청할 수 있습니다."),
+    ALREADY_MEMO_APPLY(HttpStatus.BAD_REQUEST,"MEMO4004","메모는 하루 1회만 신청가능합니다."),
+
+    //meeting 관련 에러
+    ALREADY_MEETING_SAVE(HttpStatus.BAD_REQUEST,"MEET4000","이미 1:1 매칭에 등록했습니다."),
+    NOT_FOUNT_MEETING(HttpStatus.BAD_REQUEST,"MEET4001","등록된 1:1 매칭을 찾을수 없습니다."),
+    ALREADY_APPLY_MEETING_DONE(HttpStatus.BAD_REQUEST,"MEET4002","이미 매칭이 성사된 글입니다."),
+    NOT_POST_MEETING(HttpStatus.BAD_REQUEST,"MEET4003","1:1 매칭에 등록을 해야 신청할 수 있습니다."),
+    NOT_HAVE_REMAINING(HttpStatus.BAD_REQUEST,"MEET4004","신청가능한 횟수가 없습니다."),
+    GENDER_SAME(HttpStatus.BAD_REQUEST,"MEET4005","같은 성별에 신청할 수 없습니다."),
+    YOU_ARE_ALREADY_APPLY_MEETING(HttpStatus.BAD_REQUEST,"MEET4006","해당글에 이미 매칭을 신청했습니다"),
+
+
+    //총학 Event 관련 에러
+    ALREADY_EVENT_APPLY(HttpStatus.BAD_REQUEST,"EVENT4000","오늘 이미 참여를 했습니다."),
+    NOT_FOUND_NICKNAME(HttpStatus.BAD_REQUEST,"EVENT4001","해당 닉네임을 찾을 수 없습니다.")
+
+    ;
 
     private final HttpStatus httpStatus;
     private final String code;

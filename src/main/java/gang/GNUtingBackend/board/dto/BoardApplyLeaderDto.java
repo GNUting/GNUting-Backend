@@ -14,6 +14,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Setter
+//apply (신청할때만 사용하는(request) dto)
 public class BoardApplyLeaderDto {
     //private Long id;
     private Board boardId;
@@ -31,13 +32,5 @@ public class BoardApplyLeaderDto {
                 .receiveShowStatus(this.receiveShowStatus)
                 .build();
     }
-    public static BoardApplyLeaderDto toDto(BoardApplyLeader boardApplyLeader){
-        return BoardApplyLeaderDto.builder()
-                .boardId(boardApplyLeader.getBoardId())
-                .leaderId(boardApplyLeader.getLeaderId())
-                .status(boardApplyLeader.getStatus())
-                .build();
-    }
-
 
 }

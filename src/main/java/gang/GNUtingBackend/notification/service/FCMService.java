@@ -44,9 +44,7 @@ import java.util.logging.Logger;
 public class FCMService {
     private final UserRepository userRepository;
     private final FCMRepository fcmRepository;
-    private final ObjectMapper objectMapper;
     private final UserNotificationService userNotificationService;
-    private final String API_URL = "https://fcm.googleapis.com/v1/projects/" + "1036172493674/messages:send";
 
 
     public boolean sendMessageTo(User findId, String title, String body,String location,Long locationId) {
@@ -97,7 +95,15 @@ public class FCMService {
             System.out.println(response.getSuccessCount() + " messages were sent successfully");
             userNotificationService.saveNotification(findId, title, body,location,locationId);
             return true;
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) { //토큰이 없을시 예외처리 필요
+            userNotificationService.saveNotification(findId, title, body,location,locationId); //fcm토큰이 null일 수 도 있다고 예상하고 처리
+            return true;
+        } catch (NullPointerException e) { //토큰이 없을시 예외처리 필요
+            userNotificationService.saveNotification(findId, title, body,location,locationId); //어떤값이 null일 수 도 있다고 예상하고 처리
+            return true;
+        }
+        catch (Exception e) {
+            System.out.println(e);
             throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
         }
     }
@@ -114,7 +120,6 @@ public class FCMService {
         if (findId.getNotificationSetting() != NotificationSetting.ENABLE) {
             return false;
         }
-
         try {
             List<String> fcms = new ArrayList<>();
             List<FCM> fcmTokens = fcmRepository.findByUserId(findId);
@@ -152,24 +157,27 @@ public class FCMService {
                                     .build()
 
                     )
-                    //.putData("location","chat")
                     .addAllTokens(fcms)
                     .build();
             BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
             System.out.println(response.getSuccessCount() + " messages were sent successfully");
-
-
-
-
             return true;
-        } catch (Exception e) {
+        }
+        catch (IllegalArgumentException e) {
+            userNotificationService.saveNotification(findId, title, body,location,locationId); //fcm토큰이 null일 수 도 있다고 예상하고 처리
+            return true;
+        } catch (NullPointerException e) {
+            userNotificationService.saveNotification(findId, title, body,location,locationId); //어떤값이 null일 수 도 있다고 예상하고 처리
+            return true;
+        }
+        catch (Exception e) {
             throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
         }
 
     }
 
     public void sendAllMessage(List<User> findId, String title, String body,String location,Long locationId) {
-        try {
+
             List<String> fcms = new ArrayList<>();
             for (User user : findId) {
                 if(user.getNotificationSetting() == NotificationSetting.ENABLE) {
@@ -180,6 +188,10 @@ public class FCMService {
                     userNotificationService.saveNotification(user, title, body,location,locationId);
                 }
             }
+        for (String fcm:fcms) {
+            System.out.println("Ddd"+fcm);
+        }
+        try {
             MulticastMessage message = MulticastMessage.builder()
                     .setNotification(Notification.builder()
                             .setTitle(title)
@@ -214,7 +226,10 @@ public class FCMService {
                     .build();
             BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
             System.out.println(response.getSuccessCount() + " messages were sent successfully");
-        } catch (Exception e) {
+        }catch (IllegalArgumentException e) {
+            System.out.println(e);
+        }
+        catch (Exception e) {
             throw new BoardHandler(ErrorStatus.FIREBASE_ERROR);
         }
 

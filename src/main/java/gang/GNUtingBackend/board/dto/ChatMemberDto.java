@@ -14,16 +14,16 @@ import java.util.List;
 @Builder
 @Setter
 public class ChatMemberDto {
-    private Board board;
+    private String title;
     private String applyUserDepartment;
     private String participantUserDepartment;
     private List<User> applyUser;
     private List<User> participantUser;
 
-    public static ChatMemberDto toDto(Board board, String applyUserDepartment, String participantUserDepartment,
+    public static ChatMemberDto toDto(String title, String applyUserDepartment, String participantUserDepartment,
                                       List<User> applyUser, List<User> participantUser) {
         return ChatMemberDto.builder()
-                .board(board)
+                .title(title)
                 .applyUserDepartment(applyUserDepartment)
                 .participantUserDepartment(participantUserDepartment)
                 .applyUser(applyUser)

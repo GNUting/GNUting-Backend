@@ -28,6 +28,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -88,6 +92,20 @@ public class BoardService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        //30분 이내로 작성했을시 에러
+        Pageable pageable = PageRequest.of(0, 1);
+        List<Board> board = boardRepository.findRecentBoardsByUser(user, pageable);
+        for (Board b:board) {
+            LocalDateTime now= LocalDateTime.now();
+            Duration duration = Duration.between(b.getCreatedDate(), now);
+            long minutes = duration.toMinutes();
+            System.out.println(minutes);
+            if(minutes<=30){
+                throw new BoardHandler(ErrorStatus.BOARD_WRITE_30MIN);
+            }
+        }
+
         boardRequestDto.setStatus(Status.OPEN); //생성이기 때문에 open으로 바로 설정
         boardRequestDto.setUserId(user);
         boardRequestDto.setGender(user.getGender());
@@ -103,11 +121,15 @@ public class BoardService {
             BoardParticipant boardParticipantSave = boardParticipantDto.toEntity();
             boardParticipantRepository.save(boardParticipantSave);
         }
+        //인원수가 1명이면 컷
+        if(boardRequestDto.getInUser().size()<=1){
+            throw new BoardHandler(ErrorStatus.BOARD_NOT_JUST_ONE);
+        }
         if (boardParticipantInWriter == false) {
             throw new BoardHandler(ErrorStatus.WRITER_NOT_IN_BOARD_PARTICIPANT);
         }
-        // return BoardRequestDto.toDto(boardSave);
-        return boardSave.getTitle() + "게시글이 작성되었습니다."; //굳이 리턴값을 줄필요 없을듯 ???
+
+        return boardSave.getTitle() + "게시글이 작성되었습니다.";
     }
 
     /**
@@ -179,14 +201,19 @@ public class BoardService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.BOARD_NOT_FOUND));
+
+        if(boardRequestDto.getInUser().size()!=board.getInUserCount()){
+            throw new BoardHandler(ErrorStatus.INCORRECT_NUMBER_OF_PEOPLE);
+        }
         if (board.getUserId().getId() == user.getId()) {
             board.updateBoard(id, boardRequestDto.getTitle(), boardRequestDto.getDetail());
-            List<BoardParticipant> boardParticipant = boardParticipantRepository.findByBoardId(board);
-            boardParticipantRepository.deleteAll(boardParticipant);
-            for (User member : boardRequestDto.getInUser()) {
-                BoardParticipantDto boardParticipantDto = BoardParticipantDto.toDto(board, member);
-                boardParticipantRepository.save(boardParticipantDto.toEntity());
-            }
+
+//            List<BoardParticipant> boardParticipant = boardParticipantRepository.findByBoardId(board);
+//            boardParticipantRepository.deleteAll(boardParticipant);
+//            for (User member : boardRequestDto.getInUser()) {
+//                BoardParticipantDto boardParticipantDto = BoardParticipantDto.toDto(board, member);
+//                boardParticipantRepository.save(boardParticipantDto.toEntity());
+//            }
             return board.getId() + "번 게시글이 수정되었습니다";
         } else {
             throw new BoardHandler(ErrorStatus.USER_NOT_FOUND_IN_BOARD);

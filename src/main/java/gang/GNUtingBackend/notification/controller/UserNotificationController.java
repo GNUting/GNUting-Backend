@@ -1,6 +1,10 @@
 package gang.GNUtingBackend.notification.controller;
 
 
+import gang.GNUtingBackend.board.dto.ApplicationStatusResponseDto;
+import gang.GNUtingBackend.board.dto.BoardApplyLeaderDto;
+import gang.GNUtingBackend.board.entity.BoardApplyLeader;
+import gang.GNUtingBackend.chat.dto.ChatNotificationResponseDto;
 import gang.GNUtingBackend.chat.service.ChatRoomUserService;
 import gang.GNUtingBackend.notification.dto.NotificationChatSettingDto;
 import gang.GNUtingBackend.notification.dto.NotificationSettingDto;
@@ -101,4 +105,23 @@ public class UserNotificationController {
         return ResponseEntity.ok()
                 .body(ApiResponse.onSuccess(notificationSettingDto));
     }
+
+    @GetMapping("/notification/application/click/{id}")
+    @Operation(summary = "알림 클릭시 신청받은현황으로 이동하는 API", description = "알림을 클릭하면 ID 신청받은현황으로 넘어갑니다.")
+    public ResponseEntity<?> notificationApplicationClickAction(@RequestHeader("Authorization") String token,@PathVariable Long id){
+        String email = tokenProvider.getUserEmail(token.substring(7));
+        ApplicationStatusResponseDto applicationStatusResponseDto =userNotificationService.notificationApplicationClickAction(email,id);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(applicationStatusResponseDto));
+    }
+
+    @GetMapping("/notification/chat/click/{id}")
+    @Operation(summary = "알림 클릭시 채팅방으로 이동하는 API", description = "알림을 클릭하면 ID 채팅방으로 넘어갑니다.")
+    public ResponseEntity<?> notifficationChatClickAction(@RequestHeader("Authorization") String token,@PathVariable Long id){
+        String email = tokenProvider.getUserEmail(token.substring(7));
+        ChatNotificationResponseDto applicationStatusResponseDto =userNotificationService.notificationChatClickAction(email,id);
+        return ResponseEntity.ok()
+                .body(ApiResponse.onSuccess(applicationStatusResponseDto));
+    }
+
 }

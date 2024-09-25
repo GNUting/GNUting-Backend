@@ -45,7 +45,7 @@ public class ChatRoomService {
     @Transactional
     public ChatRoomResponseDto createChatRoom(ChatMemberDto chatMemberDto) {
         ChatRoom chatRoom = ChatRoom.builder()
-                .title(chatMemberDto.getBoard().getTitle())
+                .title(chatMemberDto.getTitle())
                 .leaderUserDepartment(chatMemberDto.getParticipantUserDepartment())
                 .applyLeaderDepartment(chatMemberDto.getApplyUserDepartment())
                 .build();

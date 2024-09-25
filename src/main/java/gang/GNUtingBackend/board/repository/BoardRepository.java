@@ -20,4 +20,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query("SELECT b FROM Board b WHERE b.userId = :user ORDER BY CASE WHEN b.status = 'OPEN' THEN 1 ELSE 0 END DESC, b.createdDate DESC")
     List<Board> findByUserIdMyboard(User user);
+
+
+    @Query("SELECT b FROM Board b WHERE b.userId = :user ORDER BY b.createdDate DESC")
+    List<Board> findRecentBoardsByUser(User user, Pageable pageable);
+
 }
