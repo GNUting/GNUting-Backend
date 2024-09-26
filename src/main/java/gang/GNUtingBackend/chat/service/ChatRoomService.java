@@ -108,14 +108,14 @@ public class ChatRoomService {
 
                     List<ChatRoomUserDto> chatRoomUserDtos = chatRoom.getChatRoomUsers().stream()
                             .filter(chatRoomUser -> !chatRoomUser.getUser().getEmail().equals(email))
-                            .map(cruUser -> ChatRoomUserDto.builder()
-                                    .id(cruUser.getId())
-                                    .userId(cruUser.getUser().getId())
-                                    .chatRoomId(chatRoom.getId())
-                                    .nickname(cruUser.getUser().getNickname())
-                                    .profileImage(cruUser.getUser().getProfileImage())
-                                    .department(cruUser.getUser().getDepartment())
-                                    .studentId(cruUser.getUser().getStudentId())
+                            .map(chatRoomUser -> ChatRoomUserDto.builder()
+                                    .id(chatRoomUser.getId())
+                                    .userId(chatRoomUser.getUser().getId())
+                                    .chatRoomId(chatRoomUser.getId())
+                                    .nickname(chatRoomUser.getUser().getNickname())
+                                    .profileImage(chatRoomUser.getUser().getProfileImage())
+                                    .department(chatRoomUser.getUser().getDepartment())
+                                    .studentId(chatRoomUser.getUser().getStudentId())
                                     .build())
                             .collect(Collectors.toList());
 
