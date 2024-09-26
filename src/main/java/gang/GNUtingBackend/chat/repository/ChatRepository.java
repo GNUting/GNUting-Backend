@@ -30,5 +30,8 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
      * @return
      */
     @Query("select c from Chat c where c.chatRoom = :chatRoom and c.messageType = :messageType order by c.createDate desc")
-    Optional<Chat> findTopByChatRoomOrderByCreateDateDesc(ChatRoom chatRoom, MessageType messageType);
+    Optional<Chat> findFirstByChatRoomOrderByCreateDateDesc(ChatRoom chatRoom, MessageType messageType);
+
+    @Query("select c from Chat c where c.chatRoom = :chatRoom and c.messageType = :messageType and c.createDate = :createDate order by c.createDate desc")
+    Optional<Chat> findByTopChat(ChatRoom chatRoom, MessageType messageType,LocalDateTime createDate);
 }
