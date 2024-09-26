@@ -3,6 +3,7 @@ package gang.GNUtingBackend.chat.repository;
 import gang.GNUtingBackend.chat.domain.Chat;
 import gang.GNUtingBackend.chat.domain.ChatRoom;
 import gang.GNUtingBackend.chat.domain.enums.MessageType;
+import io.lettuce.core.dynamic.annotation.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -33,5 +34,5 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
     Optional<Chat> findFirstByChatRoomOrderByCreateDateDesc(ChatRoom chatRoom, MessageType messageType);
 
     @Query("select c from Chat c where c.chatRoom = :chatRoom and c.messageType = :messageType and c.createDate = :createDate order by c.createDate desc")
-    Optional<Chat> findByTopChat(ChatRoom chatRoom, MessageType messageType,LocalDateTime createDate);
+    Optional<Chat> findByTopChat(ChatRoom chatRoom, MessageType messageType, LocalDateTime createDate);
 }

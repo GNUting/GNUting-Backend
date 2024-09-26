@@ -56,7 +56,7 @@ public class ChatService {
 
         LocalDateTime lastMessageTime = chatRepository.findLastMessageTimeByChatRoomId(chatRoom.getId()); //재욱추가
         //findFirstByChatRoomOrderByCreateDateDesc
-        Optional<Chat> lastChat = chatRepository.findByTopChat(chatRoom, MessageType.CHAT,lastMessageTime); //재욱변경
+        Optional<Chat> lastChat = chatRepository.findByTopChat(chatRoom, MessageType.CHAT, lastMessageTime); //재욱변경
 
         LocalDate lastMessageDate = lastChat.isPresent() ? lastChat.get().getCreateDate().toLocalDate() : null;
 

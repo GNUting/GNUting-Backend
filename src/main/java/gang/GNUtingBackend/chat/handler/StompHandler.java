@@ -55,11 +55,10 @@ public class StompHandler implements ChannelInterceptor {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        log.info("CONNECT - userEmail: {} | nickName: {} | profileImage: {}", user.getEmail(), user.getNickname(), user.getProfileImage());
+        log.info("CONNECT - userEmail: {} | nickName: {}", user.getEmail(), user.getNickname());
 
         accessor.getSessionAttributes().put("userEmail", user.getEmail());
         accessor.getSessionAttributes().put("userNickname", user.getNickname());
-        accessor.getSessionAttributes().put("profileImageUrl", user.getProfileImage());
     }
 
     private void handleSubscribe(StompHeaderAccessor accessor) {
