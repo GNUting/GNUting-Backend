@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MemoApplyRemainingRepository extends JpaRepository<MemoApplyRemaining,Long> {
 
     MemoApplyRemaining findByUserId(User user);
+
+    void deleteByUserId(User user);
 }

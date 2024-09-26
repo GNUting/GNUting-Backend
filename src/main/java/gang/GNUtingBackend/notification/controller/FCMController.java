@@ -21,17 +21,18 @@ public class FCMController {
     private final FCMService fcmNotificationService;
 
 
-//    @PostMapping("/fcm")
-//    public ResponseEntity pushMessage(@RequestBody TestDto testDto) throws IOException {
-//        System.out.println(testDto.getTargetToken() + " "
-//                +testDto.getTitle() + " " + testDto.getBody());
-//
-//        fcmNotificationService.sendMessageTo(
-//                testDto.getTargetToken(),
-//                testDto.getTitle(),
-//                testDto.getBody());
-//        return ResponseEntity.ok().build();
-//    }
+    @PostMapping("/fcm")
+    public ResponseEntity pushMessage(@RequestBody TestDto testDto) throws IOException {
+        System.out.println(testDto.getTargetToken() + " "
+                +testDto.getTitle() + " " + testDto.getBody());
+
+        fcmNotificationService.sendMessageTo(
+                testDto.getTargetToken(),
+                testDto.getTitle(),
+                testDto.getBody(),
+                "chat",2L);
+        return ResponseEntity.ok().build();
+    }
 
 
     @PostMapping("/savetoken")

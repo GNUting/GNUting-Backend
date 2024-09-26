@@ -91,7 +91,7 @@ public class FCMService {
                     )
                     .addAllTokens(fcms)
                     .build();
-            BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
+            BatchResponse response = FirebaseMessaging.getInstance().sendEachForMulticast(message);
             System.out.println(response.getSuccessCount() + " messages were sent successfully");
             userNotificationService.saveNotification(findId, title, body,location,locationId);
             return true;
@@ -159,7 +159,7 @@ public class FCMService {
                     )
                     .addAllTokens(fcms)
                     .build();
-            BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
+            BatchResponse response = FirebaseMessaging.getInstance().sendEachForMulticast(message);
             System.out.println(response.getSuccessCount() + " messages were sent successfully");
             return true;
         }
@@ -224,7 +224,7 @@ public class FCMService {
                     )
                     .addAllTokens(fcms)
                     .build();
-            BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
+            BatchResponse response = FirebaseMessaging.getInstance().sendEachForMulticast(message);
             System.out.println(response.getSuccessCount() + " messages were sent successfully");
         }catch (IllegalArgumentException e) {
             System.out.println(e);
