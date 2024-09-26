@@ -5,6 +5,7 @@ import gang.GNUtingBackend.chat.domain.ChatRoom;
 import gang.GNUtingBackend.chat.domain.enums.MessageType;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -29,5 +30,5 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
      * @return
      */
     @Query("select c from Chat c where c.chatRoom = :chatRoom and c.messageType = :messageType order by c.createDate desc")
-    Chat findTopByChatRoomOrderByCreateDateDesc(ChatRoom chatRoom, MessageType messageType);
+    Optional<Chat> findTopByChatRoomOrderByCreateDateDesc(ChatRoom chatRoom, MessageType messageType);
 }

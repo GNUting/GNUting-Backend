@@ -121,7 +121,9 @@ public class ChatRoomService {
 
                     boolean hasNewMessage = chatService.hasNewMessages(email, chatRoom.getId());
                     LocalDateTime lastMessageTime = chatRepository.findLastMessageTimeByChatRoomId(chatRoom.getId());
-                    String lastMessage = chatRepository.findTopByChatRoomOrderByCreateDateDesc(chatRoom, MessageType.CHAT).getMessage();
+                    String lastMessage = chatRepository.findTopByChatRoomOrderByCreateDateDesc(chatRoom, MessageType.CHAT)
+                            .map(Chat::getMessage)
+                            .orElse("");
 
                     return ChatRoomResponseDto.builder()
                             .id(chatRoom.getId())
