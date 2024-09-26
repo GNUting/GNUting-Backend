@@ -54,7 +54,7 @@ public class ChatService {
 
         LocalDate today = LocalDate.now();
 
-        Optional<Chat> lastChat = chatRepository.findTopByChatRoomOrderByCreateDateDesc(chatRoom, MessageType.CHAT);
+        Optional<Chat> lastChat = chatRepository.findFirstByChatRoomOrderByCreateDateDesc(chatRoom, MessageType.CHAT);
         LocalDate lastMessageDate = lastChat.isPresent() ? lastChat.get().getCreateDate().toLocalDate() : null;
 
 
@@ -145,7 +145,7 @@ public class ChatService {
 
                     boolean hasNewMessage = hasNewMessages(email, chatRoom.getId());
                     LocalDateTime lastMessageTime = chatRepository.findLastMessageTimeByChatRoomId(chatRoom.getId());
-                    String lastMessage = chatRepository.findTopByChatRoomOrderByCreateDateDesc(chatRoom, MessageType.CHAT)
+                    String lastMessage = chatRepository.findFirstByChatRoomOrderByCreateDateDesc(chatRoom, MessageType.CHAT)
                             .map(Chat::getMessage)
                             .orElse("");
 
