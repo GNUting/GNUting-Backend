@@ -49,6 +49,10 @@ public class MemoService {
         if(memoRepository.findByUserIdAndStatus(user)!=null){ //open 인게 없을떄
             throw new MemoHandler(ErrorStatus.MEMO_ALREADY_SAVE);
         }
+        MemoApplyRemaining multiClick=memoApplyRemainingRepository.findByUserId(user);
+        if(multiClick!=null){
+            memoApplyRemainingRepository.deleteByUserId(user);
+        }
         Memo memo=MemoRequestDto.toEntity(user,memoRequestDto);
         memoRepository.save(memo);
         MemoApplyRemaining memoApplyRemaining=MemoApplyRemaining.builder()
@@ -111,7 +115,7 @@ public class MemoService {
         notificationUser.add(memoUser);
         userDum.add(user);
         memoUserDum.add(memoUser);
-        ChatMemberDto chatMemberDto = ChatMemberDto.toDto(memo.getContent(), user.getDepartment(), memo.getUserId().getDepartment(), userDum,
+        ChatMemberDto chatMemberDto = ChatMemberDto.toDto("메모팅", user.getDepartment(), memo.getUserId().getDepartment(), userDum,
                 memoUserDum);
 
         ChatRoomResponseDto chatRoomResponseDto=chatRoomService.createChatRoom(chatMemberDto);

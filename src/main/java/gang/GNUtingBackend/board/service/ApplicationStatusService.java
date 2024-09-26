@@ -263,7 +263,7 @@ public class ApplicationStatusService {
                 .collect(Collectors.toList());
         String applyUserDepartment = boardApplyLeader.getLeaderId().getDepartment();
         String participantUserDepartment = boardApplyLeader.getBoardId().getUserId().getDepartment();
-        ChatMemberDto chatMemberDto = ChatMemberDto.toDto(boardApplyLeader.getBoardId().getTitle(), applyUserDepartment, participantUserDepartment, applyUserList,
+        ChatMemberDto chatMemberDto = ChatMemberDto.toDto(applyUserList.size()+" : "+participantUserList.size(), applyUserDepartment, participantUserDepartment, applyUserList,
                 participantUserList);
 
         ChatRoomResponseDto chatRoomResponseDto=chatRoomService.createChatRoom(chatMemberDto);
