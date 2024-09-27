@@ -16,6 +16,7 @@ import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.entity.enums.NotificationSetting;
 import gang.GNUtingBackend.notification.service.FCMService;
 import gang.GNUtingBackend.response.code.status.ErrorStatus;
+import gang.GNUtingBackend.user.auth.PrincipalDetails;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.repository.UserRepository;
 
@@ -30,6 +31,9 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,7 +120,16 @@ public class ChatService {
 
         // 채팅방 마지막 메세지를 실시간으로 업데이트 하기 위한 로직
         // 메시지를 보낸 사람의 채팅방 목록이 보여지는 오류 수정
+
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String userEmail = "";
+//        if (authentication.getPrincipal() instanceof PrincipalDetails) {
+//            PrincipalDetails userDetails = (PrincipalDetails) authentication.getPrincipal();
+//            userEmail = userDetails.getEmail();
+//        }
+
         messagingTemplate.convertAndSendToUser(email, "/sub/chatRoom/update", chatRoomsByUserEmail);
+//        messagingTemplate.convertAndSendToUser(email, "/sub/chatRoom/update", chatRoomsByUserEmail);
 
         return chatResponse;
     }
