@@ -115,7 +115,8 @@ public class ChatService {
         List<ChatRoomResponseDto> chatRoomsByUserEmail = findChatRoomsByUserEmail(user.getEmail());
 
         // 채팅방 마지막 메세지를 실시간으로 업데이트 하기 위한 로직
-        messagingTemplate.convertAndSend("/sub/chatRoom/update", chatRoomsByUserEmail);
+        // 메시지를 보낸 사람의 채팅방 목록이 보여지는 오류 수정
+        messagingTemplate.convertAndSendToUser(email, "/sub/chatRoom/update", chatRoomsByUserEmail);
 
         return chatResponse;
     }
