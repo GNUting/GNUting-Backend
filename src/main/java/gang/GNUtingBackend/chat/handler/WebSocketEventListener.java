@@ -47,47 +47,23 @@ public class WebSocketEventListener {
         }
     }
 
+
+
     @Transactional
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-        try {
-            String userEmail = safelyGetValue(accessor, "userEmail", String.class);
-            String userNickname = safelyGetValue(accessor, "userNickname", String.class);
-            Long chatRoomId = null; // Initialize to null
+        String userEmail = safelyGetValue(accessor, "userEmail", String.class);
+        String userNickname = safelyGetValue(accessor, "userNickname", String.class);
+        Long chatRoomId = safelyGetValue(accessor, "chatRoomId", Long.class);
 
-            if (accessor.getSessionAttributes().containsKey("chatRoomId")) {
-                chatRoomId = safelyGetValue(accessor, "chatRoomId", Long.class);
-            }
+        ChatRoomUser chatRoomUser = chatRoomUserRepository.findByChatRoomIdAndUserEmail(chatRoomId, userEmail)
+                .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER));
+        chatRoomUser.setLastDisconnectedTime(LocalDateTime.now());
+        chatRoomUserRepository.save(chatRoomUser);
 
-            if (chatRoomId != null) {
-                ChatRoomUser chatRoomUser = chatRoomUserRepository.findByChatRoomIdAndUserEmail(chatRoomId, userEmail)
-                        .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER));
-                chatRoomUser.setLastDisconnectedTime(LocalDateTime.now());
-                chatRoomUserRepository.save(chatRoomUser);
-
-                logger.info("{}({})님이 ChatRoomId : {}를 떠났습니다.", userNickname, userEmail, chatRoomId);
-            }
-        } catch (Exception e) {
-            logger.error("연결 해제 처리 중 예외 발생: {}", e.getMessage(), e);
-        }
+        logger.info("{}({})님이 ChatRoomId : {}를 떠났습니다.", userNickname, userEmail, chatRoomId);
     }
-
-//    @Transactional
-//    @EventListener
-//    public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-//        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-//        String userEmail = safelyGetValue(accessor, "userEmail", String.class);
-//        String userNickname = safelyGetValue(accessor, "userNickname", String.class);
-//        Long chatRoomId = safelyGetValue(accessor, "chatRoomId", Long.class);
-//
-//        ChatRoomUser chatRoomUser = chatRoomUserRepository.findByChatRoomIdAndUserEmail(chatRoomId, userEmail)
-//                .orElseThrow(() -> new ChatRoomHandler(ErrorStatus.NOT_FOUND_CHAT_ROOM_USER));
-//        chatRoomUser.setLastDisconnectedTime(LocalDateTime.now());
-//        chatRoomUserRepository.save(chatRoomUser);
-//
-//        logger.info("{}({})님이 ChatRoomId : {}를 떠났습니다.", userNickname, userEmail, chatRoomId);
-//    }
 
     private <T> T safelyGetValue(StompHeaderAccessor accessor, String key, Class<T> type) {
         Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
