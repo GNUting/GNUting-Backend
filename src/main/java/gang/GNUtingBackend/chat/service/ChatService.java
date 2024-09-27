@@ -116,16 +116,24 @@ public class ChatService {
 
         notifyOtherUsers(chatRoom, chat, user);
 
-        List<ChatRoomResponseDto> chatRoomsByUserEmail = findChatRoomsByUserEmail(user.getEmail());
+//        List<ChatRoomResponseDto> chatRoomsByUserEmail = findChatRoomsByUserEmail(user.getEmail());
 
         // 채팅방 마지막 메세지를 실시간으로 업데이트 하기 위한 로직
         // 메시지를 보낸 사람의 채팅방 목록이 보여지는 오류 수정
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = ((UserDetails)authentication.getPrincipal()).getUsername();
-        messagingTemplate.convertAndSendToUser(userEmail, "/sub/chatRoom/update", chatRoomsByUserEmail);
-//        messagingTemplate.convertAndSendToUser(email, "/sub/chatRoom/update", chatRoomsByUserEmail);
+
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String username = authentication.getName();
+//        messagingTemplate.convertAndSend("/sub/chatRoom/update", chatRoomsByUserEmail);
+        chatRoom.getChatRoomUsers().forEach(chatRoomUser -> {
+            updateChatRoomLists(chatRoomUser.getUser().getEmail());
+        });
 
         return chatResponse;
+    }
+
+    public void updateChatRoomLists(String email) {
+        List<ChatRoomResponseDto> chatRoomsByUserEmail = findChatRoomsByUserEmail(email);
+        messagingTemplate.convertAndSendToUser(email, "/sub/chatRoom/update", chatRoomsByUserEmail);
     }
 
     @Transactional(readOnly = true)
