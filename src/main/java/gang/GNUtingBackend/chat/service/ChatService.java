@@ -120,7 +120,7 @@ public class ChatService {
         String username = ((UserDetails)authentication.getPrincipal()).getUsername();
         List<ChatRoomResponseDto> chatRoomsByUserEmail = findChatRoomsByUserEmail(username);
 
-        messagingTemplate.convertAndSendToUser(username, "/sub/chatRoom/update", chatRoomsByUserEmail);
+        messagingTemplate.convertAndSend("/sub/chatRoom/update", chatRoomsByUserEmail);
 
         return chatResponse;
     }
