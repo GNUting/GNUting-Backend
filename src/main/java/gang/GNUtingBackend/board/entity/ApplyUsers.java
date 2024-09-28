@@ -28,4 +28,8 @@ public class ApplyUsers {
     @JoinColumn(name = "user_id")
     private User userId;
 
+    public void setNullUserId(){
+        this.userId=null;
+    }
+
 }

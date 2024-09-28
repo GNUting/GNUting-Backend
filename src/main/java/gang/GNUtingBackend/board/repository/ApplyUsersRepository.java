@@ -10,7 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ApplyUsersRepository extends JpaRepository<ApplyUsers, Long> {
+    List<ApplyUsers> findByUserId(User user);
 
 
-   // List<ApplyUsers> findByBoardApplyLeaderId(List<BoardApplyLeader> boardApplyUsers);
+    // List<ApplyUsers> findByBoardApplyLeaderId(List<BoardApplyLeader> boardApplyUsers);
 }

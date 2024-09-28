@@ -1,6 +1,14 @@
 package gang.GNUtingBackend.user.service;
 
+import gang.GNUtingBackend.board.entity.ApplyUsers;
+import gang.GNUtingBackend.board.entity.Board;
+import gang.GNUtingBackend.board.entity.BoardApplyLeader;
+import gang.GNUtingBackend.board.entity.BoardParticipant;
+import gang.GNUtingBackend.board.entity.enums.ApplyStatus;
 import gang.GNUtingBackend.board.repository.ApplyUsersRepository;
+import gang.GNUtingBackend.board.repository.BoardApplyLeaderRepository;
+import gang.GNUtingBackend.board.repository.BoardParticipantRepository;
+import gang.GNUtingBackend.board.repository.BoardRepository;
 import gang.GNUtingBackend.exception.handler.TokenHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.service.FCMService;
@@ -15,6 +23,8 @@ import gang.GNUtingBackend.user.dto.token.TokenResponseDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
 import gang.GNUtingBackend.user.token.RefreshTokenService;
 import gang.GNUtingBackend.user.token.TokenProvider;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import jdk.jshell.spi.ExecutionControl.UserException;
@@ -32,6 +42,10 @@ public class UserService {
     private final TokenProvider tokenProvider;
     private final RefreshTokenService refreshTokenService;
     private final FCMService fcmService;
+    private final BoardRepository boardRepository;
+    private final BoardApplyLeaderRepository boardApplyLeaderRepository;
+    private final BoardParticipantRepository boardParticipantRepository;
+    private final ApplyUsersRepository applyUsersRepository;
     private final Pattern PASSWORD_PATTERN = Pattern.compile(
             "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,15}$");
 
@@ -256,10 +270,59 @@ public class UserService {
     @Transactional
     public void deleteUser(String email) {
         // 사용자의 모든 리프레시 토큰 삭제
-        refreshTokenService.deleteUserRefreshTokens(email);
+//        refreshTokenService.deleteUserRefreshTokens(email);
         // 사용자 정보 삭제
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        //Board 상태 close 및 userId null 세팅
+        List<Board> boardList=boardRepository.findByUserId(user);
+
+        boardList.forEach(board -> {
+            //내글에 신청한 사람들 모두 거절
+            List<BoardApplyLeader> boardApplyLeaderList=board.getBoardApplyLeader();
+            boardApplyLeaderList.forEach(boardApplyLeader -> {
+                if(boardApplyLeader.getStatus()== ApplyStatus.대기중){
+                    boardApplyLeader.setStatus(ApplyStatus.거절);
+                    boardApplyLeaderRepository.save(boardApplyLeader);
+                    fcmService.sendMessageTo(boardApplyLeader.getLeaderId(), "과팅신청이 거절되었습니다", user.getDepartment() + " " + user.getNickname() + "님이 과팅을 거절했습니다.","cancel",boardApplyLeader.getId());
+                }
+            });
+            board.closeState();
+            board.setNullUserId();
+            boardRepository.save(board);
+
+        });
+
+        //내가 신청한 목록 취소, 승인 및 거절일땐 null값으로 표시
+        List<BoardApplyLeader> boardApplyLeaderListMyApply=boardApplyLeaderRepository.findByLeaderId(user);
+        for (BoardApplyLeader boardApplyLeader:boardApplyLeaderListMyApply) {
+            System.out.println(boardApplyLeader.getId());
+        }
+        boardApplyLeaderListMyApply.forEach(boardApplyLeader -> {
+            if(boardApplyLeader.getStatus()==ApplyStatus.대기중){
+                boardApplyLeaderRepository.delete(boardApplyLeader);
+                fcmService.sendMessageTo(boardApplyLeader.getBoardId().getUserId(), "과팅신청자가 과팅을 취소했습니다.", user.getDepartment() + user.getNickname() + "님이 과팅을 취소했습니다.","cancel",boardApplyLeader.getId());
+            }else {
+                boardApplyLeader.setNullLeaderId();
+                boardApplyLeaderRepository.save(boardApplyLeader);
+            }
+        });
+
+        //과팅에 참가중인 게시물에 null로 표시
+        List<BoardParticipant> boardParticipantList=boardParticipantRepository.findByUserId(user);
+        boardParticipantList.forEach(boardParticipant -> {
+            boardParticipant.setNullUserId();
+            boardParticipantRepository.save(boardParticipant);
+        });
+
+        //과팅 신청한곳에 null로 표시
+        List<ApplyUsers> applyUsersList=applyUsersRepository.findByUserId(user);
+        applyUsersList.forEach(applyUsers -> {
+            applyUsers.setNullUserId();
+            applyUsersRepository.save(applyUsers);
+        });
+
 
         userRepository.delete(user);
     }

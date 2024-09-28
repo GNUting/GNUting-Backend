@@ -38,4 +38,6 @@ public interface BoardApplyLeaderRepository extends JpaRepository<BoardApplyLead
 
     @Query(" SELECT bal FROM BoardApplyLeader bal WHERE bal.boardId= :boardId " + "AND bal.status ='대기중'")
     List<BoardApplyLeader> findByBoardIdAndWaiting(Board boardId);
+
+    List<BoardApplyLeader> findByLeaderId(User user);
 }

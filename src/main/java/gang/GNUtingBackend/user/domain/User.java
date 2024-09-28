@@ -116,20 +116,21 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserNotification> userNotifications;
 
-    @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "userId")
+//            ,cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Board> boards;
 
     @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<FCM> fcms;
 
-    @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<BoardParticipant> boardParticipants;
+//    @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private List<BoardParticipant> boardParticipants;
 
-    @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<ApplyUsers> applyUsersList;
+//    @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private List<ApplyUsers> applyUsersList;
 
-    @OneToMany(mappedBy = "leaderId",cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<BoardApplyLeader> boardApplyLeaders;
+//    @OneToMany(mappedBy = "leaderId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private List<BoardApplyLeader> boardApplyLeaders;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ChatRoomUser> chatRoomUsers;

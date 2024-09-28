@@ -32,4 +32,8 @@ public class BoardParticipant {
         this.id=id;
         this.userId=userId;
     }
+    public void setNullUserId(){
+        this.userId=null;
+    }
+
 }

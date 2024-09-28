@@ -3,13 +3,14 @@ package gang.GNUtingBackend.user.dto;
 import gang.GNUtingBackend.user.domain.User;
 import gang.GNUtingBackend.user.domain.enums.Gender;
 import gang.GNUtingBackend.user.domain.enums.UserRole;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
+import org.checkerframework.checker.units.qual.A;
 
 import java.time.LocalDate;
 
 @Getter
 @Builder
+
 public class UserSearchResponseDto {
 
     private final Long id;
@@ -25,6 +26,10 @@ public class UserSearchResponseDto {
 
     // 한줄소개 추가
     public static UserSearchResponseDto toDto(User user){
+
+        if (user == null) {
+            return new UserSearchResponseDto(null, "null", null, "null", "null", "null", "null", "null", null, "null");
+        }
         return UserSearchResponseDto.builder()
                 .id(user.getId())
                 .name(user.getName())

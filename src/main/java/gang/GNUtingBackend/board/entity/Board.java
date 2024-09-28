@@ -50,10 +50,12 @@ public class Board extends BaseTime {
     @Column
     private int inUserCount;
 
-    @OneToMany(mappedBy = "boardId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "boardId")
+//    ,cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BoardApplyLeader> boardApplyLeader;
 
-    @OneToMany(mappedBy = "boardId",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "boardId")
+//    ,cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<BoardParticipant> boardParticipant;
 
     public void updateBoard(Long id,String title,String detail){
@@ -64,6 +66,10 @@ public class Board extends BaseTime {
 
     public void closeState(){
         this.status=Status.CLOSE;
+    }
+
+    public void setNullUserId(){
+        this.userId=null;
     }
 
 }

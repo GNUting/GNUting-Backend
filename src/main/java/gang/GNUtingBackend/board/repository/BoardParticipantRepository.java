@@ -11,4 +11,6 @@ import java.util.List;
 public interface BoardParticipantRepository extends JpaRepository<BoardParticipant, Long> {
     void deleteByBoardId(Board boardDelete);
     List<BoardParticipant> findByBoardId(Board id);
+
+    List<BoardParticipant> findByUserId(User user);
 }

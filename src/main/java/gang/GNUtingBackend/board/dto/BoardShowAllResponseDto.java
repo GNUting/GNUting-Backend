@@ -5,6 +5,8 @@ import gang.GNUtingBackend.board.entity.enums.Status;
 import gang.GNUtingBackend.user.domain.enums.Gender;
 import java.time.Duration;
 import java.time.LocalDateTime;
+
+import gang.GNUtingBackend.user.dto.UserSearchResponseDto;
 import lombok.*;
 
 @Getter
@@ -28,7 +30,11 @@ public class BoardShowAllResponseDto {
 
     public static BoardShowAllResponseDto toDto(Board board) {
 
+
         String elapsedTime = getElapsedTime(board.getCreatedDate());
+        if (board.getUserId() == null) {
+            return new BoardShowAllResponseDto(board.getId(),board.getTitle(),board.getTitle(),board.getStatus(),board.getGender(),null,board.getInUserCount(),elapsedTime);
+        }
 
         return BoardShowAllResponseDto.builder()
                 .id(board.getId())
