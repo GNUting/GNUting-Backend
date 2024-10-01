@@ -54,7 +54,6 @@ public class SecurityConfig {
                 .antMatchers("/pub/**").permitAll()
                 .antMatchers("/sub/**").permitAll()
                 .antMatchers("/chatRoom").permitAll()
-                .antMatchers("/user/**").permitAll()
                 .anyRequest().permitAll()
 
                 .and()

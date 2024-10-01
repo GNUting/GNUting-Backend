@@ -84,29 +84,29 @@ public class StompHandler implements ChannelInterceptor {
         return jwtToken.substring(7);
     }
 
-//    private Long parseChatRoomIdFromPath(StompHeaderAccessor accessor) {
-//        String destination = accessor.getDestination();
-//        if (destination == null) {
-//            throw new WebSocketHandler(ErrorStatus.INVALID_DESTINATION);
-//        }
-//        return Long.parseLong(destination.split("/")[3]); // Assuming the destination format is "/sub/chatRoom/{id}"
-//    }
-
     private Long parseChatRoomIdFromPath(StompHeaderAccessor accessor) {
         String destination = accessor.getDestination();
         if (destination == null) {
             throw new WebSocketHandler(ErrorStatus.INVALID_DESTINATION);
         }
-        // 경로가 예상보다 길 경우, 마지막 세그먼트를 채팅방 ID로 추정
-        String[] pathSegments = destination.split("/");
-        if (pathSegments.length < 2) {
-            throw new WebSocketHandler(ErrorStatus.DESTINATION_PATH_IS_SHORT);
-        }
-        // 마지막 세그먼트를 ID로 추출
-        try {
-            return Long.parseLong(pathSegments[pathSegments.length - 1]);
-        } catch (NumberFormatException e) {
-            throw new WebSocketHandler(ErrorStatus.LAST_SEGMENT_IS_NOT_CHATROOMID);
-        }
+        return Long.parseLong(destination.split("/")[3]); // Assuming the destination format is "/sub/chatRoom/{id}"
     }
+
+//    private Long parseChatRoomIdFromPath(StompHeaderAccessor accessor) {
+//        String destination = accessor.getDestination();
+//        if (destination == null) {
+//            throw new WebSocketHandler(ErrorStatus.INVALID_DESTINATION);
+//        }
+//        // 경로가 예상보다 길 경우, 마지막 세그먼트를 채팅방 ID로 추정
+//        String[] pathSegments = destination.split("/");
+//        if (pathSegments.length < 2) {
+//            throw new WebSocketHandler(ErrorStatus.DESTINATION_PATH_IS_SHORT);
+//        }
+//        // 마지막 세그먼트를 ID로 추출
+//        try {
+//            return Long.parseLong(pathSegments[pathSegments.length - 1]);
+//        } catch (NumberFormatException e) {
+//            throw new WebSocketHandler(ErrorStatus.LAST_SEGMENT_IS_NOT_CHATROOMID);
+//        }
+//    }
 }

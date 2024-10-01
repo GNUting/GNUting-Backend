@@ -116,12 +116,6 @@ public class ChatService {
 
         notifyOtherUsers(chatRoom, chat, user);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = ((UserDetails)authentication.getPrincipal()).getUsername();
-        List<ChatRoomResponseDto> chatRoomsByUserEmail = findChatRoomsByUserEmail(username);
-
-        messagingTemplate.convertAndSendToUser(username, "/sub/chatRoom/update", chatRoomsByUserEmail);
-
         return chatResponse;
     }
 
