@@ -115,7 +115,7 @@ public class ChatRoomService {
                                     .nickname(chatRoomUser.getUser().getNickname())
                                     .profileImage(chatRoomUser.getUser().getProfileImage())
                                     .department(chatRoomUser.getUser().getDepartment())
-                                    .studentId(chatRoomUser.getUser().getStudentId())
+                                    .studentId(chatRoomUser.getUser().getStudentId()+"학번")
                                     .build())
                             .collect(Collectors.toList());
 
