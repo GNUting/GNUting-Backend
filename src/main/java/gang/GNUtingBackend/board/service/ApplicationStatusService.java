@@ -89,16 +89,9 @@ public class ApplicationStatusService {
                         .map(UserSearchResponseDto::toDto)
                         .collect(Collectors.toList());
 
-                String boardApplyLeaderDepartment="";
-                if(boardApplyLeader.getLeaderId()==null){
-                    boardApplyLeaderDepartment="null";
-                }else {
-                    boardApplyLeaderDepartment=boardApplyLeader.getLeaderId().getDepartment();
-                }
-
                 ApplicationStatusResponseDto savedResponseDto =
                         ApplicationStatusResponseDto.toDto(boardApplyLeader.getId(), participantsUsers, applyUsers,
-                                boardApplyLeaderDepartment, participantDepartment,
+                                boardApplyLeader.getLeaderId().getDepartment(), participantDepartment,
                                 boardApplyLeader.getStatus(), boardApplyLeader.getCreatedDate(), boardApplyLeader.getModifiedDate());
                 allUsersByLeader.add(savedResponseDto);
             }
@@ -155,17 +148,11 @@ public class ApplicationStatusService {
             List<UserSearchResponseDto> applyUsers = userList.stream()
                     .map(UserSearchResponseDto::toDto)
                     .collect(Collectors.toList());
-            String boardDepartment="";
-            if(boardApplyLeaders.getBoardId().getUserId()==null){
-                boardDepartment="null";
-            }else {
-                boardDepartment=boardApplyLeaders.getBoardId().getUserId().getDepartment();
-            }
             ApplicationStatusResponseDto savedResponseDto =
                     ApplicationStatusResponseDto.toDto
                             (boardApplyLeaders.getId(), participantsUsers, applyUsers,
                                     boardApplyLeaders.getLeaderId().getDepartment(),
-                                    boardDepartment,
+                                    boardApplyLeaders.getBoardId().getUserId().getDepartment(),
                                     boardApplyLeaders.getStatus(), boardApplyLeaders.getCreatedDate(), boardApplyLeaders.getModifiedDate());
             allUsersByLeader.add(savedResponseDto);
         }

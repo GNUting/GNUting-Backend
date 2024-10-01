@@ -157,21 +157,6 @@ public class UserNotificationService {
 
         if(boardApplyLeader.getLeaderId()==user||boardApplyLeader.getBoardId().getUserId()==user) {
 
-            String boardDepartment="null";
-            String leaderDepartment= "null";
-            if(boardApplyLeader.getBoardId().getUserId()==null){
-                boardDepartment="null";
-            }else {
-                boardDepartment=boardApplyLeader.getBoardId().getUserId().getDepartment();
-            }
-
-            if(boardApplyLeader.getLeaderId().getDepartment()==null){
-                leaderDepartment="null";
-            }else {
-                leaderDepartment=boardApplyLeader.getLeaderId().getDepartment();
-            }
-
-
             return ApplicationStatusResponseDto.toDto(boardApplyLeader.getId(),
                     boardApplyLeader.getBoardId().getBoardParticipant().stream()
                             .map(BoardParticipant::getUserId)
@@ -181,8 +166,8 @@ public class UserNotificationService {
                             .map(ApplyUsers::getUserId)
                             .map(UserSearchResponseDto::toDto)
                             .collect(Collectors.toList()),
-                    boardDepartment,
-                    leaderDepartment,
+                    boardApplyLeader.getBoardId().getUserId().getDepartment(),
+                    boardApplyLeader.getLeaderId().getDepartment(),
                     boardApplyLeader.getStatus(), boardApplyLeader.getCreatedDate(), boardApplyLeader.getModifiedDate());
         }else{
             throw new UserHandler(ErrorStatus.USER_NOT_AUTHORITY);

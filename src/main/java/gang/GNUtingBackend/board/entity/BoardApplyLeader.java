@@ -48,8 +48,4 @@ public class BoardApplyLeader extends BaseTime {
         this.status=applyStatus;
     }
 
-    public void setNullLeaderId(){
-        this.leaderId=null;
-    }
-
 }
