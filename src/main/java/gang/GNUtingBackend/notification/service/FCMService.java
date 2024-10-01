@@ -164,10 +164,10 @@ public class FCMService {
             return true;
         }
         catch (IllegalArgumentException e) {
-            userNotificationService.saveNotification(findId, title, body,location,locationId); //fcm토큰이 null일 수 도 있다고 예상하고 처리
+//            userNotificationService.saveNotification(findId, title, body,location,locationId); //fcm토큰이 null일 수 도 있다고 예상하고 처리
             return true;
         } catch (NullPointerException e) {
-            userNotificationService.saveNotification(findId, title, body,location,locationId); //어떤값이 null일 수 도 있다고 예상하고 처리
+//            userNotificationService.saveNotification(findId, title, body,location,locationId); //어떤값이 null일 수 도 있다고 예상하고 처리
             return true;
         }
         catch (Exception e) {
