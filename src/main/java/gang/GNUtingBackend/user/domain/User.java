@@ -113,6 +113,8 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private NotificationSetting notificationSetting;
 
+    
+
     @OneToMany(mappedBy = "userId",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserNotification> userNotifications;
 
