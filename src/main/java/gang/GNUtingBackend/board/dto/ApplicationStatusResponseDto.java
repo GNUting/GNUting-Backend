@@ -29,6 +29,7 @@ public class ApplicationStatusResponseDto  {
     private LocalDateTime modifiedDate;
 
 
+
     public static ApplicationStatusResponseDto toDto(Long id,List<UserSearchResponseDto> participantUser, List<UserSearchResponseDto> applyUsers, String applyDepartment, String participantDepartment,ApplyStatus applyStatus,LocalDateTime createdDate,LocalDateTime modifiedDate) {
 
         return ApplicationStatusResponseDto.builder()
