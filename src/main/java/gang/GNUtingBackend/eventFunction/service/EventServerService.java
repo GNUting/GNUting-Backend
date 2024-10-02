@@ -46,6 +46,11 @@ public class EventServerService {
                 .orElseThrow(()-> new UserHandler(ErrorStatus.NOT_FOUND_NICKNAME));
         EventApply eventApply=eventApplyRepository.findByUserId(user);
 
+        EventServerState eventServerState=eventServerStateRepository.findById(1L);
+        if(eventServerState.getStatus()==Status.CLOSE){
+            throw new UserHandler(ErrorStatus.SERVER_NOT_OPEN);
+        }
+
         if(eventApply!=null){
             throw new UserHandler(ErrorStatus.ALREADY_EVENT_APPLY);
         }

@@ -19,7 +19,7 @@ public class Schedules {
     public void autoClose (){
         memoRepository.updateMemoStatusToClose(); //메모 모두 close
         memoApplyRemainingRepository.deleteAll();  //메모 신청횟수 초기화
-        eventApplyRepository.deleteAll();
+        eventApplyRepository.deleteAll(); //이벤트 신청 초기화
 
     }
 }

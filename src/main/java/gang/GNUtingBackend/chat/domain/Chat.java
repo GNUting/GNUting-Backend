@@ -37,4 +37,7 @@ public class Chat extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MessageType messageType;
 
+    public void setSenderNull(){
+        this.sender=null;
+    }
 }

@@ -24,6 +24,7 @@ public enum ErrorStatus implements BaseErrorCode {
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "USER4000-5", "비밀번호가 일치하지 않습니다."),
     USER_GENDER_NOT_MATCH(HttpStatus.BAD_REQUEST, "USER4000-6", "사용자가 없습니다. (성별이 일치하지않거나 닉네임이 잘못됐습니다.)"),
     INVALID_STUDENT_ID(HttpStatus.BAD_REQUEST, "USER4000-7", "학번은 숫자 2자리로 입력해주세요."),
+    NICKNAME_LENGTH_OR_SPACEBAR_ERROR(HttpStatus.BAD_REQUEST, "USER4000-8", "닉네임은 1글자 이상이어야 하며, 공백을 포함할 수 없습니다."),
     NICKNAME_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "USER4000-8", "닉네임은 최대 10자까지 가능합니다."),
     USER_SELF_INTRODUCTION_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "USER4000-9", "한 줄 소개는 최대 30자까지 가능합니다."),
     PASSWORD_IS_NOT_VALID(HttpStatus.BAD_REQUEST,"USER4006","비밀번호를 특수문자,영문자 1개이상 포함 8~15자 이내로 작성하세요"),
@@ -112,7 +113,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //총학 Event 관련 에러
     ALREADY_EVENT_APPLY(HttpStatus.BAD_REQUEST,"EVENT4000","오늘 이미 참여를 했습니다."),
-    NOT_FOUND_NICKNAME(HttpStatus.BAD_REQUEST,"EVENT4001","해당 닉네임을 찾을 수 없습니다.")
+    NOT_FOUND_NICKNAME(HttpStatus.BAD_REQUEST,"EVENT4001","해당 닉네임을 찾을 수 없습니다."),
+    SERVER_NOT_OPEN(HttpStatus.BAD_REQUEST,"EVENT4002","행사 시작전 입니다.")
 
     ;
 
