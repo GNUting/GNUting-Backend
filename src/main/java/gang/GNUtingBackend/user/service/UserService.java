@@ -159,6 +159,9 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public boolean isNicknameAvailable(String nickname) {
+        if (nickname == null || nickname.length() < 1 || nickname.contains(" ")) {
+            throw new UserHandler(ErrorStatus.NICKNAME_LENGTH_OR_SPACEBAR_ERROR);
+        }
         return userRepository.findByNickname(nickname).isEmpty();
     }
 
