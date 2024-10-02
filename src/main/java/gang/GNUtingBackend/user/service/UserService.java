@@ -1,6 +1,8 @@
 package gang.GNUtingBackend.user.service;
 
 import gang.GNUtingBackend.board.repository.ApplyUsersRepository;
+import gang.GNUtingBackend.chat.domain.Chat;
+import gang.GNUtingBackend.chat.repository.ChatRepository;
 import gang.GNUtingBackend.exception.handler.TokenHandler;
 import gang.GNUtingBackend.exception.handler.UserHandler;
 import gang.GNUtingBackend.notification.service.FCMService;
@@ -15,6 +17,8 @@ import gang.GNUtingBackend.user.dto.token.TokenResponseDto;
 import gang.GNUtingBackend.user.repository.UserRepository;
 import gang.GNUtingBackend.user.token.RefreshTokenService;
 import gang.GNUtingBackend.user.token.TokenProvider;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import jdk.jshell.spi.ExecutionControl.UserException;
@@ -32,6 +36,7 @@ public class UserService {
     private final TokenProvider tokenProvider;
     private final RefreshTokenService refreshTokenService;
     private final FCMService fcmService;
+    private final ChatRepository chatRepository;
     private final Pattern PASSWORD_PATTERN = Pattern.compile(
             "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,15}$");
 
@@ -261,6 +266,11 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
+        List<Chat> chatList=chatRepository.findBySender(user.getNickname());
+        for (Chat chat : chatList) {
+            chat.setSenderNull();
+        }
+        chatRepository.saveAll(chatList);
         userRepository.delete(user);
     }
 

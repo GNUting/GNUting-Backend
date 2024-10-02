@@ -165,7 +165,7 @@ public class ChatRoomService {
                                     .nickname(cru.getUser().getNickname())
                                     .profileImage(cru.getUser().getProfileImage())
                                     .department(cru.getUser().getDepartment())
-                                    .studentId(cru.getUser().getStudentId())
+                                    .studentId(cru.getUser().getStudentId()+"학번")
                                     .build())
                             .collect(Collectors.toList());
                 })
