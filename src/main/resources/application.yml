@@ -1,0 +1,82 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USER_NAME}
+    password: ${DB_USER_PASSWORD}
+
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+      show-sql: true # true 설정시 JPA 쿼리문 확인 가능
+      format-sql: true # JPA의 구현체인 Hibernate가 동작하면서 발생하는 SQL의 가독성을 높여준다.
+      generate-ddl: true
+
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USER_NAME}
+
+    password: ${MAIL_USER_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+  auth:
+    code:
+      expiration:
+        millis: 2 * 60 * 1000
+
+  cloud:
+    aws:
+      s3:
+        bucket: gnuting-bucket
+      region:
+        static: ap-northeast-2
+        auto: false
+      stack:
+        auto: false
+      credentials:
+        access-key: ${S3_ACCESS_KEY}
+        secret-key: ${S3_SECRET_KEY}
+
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+
+  servlet:
+    multipart:
+      max-request-size: 10MB
+      max-file-size: 10MB
+
+jwt:
+  header: Authorization
+  secret: ${JWT_SECRET}
+  duration: 30
+
+slack:
+  token: ${SLACK_TOKEN}
+  channel:
+    monitor: '#gnuting'
+
+logging:
+  level:
+    gang:
+      GNUtingBackend: INFO
+
+server:
+  address: 0.0.0.0
+  port: 10001
