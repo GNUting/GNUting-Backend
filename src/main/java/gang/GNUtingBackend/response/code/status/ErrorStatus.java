@@ -28,6 +28,8 @@ public enum ErrorStatus implements BaseErrorCode {
     NICKNAME_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "USER4000-8", "닉네임은 최대 10자까지 가능합니다."),
     USER_SELF_INTRODUCTION_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "USER4000-9", "한 줄 소개는 최대 30자까지 가능합니다."),
     PASSWORD_IS_NOT_VALID(HttpStatus.BAD_REQUEST,"USER4006","비밀번호를 특수문자,영문자 1개이상 포함 8~15자 이내로 작성하세요"),
+    EMAIL_LENGTH_ERROR(HttpStatus.BAD_REQUEST,"USER4000-10","이메일을 1글자 이상으로 작성해 주세요"),
+
 
     // Board 관련 에러
     BOARD_NOT_FOUND(HttpStatus.BAD_REQUEST,"BOARD5001", "게시글이 없습니다"),
