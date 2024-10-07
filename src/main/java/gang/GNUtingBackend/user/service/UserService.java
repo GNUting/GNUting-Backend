@@ -65,6 +65,11 @@ public class UserService {
                     throw new UserHandler(ErrorStatus.DUPLICATE_NICKNAME);
                 });
 
+        if(userSignupRequestDto.getEmail().length()<=10){
+            throw new UserHandler(ErrorStatus.EMAIL_LENGTH_ERROR);
+        }
+
+
         if (!userSignupRequestDto.getStudentId().matches("^\\d{2}$")) {
             throw new UserHandler(ErrorStatus.INVALID_STUDENT_ID);
         }
