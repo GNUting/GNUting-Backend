@@ -46,9 +46,13 @@ public class MemoService {
     public String saveMemo(String email, MemoRequestDto memoRequestDto) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-        if(memoRepository.findByUserIdAndStatus(user)!=null){ //open 인게 없을떄
+        if(memoRepository.findByUserIdAndStatus(user)!=null){ //open 인게 없을떄 // 이거 굳이 없어도 될것같음
             throw new MemoHandler(ErrorStatus.MEMO_ALREADY_SAVE);
         }
+        if(memoApplyRemainingRepository.findByUserId(user)!=null){
+            throw new MemoHandler(ErrorStatus.MEMO_ALREADY_SAVE);
+        }
+
         MemoApplyRemaining multiClick=memoApplyRemainingRepository.findByUserId(user);
         if(multiClick!=null){
             memoApplyRemainingRepository.deleteByUserId(user);
@@ -105,6 +109,9 @@ public class MemoService {
         }
         if(memo.getStatus()== Status.CLOSE){
             throw new MemoHandler(ErrorStatus.MEMO_ALREADY_APPLY);
+        }
+        if(memo.getGender()==user.getGender()){
+            throw new MemoHandler(ErrorStatus.GENDER_SAME);
         }
         User memoUser=memo.getUserId();
 
