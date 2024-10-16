@@ -187,6 +187,8 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
+        String oldNickname = user.getNickname();
+
         // 닉네임 길이 검증
         if (nickname.length() > 10) {
             throw new UserHandler(ErrorStatus.NICKNAME_LENGTH_EXCEEDED);
@@ -198,6 +200,11 @@ public class UserService {
         }
 
         user.update(profileImage, nickname, department, userSelfIntroduction,drink,hobby,mbti,smoke);
+        List<Chat> chats = chatRepository.findBySender(oldNickname);
+        for (Chat chat : chats) {
+            chat.setSender(nickname);
+        }
+        chatRepository.saveAll(chats);
 
         return UserDetailResponseDto.builder()
                 .id(user.getId())

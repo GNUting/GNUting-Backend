@@ -40,4 +40,10 @@ public class Chat extends BaseEntity {
     public void setSenderNull(){
         this.sender=null;
     }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+
 }
