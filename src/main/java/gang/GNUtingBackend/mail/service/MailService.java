@@ -138,14 +138,7 @@ public class MailService {
      * @return
      */
     public boolean verifyNumber(String email, String number) {
-        if(number.equals("0526")){ //행사용 마스터 비번
-            eventMailRepository.save(EventMailEntity.builder()
-                    .number(number)
-                    .email(email)
-                    .build());
 
-            return true;
-        }
         String storedNumber = redisTemplate.opsForValue().get(email);
 
 
