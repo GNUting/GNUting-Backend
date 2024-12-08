@@ -114,7 +114,9 @@ public class BoardService {
         boolean boardParticipantInWriter = false;
         //참여자 테이블에 저장
         for (User member : boardRequestDto.getInUser()) {
+            System.out.println("과팅신청자들 닉네임"+member.getNickname());
             if (member.getId() == user.getId()) {
+                System.out.println("참여자가 안에있음");
                 boardParticipantInWriter = true;
             }
             BoardParticipantDto boardParticipantDto = BoardParticipantDto.toDto(boardSave, member);
